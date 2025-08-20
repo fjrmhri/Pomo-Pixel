@@ -1,0 +1,193 @@
+/* =======================================================================
+   Dashboard (Panel kiri-atas)
+   Tema: Pixel, Monocraft, Glass
+   Struktur kelas yang dipakai pada Dashboard.js:
+   - .Db               : pembungkus utama
+   - .Db__inner        : isi kartu (pixel-card)
+   - .Db__row-top      : baris atas (tabs kiri, ikon+status kanan)
+   - .Db__tabs         : tab periode (work/short/long)
+   - .Db__tab          : tombol tab
+   - .Db__tab--aktif   : status aktif tab
+   - .Db__kanan        : kontainer kanan (ikon+status)
+   - .Db__ikonbar      : kumpulan tombol ikon (settings, statistik)
+   - .Db__ikonbtn      : tombol ikon
+   - .Db__ikonimg      : gambar ikon
+   - .Db__status       : status login
+   - .Db__dot          : indikator login
+   - .Db__status-teks  : teks status login
+   ======================================================================= */
+
+/* Kontainer luar panel (posisi ditangani oleh .area-kiri-atas di globals.css) */
+.Db {
+  width: max-content;
+  max-width: min(92vw, 520px);
+  position: relative;
+}
+
+/* Kartu dalam: gunakan gaya glass + pixel frame */
+.Db__inner {
+  position: relative; /* supaya anak absolute bisa nempel */
+  background: var(--glass);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: var(--foreground);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
+  border-radius: 6px;
+  padding: 10px 12px;
+  min-width: 280px;
+  font-family: var(--font-pixel);
+}
+
+/* Baris atas: hanya tab di kiri */
+.Db__row-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* Tabs periode */
+.Db__tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.Db__tab {
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  color: #111827;
+  background: #cbd5e1; /* slate-300 */
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  border-radius: 0;
+  padding: 8px 10px;
+  cursor: pointer;
+  text-transform: lowercase;
+  letter-spacing: 0.5px;
+  transition: transform 80ms ease, filter 120ms ease;
+  user-select: none;
+}
+.Db__tab:hover {
+  transform: translateY(-1px);
+}
+.Db__tab.is-aktif,
+.Db__tab--aktif {
+  background: var(--aksen-violet);
+  filter: contrast(110%);
+}
+
+/* Bagian kanan atas (absolute di pojok) */
+.Db__kanan {
+  display: flex;
+  align-items: center;
+  gap: 14px; /* jarak ikonbar dan status */
+}
+
+/* Bar ikon (settings + statistik) */
+.Db__ikonbar {
+  display: flex;
+  gap: 8px;
+}
+.Db__ikonbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 2px solid #000;
+  background: transparent;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  cursor: pointer;
+  transition: transform 80ms ease;
+}
+.Db__ikonbtn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.2);
+}
+.Db__ikonimg {
+  image-rendering: pixelated;
+  width: 20px;
+  height: 20px;
+}
+
+/* Status login */
+.Db__status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #e5e7eb;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 6px;
+  border: 1px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+}
+.Db__dot {
+  width: 10px;
+  height: 10px;
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  background: #9ca3af;
+}
+.Db__dot.is-on {
+  background: #22c55e;
+}
+.Db__dot.is-off {
+  background: #ef4444;
+}
+.Db__status-teks {
+  color: #e5e7eb;
+}
+
+/* Tombol umum (opsional) */
+.Db__btn {
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  color: #111827;
+  background: var(--aksen-amber);
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  border-radius: 0;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: transform 80ms ease;
+  white-space: nowrap;
+}
+.Db__btn:hover {
+  transform: translateY(-1px);
+}
+.Db__btn--sekunder {
+  background: #a5b4fc; /* indigo-300 */
+}
+.Db__btn--danger {
+  background: #fca5a5; /* red-300 */
+}
+
+/* Garis pemisah tipis (opsional) */
+.Db__hr {
+  height: 2px;
+  background: #fff;
+  box-shadow: 0 0 0 2px #000, 0 0 0 4px #000;
+  margin: 8px 0;
+  border: 0;
+}
+
+/* Responsif */
+@media (max-width: 640px) {
+  .Db__inner {
+    padding: 8px 10px 12px 10px;
+    min-width: 240px;
+  }
+  .Db__row-top {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .Db__kanan {
+    position: static;
+    justify-content: flex-end;
+    margin-top: 4px;
+    width: 100%;
+  }
+}

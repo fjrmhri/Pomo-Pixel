@@ -1,26 +1,30 @@
-import { Geist, Geist_Mono } from "next/font/google";
+"use client"; // Menandai komponen ini sebagai client-side
+
 import "./globals.css";
+import { useEffect } from "react";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export const metadata = {
-  title: "Lofi Pamodoro",
-  description: "Pamodoro Timer With Music",
-};
-
+// Hapus ekspor metadata, karena itu tidak diperbolehkan di dalam komponen client-side
 export default function RootLayout({ children }) {
+  useEffect(() => {
+    // Mengatasi masalah font dengan memastikan font Monocraft dimuat dengan benar
+    const font = new FontFace("Monocraft", "url(/fonts/Monocraft.otf)");
+    font
+      .load()
+      .then(() => {
+        document.fonts.add(font);
+      })
+      .catch((err) => {
+        console.error("Font Monocraft gagal dimuat", err);
+      });
+  }, []);
+
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className="font-mono antialiased"
+        style={{
+          fontFamily: "Monocraft, monospace",
+        }}
       >
         {children}
       </body>

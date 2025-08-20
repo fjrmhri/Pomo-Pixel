@@ -1,0 +1,107 @@
+/* Monocraft (jika belum global) ---------------------------------------- */
+@font-face {
+  font-family: "Monocraft";
+  src: url("/fonts/Monocraft.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Backdrop -------------------------------------------------------------- */
+.Md__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.55); /* slate-950/55 */
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  display: grid;
+  place-items: center;
+  z-index: 999; /* Naikkan supaya di atas Timer */
+}
+/* Konten modal (tema pixel) -------------------------------------------- */
+.Md__konten {
+  width: min(94vw, 720px);
+  max-height: min(88vh, 840px);
+  overflow: auto;
+  background: rgba(10, 10, 10, 0.75);
+  color: #e5e7eb;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
+  border-radius: 6px;
+  padding: 14px 16px;
+  font-family: "Monocraft", monospace;
+  outline: none;
+  z-index: 1000; /* Pastikan isi modal selalu di atas */
+}
+
+/* Ukuran varian */
+.Md__konten--sm {
+  width: min(92vw, 420px);
+}
+.Md__konten--md {
+  width: min(94vw, 640px);
+}
+.Md__konten--lg {
+  width: min(96vw, 880px);
+}
+
+/* Header --------------------------------------------------------------- */
+.Md__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.Md__judul {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.Md__ikon {
+  image-rendering: pixelated;
+}
+
+.Md__judul-text {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+/* Tombol tutup (pixel) ------------------------------------------------- */
+.Md__btn-tutup {
+  font-family: "Monocraft", monospace;
+  font-size: 12px;
+  color: #111827;
+  background: #fca5a5; /* red-300 */
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  border-radius: 0;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: transform 80ms ease;
+}
+.Md__btn-tutup:hover {
+  transform: translateY(-1px);
+}
+
+/* Deskripsi ------------------------------------------------------------ */
+.Md__desk {
+  margin: 0 0 10px 0;
+  color: #cbd5e1;
+  font-size: 12px;
+}
+
+/* Isi ------------------------------------------------------------------ */
+.Md__isi {
+  display: block;
+}
+
+/* Responsif ------------------------------------------------------------ */
+@media (max-width: 640px) {
+  .Md__konten {
+    padding: 12px;
+  }
+}

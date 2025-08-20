@@ -1,0 +1,250 @@
+/* =======================================================================
+   SettingsForm (Modal Pengaturan Pomodoro)
+   Tema: Pixel, Monocraft, Glass
+   Kelas yang disarankan:
+   - .Sf                      : pembungkus form
+   - .Sf__inner               : wadah isi (card)
+   - .Sf__grid                : grid 2 kolom (responsif)
+   - .Sf__group               : grup input + label
+   - .Sf__label               : label field
+   - .Sf__control             : container kontrol
+   - .Sf__number              : input number (durasi/interval)
+   - .Sf__range               : input range (volume)
+   - .Sf__hint                : teks bantuan kecil
+   - .Sf__error               : pesan error
+   - .is-invalid              : status invalid pada input
+   - .Sf__actions             : baris tombol aksi
+   - .Sf__btn, --primary, --ghost
+   - .Sf__section-title       : judul bagian kecil
+   ======================================================================= */
+
+/* Wadah utama */
+.Sf {
+  width: min(92vw, 720px);
+  font-family: var(--font-pixel);
+  color: var(--foreground);
+}
+
+/* Kartu isi (glass + pixel frame) */
+.Sf__inner {
+  background: var(--glass);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
+  border-radius: 6px;
+  padding: 14px;
+}
+
+/* Judul bagian */
+.Sf__section-title {
+  display: inline-block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 6px 0 10px 0;
+  padding: 4px 8px;
+  color: #111827;
+  background: var(--aksen-cyan);
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+}
+
+/* Grid 2 kolom untuk field durasi */
+.Sf__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Grup field */
+.Sf__group {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Label */
+.Sf__label {
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  color: #e5e7eb;
+  text-transform: lowercase;
+}
+
+/* Kontainer kontrol */
+.Sf__control {
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: 6px;
+}
+
+/* Input number (durasi/interval) */
+.Sf__number {
+  width: 100%;
+  height: 36px;
+  font-family: var(--font-pixel);
+  font-size: 13px;
+  color: #111827;
+  background: #e5e7eb; /* slate-200 */
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  border-radius: 0;
+  padding: 4px 8px;
+  -moz-appearance: textfield;
+}
+.Sf__number::-webkit-outer-spin-button,
+.Sf__number::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.Sf__number:focus {
+  outline: 2px dashed var(--aksen-amber);
+  outline-offset: 2px;
+}
+
+/* Input range (volume) */
+.Sf__range {
+  width: 100%;
+  height: 22px;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.Sf__range:focus {
+  outline: none;
+}
+
+/* Track (Chrome/Edge) */
+.Sf__range::-webkit-slider-runnable-track {
+  height: 10px;
+  background: #cbd5e1; /* slate-300 */
+  border: 2px solid #000;
+  box-shadow: inset 0 0 0 2px #fff, 0 0 0 4px #000;
+}
+/* Thumb (Chrome/Edge) */
+.Sf__range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -5px; /* center thumb pada track 10px */
+  background: var(--aksen-violet);
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  cursor: pointer;
+}
+
+/* Track (Firefox) */
+.Sf__range::-moz-range-track {
+  height: 10px;
+  background: #cbd5e1;
+  border: 2px solid #000;
+  box-shadow: inset 0 0 0 2px #fff, 0 0 0 4px #000;
+}
+/* Thumb (Firefox) */
+.Sf__range::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: var(--aksen-violet);
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  cursor: pointer;
+}
+
+/* Hint kecil di bawah kontrol */
+.Sf__hint {
+  font-size: 11px;
+  color: #cbd5e1;
+}
+
+/* Error text */
+.Sf__error {
+  font-size: 11px;
+  color: #111827;
+  background: #fca5a5; /* red-300 */
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  padding: 4px 6px;
+  display: inline-block;
+  animation: shake 160ms ease;
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-2px);
+  }
+  50% {
+    transform: translateX(2px);
+  }
+  75% {
+    transform: translateX(-2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Input invalid */
+.is-invalid,
+.is-invalid:focus {
+  border-color: #dc2626 !important; /* red-600 */
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000, 0 0 0 6px #dc2626 !important;
+}
+
+/* Baris tombol aksi bawah */
+.Sf__actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+/* Tombol */
+.Sf__btn {
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  color: #111827;
+  background: var(--aksen-amber);
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  border-radius: 0;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: transform 80ms ease;
+  user-select: none;
+}
+.Sf__btn:hover {
+  transform: translateY(-1px);
+}
+
+.Sf__btn--primary {
+  background: var(--aksen-violet);
+}
+.Sf__btn--ghost {
+  background: #cbd5e1; /* slate-300 */
+}
+
+/* Separator tipis */
+.Sf__hr {
+  height: 2px;
+  background: #fff;
+  box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
+  margin: 12px 0;
+  border: 0;
+}
+
+/* Responsif */
+@media (max-width: 768px) {
+  .Sf__grid {
+    grid-template-columns: 1fr;
+  }
+  .Sf__group {
+    grid-template-columns: 1fr;
+  }
+}

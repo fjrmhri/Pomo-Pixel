@@ -1,0 +1,196 @@
+/* Monocraft -------------------------------------------------------------- */
+/* Jika sudah global, blok ini dapat dihapus */
+@font-face {
+  font-family: "Monocraft";
+  src: url("/fonts/Monocraft.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Posisi kiri-atas (di bawah Dashboard) --------------------------------- */
+.Stat__bungkus {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 60; /* lebih tinggi dari timer dan modal settings */
+  width: min(92vw, 720px);
+  pointer-events: auto;
+  animation: fadeIn 200ms ease-out;
+}
+
+/* === Kartu Statistik === */
+.Stat {
+  background: var(--glass);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
+  border-radius: 6px;
+  padding: 14px;
+  font-family: "Monocraft", monospace;
+  pointer-events: auto;
+}
+
+/* === Overlay (Latar belakang gelap + blur) === */
+.Stat__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  z-index: 59; /* tepat di bawah box statistik */
+  animation: fadeIn 200ms ease-out;
+}
+
+/* Header / Handle drag --------------------------------------------------- */
+.Stat__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  cursor: move; /* handle drag */
+}
+
+.Stat__judul {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.Stat__judul h3 {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.Stat__ikon {
+  image-rendering: pixelated;
+}
+
+.Stat__tab {
+  display: flex;
+  gap: 6px;
+}
+
+.Stat__tabbtn {
+  font-family: "Monocraft", monospace;
+  font-size: 11px;
+  color: #111827;
+  background: #60a5fa; /* blue-400 */
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  border-radius: 0;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: transform 80ms ease;
+}
+
+.Stat__tabbtn:hover {
+  transform: translateY(-1px);
+}
+
+.Stat__tabbtn.is-aktif {
+  background: #fbbf24; /* amber-400 */
+}
+
+/* Status ----------------------------------------------------------------- */
+.Stat__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #cbd5e1; /* slate-300 */
+  margin-bottom: 8px;
+}
+
+.Stat__dot {
+  width: 10px;
+  height: 10px;
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  background: #9ca3af; /* slate-400 */
+}
+.Stat__dot.on {
+  background: #22c55e;
+} /* green-500 */
+.Stat__dot.off {
+  background: #ef4444;
+} /* red-500 */
+
+.Stat__status-teks {
+  color: #cbd5e1;
+}
+.Stat__sub {
+  opacity: 0.85;
+}
+
+/* Grid kartu angka ------------------------------------------------------- */
+.Stat__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.Stat__kartu {
+  background: rgba(17, 24, 39, 0.65); /* slate-900-ish */
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  padding: 12px 10px;
+  text-align: center;
+}
+
+.Stat__kartu-judul {
+  margin: 0 0 6px 0;
+  font-size: 12px;
+  color: #e5e7eb;
+  letter-spacing: 0.5px;
+}
+
+.Stat__angka {
+  margin: 0;
+  font-size: clamp(22px, 5.5vw, 32px);
+  line-height: 1;
+  color: #fef08a; /* yellow-200 */
+  text-shadow: 0 2px 0 #000, 0 0 10px rgba(255, 255, 255, 0.15);
+}
+
+.Stat__unit {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  color: #cbd5e1;
+}
+
+.Stat__kartu-total .Stat__angka {
+  color: #86efac; /* green-300 */
+}
+
+/* Alert ------------------------------------------------------------------ */
+.Stat__alert {
+  margin-top: 10px;
+  background: #b91c1c; /* red-700 */
+  color: #fff;
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  padding: 8px 10px;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Responsif -------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .Stat__bungkus {
+    left: 12px;
+    top: 120px;
+    width: min(96vw, 560px);
+  }
+  .Stat {
+    padding: 10px 12px;
+  }
+  .Stat__grid {
+    grid-template-columns: 1fr;
+  }
+}

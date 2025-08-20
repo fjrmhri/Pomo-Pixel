@@ -1,29 +1,286 @@
+/* ============================ */
+/*  Tailwind setup              */
+/* ============================ */
+
+/* Jika memakai Tailwind v4, cukup @import berikut ini. 
+   Jika masih v3, hapus baris ini dan gunakan @tailwind base/components/utilities di bawah. */
 @import "tailwindcss";
+
+/* Jika proyekmu masih Tailwind v3, biarkan tiga baris di bawah aktif.
+   Untuk Tailwind v4, kamu bisa hapus tiga baris ini. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ============================ */
+/*  Font Monocraft (Pixel)      */
+/* ============================ */
+
+@font-face {
+  font-family: "Monocraft";
+  src: url("/fonts/Monocraft.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
+/* ============================ */
+/*  Token & Theme (v4-friendly) */
+/* ============================ */
+
+:root {
+  /* warna dasar (mode terang default) */
+  --background: #0a0a0a; /* kita pakai gelap default agar cocok dengan lofi/pixel */
+  --foreground: #ededed;
+
+  /* aksen global untuk tema pixel */
+  --aksen-cyan: #22d3ee;
+  --aksen-blue: #60a5fa;
+  --aksen-pink: #f472b6;
+  --aksen-amber: #fbbf24;
+  --aksen-violet: #a78bfa;
+
+  /* kaca / glassmorphism tipis */
+  --glass: rgba(10, 10, 10, 0.62);
+  --glass-strong: rgba(10, 10, 10, 0.78);
+
+  /* font token */
+  --font-pixel: "Monocraft", monospace;
+}
+
+/* Tailwind v4 token inline (opsional, aman jika dibiarkan) */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-pixel); /* pakai Monocraft untuk seluruh UI */
+  --font-mono: var(--font-pixel);
 }
 
-@media (prefers-color-scheme: dark) {
+/* Adaptasi preferensi OS (kalau user pilih terang) */
+@media (prefers-color-scheme: light) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #fafafa;
+    --foreground: #111827;
+    --glass: rgba(255, 255, 255, 0.62);
+    --glass-strong: rgba(255, 255, 255, 0.78);
   }
 }
 
+/* ============================ */
+/*  Reset ringan & body         */
+/* ============================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#__next {
+  height: 100%;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
 body {
+  margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-pixel);
+  line-height: 1.35;
+}
+
+/* Selection warna */
+::selection {
+  background: rgba(34, 211, 238, 0.35); /* cyan-400/35 */
+  color: #fff;
+}
+
+/* Link fokus (aksesibilitas) */
+a,
+button,
+[role="button"],
+input,
+select,
+textarea {
+  outline: none;
+}
+:focus-visible {
+  outline: 2px dashed var(--aksen-amber);
+  outline-offset: 2px;
+}
+
+/* Scrollbar (Chrome/Edge) */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: rgba(148, 163, 184, 0.25);
+}
+*::-webkit-scrollbar-thumb {
+  background: #111827;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff; /* pixel frame */
+}
+
+/* ============================ */
+/*  Utilitas tema pixel global  */
+/* ============================ */
+
+/* Frame pixel putih-hitam bertingkat */
+.pixel-frame {
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
+}
+
+/* Card kaca bergaya pixel */
+.pixel-card {
+  background: var(--glass);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: var(--foreground);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
+  border-radius: 6px;
+}
+
+/* Tombol pixel generik */
+.pixel-btn {
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  color: #111827;
+  background: var(--aksen-violet);
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  border-radius: 0;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: transform 80ms ease;
+  user-select: none;
+}
+.pixel-btn:hover {
+  transform: translateY(-1px);
+}
+.pixel-btn--primary {
+  background: var(--aksen-amber);
+}
+.pixel-btn--success {
+  background: #86efac;
+  color: #111827;
+} /* green-300 */
+.pixel-btn--danger {
+  background: #fca5a5;
+  color: #111827;
+} /* red-300 */
+
+/* Chip/badge kecil pixel */
+.pixel-badge {
+  display: inline-block;
+  background: var(--aksen-cyan);
+  color: #111827;
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+/* Kaca / glass util */
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.glass-strong {
+  background: var(--glass-strong);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Teks kecil pixel */
+.pixel-small {
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+/* Sembunyikan visual tapi aksesibel untuk screen reader */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+
+/* ============================ */
+/*  Layout bantuan (opsional)   */
+/* ============================ */
+
+/* container kiri-atas (Dashboard/Stats) */
+.area-kiri-atas {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 30;
+}
+
+/* area music bawah-tengah */
+.area-music-bawah {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 22;
+  width: min(96vw, 880px);
+}
+
+/* halaman penuh */
+.halaman-utama {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ============================ */
+/*  Tipografi default           */
+/* ============================ */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-pixel);
+  margin: 0 0 8px 0;
+}
+
+p {
+  margin: 0 0 8px 0;
+}
+
+/* ============================ */
+/*  Animasi kecil               */
+/* ============================ */
+
+@keyframes pixel-pop {
+  0% {
+    transform: scale(0.96);
+    filter: brightness(0.9);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+.pixel-pop {
+  animation: pixel-pop 120ms ease-out;
 }

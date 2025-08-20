@@ -1,0 +1,192 @@
+/* =======================================================================
+   Timer (Pomodoro Timer) - Compact + Lowered Final + Responsive
+   Prefix class: Tm__
+   ======================================================================= */
+
+/* ===== Bungkus utama ===== */
+.Tm__bungkus {
+  position: fixed;
+  top: 22%; /* diturunkan lagi ±1cm → tampilan lebih pas */
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  z-index: 50;
+  pointer-events: none;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* ===== Kartu timer ===== */
+.Tm {
+  pointer-events: auto;
+  width: min(86vw, 360px);
+  background: var(--glass, rgba(255, 255, 255, 0.12));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--foreground, #111827);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
+  border-radius: 10px;
+  padding: 12px;
+  font-family: var(--font-pixel, "Monocraft", monospace);
+  box-sizing: border-box;
+}
+
+/* ===== Header ===== */
+.Tm__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Badge periode */
+.Tm__badge {
+  background: #a5b4fc;
+  color: #111827;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  font-size: 9px;
+}
+
+/* Indikator berjalan/jeda */
+.Tm__indikator {
+  font-weight: bold;
+}
+.Tm__indikator.on {
+  color: #10b981;
+}
+.Tm__indikator.off {
+  color: #ef4444;
+}
+
+/* ===== Progress bar ===== */
+.Tm__progress {
+  height: 6px;
+  background: #e5e7eb;
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.Tm__progress-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--aksen-violet, #8b5cf6);
+  transition: width 200ms linear;
+}
+
+/* ===== Tampilan waktu ===== */
+.Tm__waktu {
+  font-size: clamp(28px, 7vw, 46px);
+  font-weight: 700;
+  color: #cbd5e1;
+  letter-spacing: 1px;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+/* ===== Tombol kontrol ===== */
+.Tm__kontrol {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.Tm__btn {
+  font-family: var(--font-pixel, "Monocraft", monospace);
+  font-size: 12px;
+  color: #111827;
+  background: #cbd5e1;
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: transform 80ms ease;
+}
+.Tm__btn.utama {
+  background: var(--aksen-amber, #fbbf24);
+}
+.Tm__btn:hover {
+  transform: translateY(-2px);
+}
+
+/* ===== Pesan info/error ===== */
+.Tm__alert {
+  text-align: center;
+  font-size: 10px;
+  margin-top: 3px;
+}
+.Tm__alert.info {
+  color: #2563eb;
+}
+.Tm__alert.error {
+  color: #b91c1c;
+}
+
+/* ===== Footer ===== */
+.Tm__footer {
+  margin-top: 4px;
+  text-align: center;
+  font-size: 9px;
+  color: #374151;
+}
+
+/* ===== Responsif ===== */
+@media (max-width: 1024px) {
+  .Tm__bungkus {
+    top: 24%; /* tablet lebih turun sedikit */
+  }
+}
+
+@media (max-width: 768px) {
+  .Tm__bungkus {
+    top: 26%; /* tablet kecil lebih turun lagi */
+  }
+
+  .Tm {
+    width: min(88vw, 320px);
+    padding: 10px;
+  }
+
+  .Tm__waktu {
+    font-size: clamp(26px, 7vw, 42px);
+  }
+
+  .Tm__btn {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .Tm__bungkus {
+    top: 28%; /* HP lebih turun, biar pas */
+  }
+
+  .Tm {
+    width: min(92vw, 300px);
+    padding: 8px;
+  }
+
+  .Tm__waktu {
+    font-size: clamp(24px, 8vw, 38px);
+  }
+
+  .Tm__btn {
+    font-size: 10px;
+    padding: 4px 6px;
+  }
+}
