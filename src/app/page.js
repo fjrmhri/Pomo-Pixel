@@ -3,36 +3,26 @@
 /**
  * Halaman Utama: Lofi Music + Pomodoro Timer
  * --------------------------------------------------------------------
- * Mengorkestrasi:
- *  - Wallpaper  : gambar latar dari /public/images
- *  - Dashboard  : kontrol sesi (work/short/long) + tombol pengaturan
- *  - Timer      : pomodoro utama (tanpa draggable)
- *  - Statistik  : ringkasan menit (tanpa draggable)
- *  - MusicPlayer: pemutar musik + efek ambience (tanpa overlay)
- *  - Modal + SettingsForm: pengaturan durasi & volume
- *
- * Persistensi (localStorage):
- *  - lp_pengaturan_v1
- *  - lp_periode_v1
- *  - lp_wallpaper_src_v1
- *  - lp_stats_total_v1
- *  - lp_stats_daily_<YYYY-MM-DD>
- *
- * Sinkron ke Firestore saat sesi selesai (jika login):
- *  - users/<uid>/statistik/agregat
- *  - users/<uid>/statistik/harian/<YYYY-MM-DD>
+ * - Wallpaper (gambar latar)
+ * - Dashboard (kontrol timer + tombol pengaturan)
+ * - Timer utama
+ * - Statistik ringkas
+ * - Music Player
+ * - Modal pengaturan
+ * - Modal login/register
  */
 
 import { useEffect, useMemo, useState } from "react";
 import Wallpaper from "./components/Music/Wallpaper";
 import MusicPlayer from "./components/Music/MusicPlayer";
-
+import NextImage from "next/image";
+import Image from "next/image";
 import Dashboard from "./components/Timer/Dashboard";
 import Timer from "./components/Timer/Timer";
 import UserStatistics from "./components/Timer/UserStatistics";
 import Modal from "./components/Timer/Modal";
 import SettingsForm from "./components/Timer/SettingsForm";
-
+import LoginRegisterForm from "./components/Timer/LoginRegisterForm";
 import { auth, db } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc, increment } from "firebase/firestore";
@@ -54,11 +44,11 @@ const KEY_STATS_TOTAL = "lp_stats_total_v1";
 
 // ---------- nilai default ----------
 const DEFAULT_PENGATURAN = {
-  workLen: 25, // menit fokus
-  shortBreakLen: 5, // menit istirahat pendek
-  longBreakLen: 15, // menit istirahat panjang
-  longBrInterval: 4, // setiap ke-4 sesi fokus → long break
-  volume: 80, // volume notifikasi (0-100)
+  workLen: 25,
+  shortBreakLen: 5,
+  longBreakLen: 15,
+  longBrInterval: 4,
+  volume: 80,
 };
 
 const DEFAULT_WALLPAPER = "/images/background.jpg";
@@ -70,6 +60,8 @@ export default function Page() {
   const [sudahLogin, setSudahLogin] = useState(false);
   const [idPengguna, setIdPengguna] = useState(null);
   const [bukaStatistik, setBukaStatistik] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -83,15 +75,13 @@ export default function Page() {
    *  2) Pengaturan & Periode Aktif
    * =================================================================== */
   const [pengaturanTimer, setPengaturanTimer] = useState(DEFAULT_PENGATURAN);
-  const [periodeAktif, setPeriodeAktif] = useState("work"); // "work" | "short" | "long"
+  const [periodeAktif, setPeriodeAktif] = useState("work");
 
-  // muat dari localStorage sekali saat mount
   useEffect(() => {
     try {
       const rawCfg = localStorage.getItem(KEY_PENGATURAN);
       if (rawCfg) {
         const cfg = JSON.parse(rawCfg);
-        // gabungkan agar kunci baru tetap ada
         setPengaturanTimer((prev) => ({ ...prev, ...cfg }));
       }
       const p = localStorage.getItem(KEY_PERIODE);
@@ -101,7 +91,6 @@ export default function Page() {
     }
   }, []);
 
-  // simpan perubahan ke localStorage
   useEffect(() => {
     try {
       localStorage.setItem(KEY_PENGATURAN, JSON.stringify(pengaturanTimer));
@@ -119,15 +108,14 @@ export default function Page() {
   }, [periodeAktif]);
 
   /* ===================================================================
-   *  3) Statistik Ringkas (state + localStorage + Firestore)
+   *  3) Statistik Ringkas
    * =================================================================== */
   const [statRingkas, setStatRingkas] = useState({
-    totalTime: 0, // total menit (fokus + istirahat)
-    timeStudied: 0, // menit fokus
-    timeOnBreak: 0, // menit istirahat
+    totalTime: 0,
+    timeStudied: 0,
+    timeOnBreak: 0,
   });
 
-  // muat ringkasan dari localStorage (bukan wajib, supaya UI cepat muncul)
   useEffect(() => {
     try {
       const raw = localStorage.getItem(KEY_STATS_TOTAL);
@@ -144,21 +132,18 @@ export default function Page() {
     }
   }, []);
 
-  // callback dari Timer ketika satu sesi selesai
   const catatMenitSesi = async ({
     fokusMenit = 0,
     istirahatMenit = 0,
     totalMenit = 0,
-    periodeSelesai = "", // "work"|"short"|"long"
+    periodeSelesai = "",
   }) => {
-    // 1) update state ringkas
     setStatRingkas((prev) => ({
       totalTime: (prev.totalTime || 0) + Number(totalMenit || 0),
       timeStudied: (prev.timeStudied || 0) + Number(fokusMenit || 0),
       timeOnBreak: (prev.timeOnBreak || 0) + Number(istirahatMenit || 0),
     }));
 
-    // 2) simpan agregat ke localStorage
     try {
       const raw = localStorage.getItem(KEY_STATS_TOTAL);
       const d = raw
@@ -175,29 +160,10 @@ export default function Page() {
       console.warn("[page] gagal menyimpan agregat ke localStorage:", e);
     }
 
-    // 3) simpan harian ke localStorage
-    try {
-      const kH = `lp_stats_daily_${formatTanggal()}`;
-      const rawH = localStorage.getItem(kH);
-      const dH = rawH
-        ? JSON.parse(rawH)
-        : { totalMenit: 0, menitFokus: 0, menitIstirahat: 0 };
-      const baruH = {
-        totalMenit: Number(dH.totalMenit || 0) + Number(totalMenit || 0),
-        menitFokus: Number(dH.menitFokus || 0) + Number(fokusMenit || 0),
-        menitIstirahat:
-          Number(dH.menitIstirahat || 0) + Number(istirahatMenit || 0),
-      };
-      localStorage.setItem(kH, JSON.stringify(baruH));
-    } catch (e) {
-      console.warn("[page] gagal menyimpan harian ke localStorage:", e);
-    }
-
-    // 4) simpan ke Firestore (jika login)
+    // Firestore (opsional jika login)
     if (sudahLogin && idPengguna) {
       try {
         const tanggal = formatTanggal();
-        // agregat
         await setDoc(
           doc(db, "users", idPengguna, "statistik", "agregat"),
           {
@@ -209,7 +175,6 @@ export default function Page() {
           },
           { merge: true }
         );
-        // harian
         await setDoc(
           doc(db, "users", idPengguna, "statistik", "harian", tanggal),
           {
@@ -223,13 +188,12 @@ export default function Page() {
         );
       } catch (e) {
         console.error("[page] gagal menyimpan statistik ke Firestore:", e);
-        // tidak fatal; UI tetap jalan dengan localStorage/state
       }
     }
   };
 
   /* ===================================================================
-   *  5) Wallpaper (gambar latar)
+   *  4) Wallpaper
    * =================================================================== */
   const [wallpaperSrc, setWallpaperSrc] = useState(DEFAULT_WALLPAPER);
 
@@ -252,12 +216,11 @@ export default function Page() {
   };
 
   /* ===================================================================
-   *  6) Modal Pengaturan
+   *  5) Modal Pengaturan
    * =================================================================== */
   const [bukaPengaturan, setBukaPengaturan] = useState(false);
 
   const simpanPengaturan = (baru) => {
-    // normalisasi + validasi angka
     const norm = {
       workLen: Math.max(1, Number(baru.workLen ?? pengaturanTimer.workLen)),
       shortBreakLen: Math.max(
@@ -282,7 +245,7 @@ export default function Page() {
   };
 
   /* ===================================================================
-   *  7) Info login untuk anak
+   *  6) Info login untuk anak
    * =================================================================== */
   const infoLogin = useMemo(
     () => ({ loggedIn: sudahLogin, userId: idPengguna }),
@@ -290,58 +253,113 @@ export default function Page() {
   );
 
   /* ===================================================================
-   *  8) Render
+   *  7) Render
    * =================================================================== */
   return (
     <main className="halaman-utama">
-      {/* Wallpaper latar (cover penuh) */}
+      {/* Wallpaper */}
       <Wallpaper
         src={wallpaperSrc}
         alt="latar pixel"
-        onChangeSrc={
-          gantiWallpaper
-        } /* opsional kalau Wallpaper menyediakan picker */
+        onChangeSrc={gantiWallpaper}
       />
 
-      {/* Dashboard (kiri-atas) */}
+      {/* Tabs Sesi kiri-atas */}
       <div className="area-kiri-atas">
         <Dashboard
-          /* kontrol periode */
           periodeAktif={periodeAktif}
           setPeriodeAktif={setPeriodeAktif}
-          onPilihPeriode={(p) => setPeriodeAktif(p)}
-          /* pengaturan (membuka modal) */
-          onBukaPengaturan={() => setBukaPengaturan(true)}
-          onBukaStatistik={() => setBukaStatistik((prev) => !prev)}
-          /* info login (opsional dipakai Dashboard) */
-          loggedIn={infoLogin.loggedIn}
-          userId={infoLogin.userId}
-          /* dukung ganti wallpaper dari dashboard */
-          onGantiWallpaper={gantiWallpaper}
         />
       </div>
 
-      {/* Timer (tengah) */}
+      {/* Tombol kanan-atas: akun + pengaturan + statistik + status */}
+      <div className="area-kanan-atas">
+        {/* status login */}
+
+        {/* statistik */}
+        <button
+          className="Db__ikonbtn"
+          onClick={() => setBukaStatistik((prev) => !prev)}
+          aria-label="statistik"
+        >
+          <Image
+            src="/images/stats.png"
+            alt="ikon statistik"
+            width={24}
+            height={24}
+            className="Db__ikonimg"
+            priority
+          />
+        </button>
+        {/* pengaturan */}
+        <button
+          className="Db__ikonbtn"
+          onClick={() => setBukaPengaturan(true)}
+          aria-label="pengaturan"
+        >
+          <Image
+            src="/images/settings.png"
+            alt="ikon pengaturan"
+            width={24}
+            height={24}
+            className="Db__ikonimg"
+            priority
+          />
+        </button>
+        {/* akun */}
+        <button className="account-button" onClick={() => setLoginOpen(true)}>
+          <Image
+            src="/images/info.png"
+            alt="ikon akun"
+            width={20}
+            height={20}
+            className="account-icon"
+            priority
+          />
+        </button>
+        <div className="Db__status">
+          <span
+            className={`Db__dot ${sudahLogin ? "is-on" : "is-off"}`}
+            aria-label={sudahLogin ? "login" : "offline"}
+          />
+          <span className="Db__status-teks">
+            {sudahLogin
+              ? idPengguna
+                ? `halo, ${idPengguna}`
+                : "login"
+              : "offline"}
+          </span>
+        </div>
+      </div>
+
+      {/* Pop-up login/register */}
+      {loginOpen && (
+        <div className="login-popup-overlay">
+          <div className="login-popup">
+            <LoginRegisterForm setIsLoggedIn={setIsLoggedIn} />
+            <button onClick={() => setLoginOpen(false)}>Tutup</button>
+          </div>
+        </div>
+      )}
+
+      {/* Timer */}
       <Timer
-        /* konfigurasi timer */
         workLen={pengaturanTimer.workLen}
         shortBreakLen={pengaturanTimer.shortBreakLen}
         longBreakLen={pengaturanTimer.longBreakLen}
         longBrInterval={pengaturanTimer.longBrInterval}
         volume={pengaturanTimer.volume}
-        /* periode aktif */
         currentPeriod={periodeAktif}
         setCurrentPeriod={setPeriodeAktif}
-        /* callback statistik saat sesi selesai */
         onCatatMenit={catatMenitSesi}
       />
 
-      {/* Statistik (kiri-atas di bawah Dashboard) */}
+      {/* Statistik */}
       {bukaStatistik && (
         <>
           <div
             className="Stat__overlay"
-            onClick={() => setBukaStatistik(false)} // klik luar = tutup
+            onClick={() => setBukaStatistik(false)}
           />
           <UserStatistics
             loggedIn={infoLogin.loggedIn}
@@ -353,7 +371,7 @@ export default function Page() {
         </>
       )}
 
-      {/* Music Player (tengah-bawah) */}
+      {/* Music Player */}
       <div className="area-music-bawah">
         <MusicPlayer />
       </div>
@@ -362,18 +380,24 @@ export default function Page() {
       <Modal
         buka={bukaPengaturan}
         tutup={() => setBukaPengaturan(false)}
-        judul="pengaturan pomodoro"
-        deskripsi="atur durasi fokus & istirahat, serta volume notifikasi."
         lebar="md"
       >
         <SettingsForm
           pengaturan={pengaturanTimer}
           setPengaturan={setPengaturanTimer}
-          /* Jika SettingsForm memanggil onSimpan(baru) */
           onSimpan={simpanPengaturan}
-          /* Jika SettingsForm pakai onSelesai() */
           onSelesai={() => setBukaPengaturan(false)}
         />
+      </Modal>
+
+      {/* Modal login/register */}
+      <Modal
+        buka={loginOpen}
+        tutup={() => setLoginOpen(false)}
+        judul="Akun"
+        deskripsi="Kelola login / register akun Anda."
+      >
+        <LoginRegisterForm />
       </Modal>
     </main>
   );

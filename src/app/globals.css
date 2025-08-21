@@ -2,12 +2,10 @@
 /*  Tailwind setup              */
 /* ============================ */
 
-/* Jika memakai Tailwind v4, cukup @import berikut ini. 
-   Jika masih v3, hapus baris ini dan gunakan @tailwind base/components/utilities di bawah. */
+/* Tailwind v4 */
 @import "tailwindcss";
 
-/* Jika proyekmu masih Tailwind v3, biarkan tiga baris di bawah aktif.
-   Untuk Tailwind v4, kamu bisa hapus tiga baris ini. */
+/* Jika masih Tailwind v3, pakai 3 baris di bawah */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -29,34 +27,32 @@
 /* ============================ */
 
 :root {
-  /* warna dasar (mode terang default) */
-  --background: #0a0a0a; /* kita pakai gelap default agar cocok dengan lofi/pixel */
+  --background: #0a0a0a; /* default gelap */
   --foreground: #ededed;
 
-  /* aksen global untuk tema pixel */
+  /* aksen pixel */
   --aksen-cyan: #22d3ee;
   --aksen-blue: #60a5fa;
   --aksen-pink: #f472b6;
   --aksen-amber: #fbbf24;
   --aksen-violet: #a78bfa;
 
-  /* kaca / glassmorphism tipis */
+  /* glass */
   --glass: rgba(10, 10, 10, 0.62);
   --glass-strong: rgba(10, 10, 10, 0.78);
 
-  /* font token */
+  /* font */
   --font-pixel: "Monocraft", monospace;
 }
 
-/* Tailwind v4 token inline (opsional, aman jika dibiarkan) */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-pixel); /* pakai Monocraft untuk seluruh UI */
+  --font-sans: var(--font-pixel);
   --font-mono: var(--font-pixel);
 }
 
-/* Adaptasi preferensi OS (kalau user pilih terang) */
+/* adaptasi light mode */
 @media (prefers-color-scheme: light) {
   :root {
     --background: #fafafa;
@@ -96,13 +92,13 @@ body {
   line-height: 1.35;
 }
 
-/* Selection warna */
+/* selection */
 ::selection {
-  background: rgba(34, 211, 238, 0.35); /* cyan-400/35 */
+  background: rgba(34, 211, 238, 0.35);
   color: #fff;
 }
 
-/* Link fokus (aksesibilitas) */
+/* fokus aksesibilitas */
 a,
 button,
 [role="button"],
@@ -116,7 +112,7 @@ textarea {
   outline-offset: 2px;
 }
 
-/* Scrollbar (Chrome/Edge) */
+/* scrollbar */
 *::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -126,32 +122,29 @@ textarea {
 }
 *::-webkit-scrollbar-thumb {
   background: #111827;
-  border: 2px solid #ffffff;
-  box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff; /* pixel frame */
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
 }
 
 /* ============================ */
 /*  Utilitas tema pixel global  */
 /* ============================ */
 
-/* Frame pixel putih-hitam bertingkat */
 .pixel-frame {
-  border: 2px solid #ffffff;
+  border: 2px solid #fff;
   box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
 }
 
-/* Card kaca bergaya pixel */
 .pixel-card {
   background: var(--glass);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   color: var(--foreground);
-  border: 2px solid #ffffff;
+  border: 2px solid #fff;
   box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
   border-radius: 6px;
 }
 
-/* Tombol pixel generik */
 .pixel-btn {
   font-family: var(--font-pixel);
   font-size: 12px;
@@ -174,13 +167,12 @@ textarea {
 .pixel-btn--success {
   background: #86efac;
   color: #111827;
-} /* green-300 */
+}
 .pixel-btn--danger {
   background: #fca5a5;
   color: #111827;
-} /* red-300 */
+}
 
-/* Chip/badge kecil pixel */
 .pixel-badge {
   display: inline-block;
   background: var(--aksen-cyan);
@@ -191,7 +183,6 @@ textarea {
   font-size: 11px;
 }
 
-/* Kaca / glass util */
 .glass {
   background: var(--glass);
   backdrop-filter: blur(6px);
@@ -203,13 +194,11 @@ textarea {
   -webkit-backdrop-filter: blur(8px);
 }
 
-/* Teks kecil pixel */
 .pixel-small {
   font-size: 12px;
   letter-spacing: 0.5px;
 }
 
-/* Sembunyikan visual tapi aksesibel untuk screen reader */
 .visually-hidden {
   position: absolute !important;
   height: 1px;
@@ -220,18 +209,46 @@ textarea {
 }
 
 /* ============================ */
-/*  Layout bantuan (opsional)   */
+/*  Layout bantuan              */
 /* ============================ */
 
-/* container kiri-atas (Dashboard/Stats) */
+/* Desktop default (sudah ada) */
 .area-kiri-atas {
   position: fixed;
   top: 16px;
   left: 16px;
   z-index: 30;
 }
+.area-kanan-atas {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-/* area music bawah-tengah */
+/* Mobile (≤640px): stacked center */
+@media (max-width: 640px) {
+  .area-kiri-atas {
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%); /* center horizontal */
+  }
+
+  .area-kanan-atas {
+    position: fixed;
+    top: 60px; /* letakkan tepat di bawah area-kiri-atas */
+    left: 50%;
+    transform: translateX(-50%); /* center horizontal */
+    flex-direction: row; /* sejajar horizontal */
+    flex-wrap: wrap; /* jika kepanjangan, otomatis turun baris */
+    justify-content: center;
+    gap: 8px;
+  }
+}
+
 .area-music-bawah {
   position: fixed;
   left: 50%;
@@ -241,7 +258,6 @@ textarea {
   width: min(96vw, 880px);
 }
 
-/* halaman penuh */
 .halaman-utama {
   width: 100%;
   height: 100vh;

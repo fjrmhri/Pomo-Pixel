@@ -12,37 +12,39 @@
   position: fixed;
   inset: 0;
   background: rgba(2, 6, 23, 0.55); /* slate-950/55 */
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(6px); /* Efek blur lebih halus */
+  -webkit-backdrop-filter: blur(6px);
   display: grid;
   place-items: center;
-  z-index: 999; /* Naikkan supaya di atas Timer */
+  z-index: 999; /* Pastikan modal tetap di atas */
 }
+
 /* Konten modal (tema pixel) -------------------------------------------- */
 .Md__konten {
-  width: min(94vw, 720px);
-  max-height: min(88vh, 840px);
+  width: min(80vw, 500px); /* Lebar lebih kecil untuk lebih compact */
+  max-height: min(75vh, 700px); /* Menurunkan batas tinggi */
   overflow: auto;
-  background: rgba(10, 10, 10, 0.75);
+  background: rgba(10, 10, 10, 0.75); /* Latar belakang lebih transparan */
   color: #e5e7eb;
   border: 2px solid #ffffff;
   box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
   border-radius: 6px;
-  padding: 14px 16px;
+  padding: 12px 16px; /* Padding lebih ringkas */
   font-family: "Monocraft", monospace;
   outline: none;
-  z-index: 1000; /* Pastikan isi modal selalu di atas */
+  z-index: 1000; /* Menjaga modal tetap di atas */
+  transition: transform 0.2s ease-out; /* Efek transisi */
 }
 
 /* Ukuran varian */
 .Md__konten--sm {
-  width: min(92vw, 420px);
+  width: min(90vw, 400px); /* Lebar lebih kecil */
 }
 .Md__konten--md {
-  width: min(94vw, 640px);
+  width: min(85vw, 550px); /* Lebar sedikit lebih besar */
 }
 .Md__konten--lg {
-  width: min(96vw, 880px);
+  width: min(90vw, 750px); /* Lebar lebih besar untuk ukuran besar */
 }
 
 /* Header --------------------------------------------------------------- */
@@ -103,5 +105,6 @@
 @media (max-width: 640px) {
   .Md__konten {
     padding: 12px;
+    width: min(90vw, 500px); /* Lebar modal lebih kecil untuk perangkat kecil */
   }
 }

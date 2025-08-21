@@ -38,7 +38,7 @@ const kelasLebar = {
 export default function Modal({
   buka = false,
   tutup,
-  judul = "pengaturan",
+  judul = "",
   deskripsi = "",
   lebar = "md",
   tutupDenganBackdrop = true,
@@ -117,14 +117,6 @@ export default function Modal({
       >
         <header className="Md__header">
           <div className="Md__judul">
-            <Image
-              src="/images/settings.png"
-              alt=""
-              width={18}
-              height={18}
-              className="Md__ikon"
-              priority
-            />
             <h3 id={idJudul} className="Md__judul-text">
               {judul}
             </h3>

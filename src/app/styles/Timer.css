@@ -6,15 +6,16 @@
 /* ===== Bungkus utama ===== */
 .Tm__bungkus {
   position: fixed;
-  top: 22%; /* diturunkan lagi ±1cm → tampilan lebih pas */
+  top: 40%; /* taruh di tengah layar */
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%); /* center horizontal & vertical */
   display: grid;
   place-items: center;
   z-index: 50;
   pointer-events: none;
   width: 100%;
   max-width: 100%;
+  margin-top: 20px; /* opsional: kasih jarak sedikit dari atas */
 }
 
 /* ===== Kartu timer ===== */
@@ -147,13 +148,13 @@
 /* ===== Responsif ===== */
 @media (max-width: 1024px) {
   .Tm__bungkus {
-    top: 24%; /* tablet lebih turun sedikit */
+    top: 45%; /* tablet lebih turun sedikit */
   }
 }
 
 @media (max-width: 768px) {
   .Tm__bungkus {
-    top: 26%; /* tablet kecil lebih turun lagi */
+    top: 45%; /* tablet kecil lebih turun lagi */
   }
 
   .Tm {
@@ -173,7 +174,7 @@
 
 @media (max-width: 480px) {
   .Tm__bungkus {
-    top: 28%; /* HP lebih turun, biar pas */
+    top: 45%; /* HP lebih turun, biar pas */
   }
 
   .Tm {

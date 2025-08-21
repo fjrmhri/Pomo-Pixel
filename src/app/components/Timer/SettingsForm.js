@@ -269,180 +269,94 @@ export default function SettingsForm({
 
   // ---------- isi form ----------
   return (
-    <div className={`Set__bungkus ${className}`}>
-      {/* audio untuk test bunyi */}
-      <audio
-        ref={refSfx}
-        src="/sounds/minecraft_level_up.mp3"
-        preload="auto"
-        aria-hidden
-      />
-
-      <form className="Set" onSubmit={simpanPreferensi}>
+    <div className={`Sf ${className}`}>
+      <form className="Sf__inner" onSubmit={simpanPreferensi}>
         {/* Header */}
-        <div className="Set__header">
-          <div className="Set__judul">
-            <Image
-              src="/images/settings.png"
-              alt="ikon pengaturan"
-              width={24}
-              height={24}
-              className="Set__ikon"
-              priority
-            />
-            <h2>pengaturan</h2>
-          </div>
+        <div className="Sf__section-title">Pengaturan Pomodoro</div>
 
-          <div className="Set__aksi">
-            <button
-              type="button"
-              className="Set__btn kecil"
-              onClick={resetKeBawaan}
-              title="Reset ke nilai bawaan"
-            >
-              reset
-            </button>
-            {typeof onTutup === "function" && (
-              <button
-                type="button"
-                className="Set__btn kecil"
-                onClick={onTutup}
-                title="Tutup"
-              >
-                tutup
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Informasi login */}
-        <div className="Set__info">
-          <span className={`Set__dot ${uidAktif ? "on" : "off"}`} />
-          <span className="Set__info-teks">
-            {sedangMuat
-              ? "memuat…"
-              : uidAktif
-              ? "tersambung Firebase"
-              : "mode lokal (localStorage)"}
-          </span>
-        </div>
-
-        {/* Grid input */}
-        <div className="Set__grid">
-          <label className="Set__label">
-            <span>fokus (menit)</span>
+        <div className="Sf__grid">
+          <div className="Sf__group">
+            <label className="Sf__label">Durasi Fokus (Menit)</label>
             <input
+              className="Sf__number"
               type="number"
-              className="Set__input"
               value={nilaiWork}
-              min={1}
-              max={600}
-              step={1}
               onChange={(e) => setNilaiWork(e.target.value)}
+              min="1"
+              max="600"
             />
-          </label>
-
-          <label className="Set__label">
-            <span>istirahat singkat (menit)</span>
+          </div>
+          <div className="Sf__group">
+            <label className="Sf__label">
+              Durasi Istirahat Singkat (Menit)
+            </label>
             <input
+              className="Sf__number"
               type="number"
-              className="Set__input"
               value={nilaiShort}
-              min={1}
-              max={600}
-              step={1}
               onChange={(e) => setNilaiShort(e.target.value)}
+              min="1"
+              max="600"
             />
-          </label>
-
-          <label className="Set__label">
-            <span>istirahat panjang (menit)</span>
+          </div>
+          <div className="Sf__group">
+            <label className="Sf__label">
+              Durasi Istirahat Panjang (Menit)
+            </label>
             <input
+              className="Sf__number"
               type="number"
-              className="Set__input"
               value={nilaiLong}
-              min={1}
-              max={600}
-              step={1}
               onChange={(e) => setNilaiLong(e.target.value)}
+              min="1"
+              max="600"
             />
-          </label>
-
-          <label className="Set__label">
-            <span>interval long break</span>
+          </div>
+          <div className="Sf__group">
+            <label className="Sf__label">Interval Long Break</label>
             <input
+              className="Sf__number"
               type="number"
-              className="Set__input"
               value={nilaiIntervalLong}
-              min={2}
-              max={12}
-              step={1}
               onChange={(e) => setNilaiIntervalLong(e.target.value)}
+              min="2"
+              max="12"
             />
-          </label>
-
-          <label className="Set__label">
-            <span>volume notifikasi (0–100)</span>
-            <div className="Set__range">
-              <input
-                type="range"
-                min={0}
-                max={100}
-                step={1}
-                value={nilaiVolume}
-                onChange={(e) => setNilaiVolume(Number(e.target.value))}
-                aria-label="volume notifikasi"
-              />
-              <span className="Set__range-angka">{nilaiVolume}</span>
-              <button
-                type="button"
-                className="Set__btn kecil"
-                onClick={cobaBunyi}
-                title="Coba bunyi"
-              >
-                coba
-              </button>
-            </div>
-          </label>
+          </div>
+          <div className="Sf__group">
+            <label className="Sf__label">Volume Notifikasi</label>
+            <input
+              className="Sf__range"
+              type="range"
+              min="0"
+              max="100"
+              value={nilaiVolume}
+              onChange={(e) => setNilaiVolume(e.target.value)}
+            />
+          </div>
         </div>
 
-        {/* Aksi bawah */}
-        <div className="Set__footer">
-          <div className="Set__resetpos">
-            <button
-              type="button"
-              className="Set__btn"
-              onClick={resetPosisiTimer}
-              title="Reset posisi Timer"
-            >
-              reset posisi timer
+        {/* Footer Actions */}
+        <div className="Sf__actions">
+          <button className="Sf__btn" type="button" onClick={resetKeBawaan}>
+            Reset
+          </button>
+          {onTutup && (
+            <button className="Sf__btn" type="button" onClick={onTutup}>
+              Tutup
             </button>
-            <button
-              type="button"
-              className="Set__btn"
-              onClick={resetPosisiStatistik}
-              title="Reset posisi Statistik"
-            >
-              reset posisi statistik
-            </button>
-          </div>
-
+          )}
           <button
-            className="Set__btn utama"
+            className="Sf__btn Sf__btn--primary"
             type="submit"
             disabled={sedangSimpan}
           >
-            {sedangSimpan ? "menyimpan…" : "simpan pengaturan"}
+            {sedangSimpan ? "Menyimpan..." : "Simpan"}
           </button>
         </div>
 
-        {/* Pesan status */}
-        {pesanError && (
-          <div className="Set__alert error" role="alert">
-            {pesanError}
-          </div>
-        )}
-        {pesanSukses && <div className="Set__alert sukses">{pesanSukses}</div>}
+        {pesanError && <div className="Sf__error">{pesanError}</div>}
+        {pesanSukses && <div className="Sf__success">{pesanSukses}</div>}
       </form>
     </div>
   );
