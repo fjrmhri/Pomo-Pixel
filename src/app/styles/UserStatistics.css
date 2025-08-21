@@ -9,11 +9,11 @@
 
 /* Kartu Statistik -------------------------------------------------------- */
 .Stat {
-  background: transparent;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  background: var(--glass, rgba(255, 255, 255, 0.12));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: none;
-  box-shadow: none;
+  box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
   border-radius: 8px;
   padding: 16px;
   font-family: "Monocraft", monospace;
@@ -92,7 +92,7 @@
 
 .Stat__kartu {
   background: rgba(17, 24, 39, 0.65);
-  border: 2px solid #000;
+  border: none;
   box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
   padding: 10px 8px;
   text-align: center;
@@ -129,7 +129,7 @@
   margin-top: 10px;
   background: #b91c1c;
   color: #fff;
-  border: 2px solid #000;
+  border: none;
   box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
   padding: 8px 10px;
   font-size: 12px;
