@@ -53,6 +53,20 @@ const DEFAULT_PENGATURAN = {
 
 const DEFAULT_WALLPAPER = "/images/background.jpg";
 
+const WALLPAPERS = [
+  "background.jpg",
+  "black.jpg",
+  "car.gif",
+  "falcon.gif",
+  "future.gif",
+  "japan.jpg",
+  "parlor.gif",
+  "petroleum.gif",
+  "spaceship.gif",
+  "waterfall.jpg",
+  "your_name.jpg",
+];
+
 export default function Page() {
   /* ===================================================================
    *  1) Status Login Firebase
@@ -196,22 +210,27 @@ export default function Page() {
    *  4) Wallpaper
    * =================================================================== */
   const [wallpaperSrc, setWallpaperSrc] = useState(DEFAULT_WALLPAPER);
+  const [wallpaperIdx, setWallpaperIdx] = useState(0);
 
   useEffect(() => {
     try {
       const w = localStorage.getItem(KEY_WALLPAPER);
-      if (w) setWallpaperSrc(w);
+      if (w) {
+        setWallpaperSrc(w);
+        const idx = WALLPAPERS.findIndex((n) => w.endsWith(n));
+        if (idx >= 0) setWallpaperIdx(idx);
+      }
     } catch {}
   }, []);
 
-  const gantiWallpaper = (srcBaru) => {
-    const aman =
-      typeof srcBaru === "string" && srcBaru.trim().length > 0
-        ? srcBaru
-        : DEFAULT_WALLPAPER;
-    setWallpaperSrc(aman);
+  const gantiWallpaper = () => {
+    const next = (wallpaperIdx + 1) % WALLPAPERS.length;
+    const nama = WALLPAPERS[next];
+    const src = `/images/${nama}`;
+    setWallpaperIdx(next);
+    setWallpaperSrc(src);
     try {
-      localStorage.setItem(KEY_WALLPAPER, aman);
+      localStorage.setItem(KEY_WALLPAPER, src);
     } catch {}
   };
 
@@ -234,11 +253,7 @@ export default function Page() {
   return (
     <main className="halaman-utama">
       {/* Wallpaper */}
-      <Wallpaper
-        src={wallpaperSrc}
-        alt="latar pixel"
-        onChangeSrc={gantiWallpaper}
-      />
+      <Wallpaper src={wallpaperSrc} alt="latar pixel" />
 
       {/* Tabs Sesi kiri-atas */}
       <div className="area-kiri-atas">
@@ -349,7 +364,10 @@ export default function Page() {
 
       {/* Music Player */}
       <div className="area-music-bawah">
-        <MusicPlayer />
+        <MusicPlayer
+          namaWallpaper={WALLPAPERS[wallpaperIdx].replace(/\..+$/, "")}
+          onGantiWallpaper={gantiWallpaper}
+        />
       </div>
 
       {/* Modal Pengaturan */}
