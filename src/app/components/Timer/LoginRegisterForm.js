@@ -10,16 +10,18 @@ function LoginRegisterForm({ setIsLoggedIn }) {
   };
 
   return (
-    <div className="form-switch-container">
+    <div className="flex flex-col items-center gap-4">
       {currentForm === "login" ? (
         <Login setIsLoggedIn={setIsLoggedIn} />
       ) : (
         <Register setIsLoggedIn={setIsLoggedIn} />
       )}
       <button
+        type="button"
         onClick={() =>
           toggleForm(currentForm === "login" ? "register" : "login")
         }
+        className="mt-2 text-[var(--aksen-amber)] underline text-sm hover:text-[var(--aksen-violet)]"
       >
         {currentForm === "login"
           ? "Need an account? Register"
