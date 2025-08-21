@@ -12,13 +12,20 @@
   background: transparent;
   border: none;
   box-shadow: none;
-  border-radius: 8px;
+  border-radius: 0;
   padding: 16px;
   font-family: "Monocraft", monospace;
   pointer-events: auto;
   overflow-y: auto;
   max-height: 100%;
   width: 100%;
+}
+
+.Stat__section-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 16px;
+  text-align: center;
 }
 /* Tabs ------------------------------------------------------------------- */
 .Stat__tab {
@@ -90,10 +97,11 @@
 
 .Stat__kartu {
   background: rgba(17, 24, 39, 0.65);
-  border: none;
+  border: 2px solid #ffffff;
   box-shadow: none;
   padding: 10px 8px;
   text-align: center;
+  border-radius: 0;
 }
 
 .Stat__kartu-judul {

@@ -221,6 +221,7 @@ export default function UserStatistics({
   // ---------------- UI ----------------
   return (
     <section className={`Stat ${className || ""}`}>
+      <div className="Stat__section-title">Statistik</div>
       {/* Tabs */}
       <div className="Stat__tab">
         <button
