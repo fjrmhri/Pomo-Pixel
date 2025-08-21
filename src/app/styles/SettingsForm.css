@@ -5,7 +5,7 @@
   color: var(--foreground);
   margin: 0;
   padding: 16px;
-  border-radius: 8px;
+  border-radius: 0;
   background: transparent;
 }
 
@@ -45,7 +45,7 @@
   width: 100%;
   height: 32px; /* Ukuran lebih kecil */
   padding: 6px; /* Padding lebih kecil */
-  border-radius: 8px;
+  border-radius: 0;
   background: transparent; /* Menghapus latar belakang */
   border: 2px solid #ffffff;
   color: var(--foreground);
@@ -66,7 +66,7 @@
 
 .Sf__range::-webkit-slider-thumb {
   background-color: var(--aksen-amber);
-  border-radius: 50%;
+  border-radius: 0;
   width: 14px; /* Ukuran thumb lebih kecil */
   height: 14px;
 }
@@ -85,7 +85,7 @@
   background: var(--aksen-amber);
   padding: 10px 20px; /* Tombol sedikit lebih lebar */
   border: 2px solid #ffffff;
-  border-radius: 8px;
+  border-radius: 0;
   cursor: pointer;
   transition: transform 0.2s ease, background 0.3s ease;
   font-size: 14px;
@@ -111,7 +111,7 @@
   color: #ff4d4d;
   background: rgba(255, 0, 0, 0.2);
   padding: 6px;
-  border-radius: 6px;
+  border-radius: 0;
   text-align: center;
   margin-top: 8px; /* Margin lebih kecil */
 }
@@ -121,7 +121,7 @@
   color: #3e8e41;
   background: rgba(0, 255, 0, 0.2);
   padding: 6px;
-  border-radius: 6px;
+  border-radius: 0;
   text-align: center;
   margin-top: 8px; /* Margin lebih kecil */
 }

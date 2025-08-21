@@ -347,7 +347,6 @@ export default function Page() {
       <Modal
         buka={bukaStatistik}
         tutup={() => setBukaStatistik(false)}
-        judul="Statistik"
         lebar="md"
       >
         <UserStatistics
