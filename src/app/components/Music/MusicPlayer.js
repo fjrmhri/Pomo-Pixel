@@ -403,7 +403,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
             </label>
             <input
               id="volume-musik"
-              className="Mp__slider"
+              className="Mp__slider Mp__slider--volume"
               type="range"
               min="0"
               max="100"
