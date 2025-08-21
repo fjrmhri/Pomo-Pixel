@@ -80,6 +80,11 @@
   cursor: pointer;
 }
 
+/* Slider volume perlu fleksibel agar memanjang */
+.Mp__slider--volume {
+  flex: 1;
+}
+
 .Mp__slider::-webkit-slider-thumb {
   appearance: none;
   width: 10px; /* lebih kecil */
@@ -143,7 +148,6 @@
 
 .Mp__opsi-bar {
   display: flex;
-  flex: 1;
   justify-content: flex-end;
   align-items: center;
   gap: 6px;
@@ -166,6 +170,8 @@
   padding: 3px 5px;
   cursor: pointer;
   white-space: nowrap;
+  width: 10ch; /* samakan panjang dengan teks 'background' */
+  text-align: center;
 }
 
 .Mp__label {
