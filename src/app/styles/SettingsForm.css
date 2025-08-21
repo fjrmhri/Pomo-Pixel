@@ -1,15 +1,12 @@
 /* Wadah utama SettingsForm */
 .Sf {
-  width: min(80vw, 500px); /* Lebar lebih kecil untuk kesan compact */
+  width: 100%;
   font-family: var(--font-pixel);
   color: var(--foreground);
-  margin: 20px auto;
-  padding: 16px; /* Padding lebih kecil untuk compact */
+  margin: 0;
+  padding: 16px;
   border-radius: 8px;
-  background: transparent; /* Latar belakang transparan */
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2); /* Efek shadow halus */
-  z-index: 2000; /* Pastikan form tetap di atas modal */
-  position: relative; /* Posisi relative agar tidak tertimpa oleh modal */
+  background: transparent;
 }
 
 /* Judul section SettingsForm */
