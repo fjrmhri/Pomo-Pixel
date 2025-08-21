@@ -2,10 +2,19 @@ import { useState } from "react";
 import Login from "./Login";
 import Register from "./Register";
 
+/**
+ * Pembungkus form login dan registrasi.
+ * Menampilkan salah satu form dan menyediakan tombol untuk berpindah.
+ */
 function LoginRegisterForm({ setIsLoggedIn }) {
   const [currentForm, setCurrentForm] = useState("login");
 
+  // Ganti form yang sedang ditampilkan dengan validasi nama
   const toggleForm = (formName) => {
+    if (formName !== "login" && formName !== "register") {
+      console.error(`Form tidak dikenal: ${formName}`);
+      return;
+    }
     setCurrentForm(formName);
   };
 
