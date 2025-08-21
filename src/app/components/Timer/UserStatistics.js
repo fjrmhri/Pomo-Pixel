@@ -12,7 +12,6 @@
  *   3) localStorage (jika ada data)
  */
 
-import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import "../../styles/UserStatistics.css";
 
@@ -221,88 +220,70 @@ export default function UserStatistics({
 
   // ---------------- UI ----------------
   return (
-    <div className={`Stat__bungkus ${className || ""}`}>
-      <section className="Stat">
-        {/* Header */}
-        <header className="Stat__header">
-          <div className="Stat__judul">
-            <Image
-              src="/images/stats.png"
-              alt="ikon statistik"
-              width={20}
-              height={20}
-              className="Stat__ikon"
-              priority
-            />
-            <h3>statistik</h3>
-          </div>
+    <section className={`Stat ${className || ""}`}>
+      {/* Tabs */}
+      <div className="Stat__tab">
+        <button
+          className={`Stat__tabbtn ${
+            modeTampil === "total" ? "is-aktif" : ""
+          }`}
+          onClick={() => setModeTampil("total")}
+          type="button"
+        >
+          total
+        </button>
+        <button
+          className={`Stat__tabbtn ${
+            modeTampil === "harian" ? "is-aktif" : ""
+          }`}
+          onClick={() => setModeTampil("harian")}
+          type="button"
+          title="Statistik untuk hari kalender ini"
+        >
+          hari ini
+        </button>
+      </div>
 
-          <div className="Stat__tab">
-            <button
-              className={`Stat__tabbtn ${
-                modeTampil === "total" ? "is-aktif" : ""
-              }`}
-              onClick={() => setModeTampil("total")}
-              type="button"
-            >
-              total
-            </button>
-            <button
-              className={`Stat__tabbtn ${
-                modeTampil === "harian" ? "is-aktif" : ""
-              }`}
-              onClick={() => setModeTampil("harian")}
-              type="button"
-              title="Statistik untuk hari kalender ini"
-            >
-              hari ini
-            </button>
-          </div>
-        </header>
+      {/* Status */}
+      <div className="Stat__status">
+        <span className={`Stat__dot ${loggedIn || uidAktif ? "on" : "off"}`} />
+        <span className="Stat__status-teks">
+          {sedangMuat
+            ? "memuat…"
+            : loggedIn || uidAktif
+            ? "tersambung data"
+            : "mode lokal"}
+          <span className="Stat__sub"> • {dataTampil.judulKecil}</span>
+        </span>
+      </div>
 
-        {/* Status */}
-        <div className="Stat__status">
-          <span
-            className={`Stat__dot ${loggedIn || uidAktif ? "on" : "off"}`}
-          />
-          <span className="Stat__status-teks">
-            {sedangMuat
-              ? "memuat…"
-              : loggedIn || uidAktif
-              ? "tersambung data"
-              : "mode lokal"}
-            <span className="Stat__sub"> • {dataTampil.judulKecil}</span>
-          </span>
+      {/* Grid angka */}
+      <div className="Stat__grid" role="list">
+        <article className="Stat__kartu" role="listitem">
+          <h4 className="Stat__kartu-judul">fokus</h4>
+          <p className="Stat__angka">{Number(dataTampil.fokus || 0)}</p>
+          <span className="Stat__unit">menit</span>
+        </article>
+
+        <article className="Stat__kartu" role="listitem">
+          <h4 className="Stat__kartu-judul">istirahat</h4>
+          <p className="Stat__angka">{Number(dataTampil.istirahat || 0)}</p>
+          <span className="Stat__unit">menit</span>
+        </article>
+
+        <article className="Stat__kartu Stat__kartu-total" role="listitem">
+          <h4 className="Stat__kartu-judul">total</h4>
+          <p className="Stat__angka">{Number(dataTampil.total || 0)}</p>
+          <span className="Stat__unit">menit</span>
+        </article>
+      </div>
+
+      {/* Pesan error (jika ada) */}
+      {pesanError && (
+        <div className="Stat__alert error" role="alert">
+          {pesanError}
         </div>
-
-        {/* Grid angka */}
-        <div className="Stat__grid" role="list">
-          <article className="Stat__kartu" role="listitem">
-            <h4 className="Stat__kartu-judul">fokus</h4>
-            <p className="Stat__angka">{Number(dataTampil.fokus || 0)}</p>
-            <span className="Stat__unit">menit</span>
-          </article>
-
-          <article className="Stat__kartu" role="listitem">
-            <h4 className="Stat__kartu-judul">istirahat</h4>
-            <p className="Stat__angka">{Number(dataTampil.istirahat || 0)}</p>
-            <span className="Stat__unit">menit</span>
-          </article>
-
-          <article className="Stat__kartu Stat__kartu-total" role="listitem">
-            <h4 className="Stat__kartu-judul">total</h4>
-            <p className="Stat__angka">{Number(dataTampil.total || 0)}</p>
-            <span className="Stat__unit">menit</span>
-          </article>
-        </div>
-
-        {/* Pesan error (jika ada) */}
-        {pesanError && (
-          <div className="Stat__alert error" role="alert">
-            {pesanError}
-          </div>
-        )}
-      </section>
-    </div>
+      )}
+    </section>
   );
 }

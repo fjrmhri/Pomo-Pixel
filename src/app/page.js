@@ -85,6 +85,12 @@ export default function Page() {
     return () => unsub();
   }, []);
 
+  useEffect(() => {
+    if (isLoggedIn || sudahLogin) {
+      setLoginOpen(false);
+    }
+  }, [isLoggedIn, sudahLogin]);
+
   /* ===================================================================
    *  2) Pengaturan & Periode Aktif
    * =================================================================== */
@@ -298,16 +304,18 @@ export default function Page() {
           />
         </button>
         {/* akun */}
-        <button className="account-button" onClick={() => setLoginOpen(true)}>
-          <Image
-            src="/images/info.png"
-            alt="ikon akun"
-            width={20}
-            height={20}
-            className="account-icon"
-            priority
-          />
-        </button>
+        {!sudahLogin && !isLoggedIn && (
+          <button className="account-button" onClick={() => setLoginOpen(true)}>
+            <Image
+              src="/images/info.png"
+              alt="ikon akun"
+              width={20}
+              height={20}
+              className="account-icon"
+              priority
+            />
+          </button>
+        )}
         <div className="Db__status">
           <span
             className={`Db__dot ${sudahLogin ? "is-on" : "is-off"}`}
@@ -336,21 +344,20 @@ export default function Page() {
       />
 
       {/* Statistik */}
-      {bukaStatistik && (
-        <>
-          <div
-            className="Stat__overlay"
-            onClick={() => setBukaStatistik(false)}
-          />
-          <UserStatistics
-            loggedIn={infoLogin.loggedIn}
-            userId={infoLogin.userId}
-            totalTime={statRingkas.totalTime}
-            timeStudied={statRingkas.timeStudied}
-            timeOnBreak={statRingkas.timeOnBreak}
-          />
-        </>
-      )}
+      <Modal
+        buka={bukaStatistik}
+        tutup={() => setBukaStatistik(false)}
+        judul="Statistik"
+        lebar="md"
+      >
+        <UserStatistics
+          loggedIn={infoLogin.loggedIn}
+          userId={infoLogin.userId}
+          totalTime={statRingkas.totalTime}
+          timeStudied={statRingkas.timeStudied}
+          timeOnBreak={statRingkas.timeOnBreak}
+        />
+      </Modal>
 
       {/* Music Player */}
       <div className="area-music-bawah">

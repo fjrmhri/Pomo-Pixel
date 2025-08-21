@@ -7,22 +7,6 @@
   font-display: swap;
 }
 
-/* Bungkus Statistik ------------------------------------------------------ */
-.Stat__bungkus {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* Selalu di tengah */
-  z-index: 60;
-  width: min(90vw, 500px); /* Menyesuaikan layar */
-  max-height: 85vh; /* Biar tidak terpotong di layar kecil */
-  pointer-events: auto;
-  animation: fadeIn 200ms ease-out;
-  transition: transform 0.3s ease;
-  display: flex;
-  flex-direction: column;
-}
-
 /* Kartu Statistik -------------------------------------------------------- */
 .Stat {
   background: var(--glass);
@@ -35,50 +19,15 @@
   font-family: "Monocraft", monospace;
   pointer-events: auto;
   overflow-y: auto;
-  max-height: 100%; /* Biar ikut ukuran bungkus */
+  max-height: 100%;
+  width: 100%;
 }
-
-/* Overlay ---------------------------------------------------------------- */
-.Stat__overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-  z-index: 59;
-  animation: fadeIn 200ms ease-out;
-}
-
-/* Header ----------------------------------------------------------------- */
-.Stat__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 8px;
-  cursor: move;
-}
-
-.Stat__judul {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.Stat__judul h3 {
-  margin: 0;
-  font-size: 12px;
-  letter-spacing: 1px;
-}
-
-.Stat__ikon {
-  image-rendering: pixelated;
-}
-
 /* Tabs ------------------------------------------------------------------- */
 .Stat__tab {
   display: flex;
   gap: 6px;
+  justify-content: center;
+  margin-bottom: 8px;
 }
 
 .Stat__tabbtn {
