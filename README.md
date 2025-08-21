@@ -7,7 +7,11 @@
 
 # 🎧✨ Proyek Website Pemutar Musik Lofi Interaktif
 
-Sebuah aplikasi web **Lofi Music Player** dengan desain **interaktif**, menampilkan:
+## 📝 Deskripsi Proyek
+
+**Pomo-Pixel** adalah aplikasi web pemutar musik lofi interaktif yang menghadirkan suasana fokus dan santai. Dibangun dengan Next.js dan Tailwind CSS, aplikasi ini memadukan musik, wallpaper dinamis, dan efek atmosfer untuk menemani sesi belajar maupun kerja.
+
+Fitur utama:
 
 - 🎵 Pemutar musik **lofi** dengan koleksi track _chill_, _jazzy_, dan _sleepy_
 - 🌌 **Live wallpaper** bergaya Jepang yang bisa diganti sesuai mood
@@ -18,13 +22,13 @@ Sebuah aplikasi web **Lofi Music Player** dengan desain **interaktif**, menampil
 
 ---
 
-## 🖼️ Preview
+## 🖼️ Preview Gambar
 
 ![Preview](./public/preview/preview.png)
 
 ---
 
-## ⚙️ Tech Stack
+## 🛠️ Tech Stack
 
 - ⚡ **Next.js** – Framework React modern
 - 🎨 **Tailwind CSS** – Styling cepat & responsif
@@ -34,7 +38,7 @@ Sebuah aplikasi web **Lofi Music Player** dengan desain **interaktif**, menampil
 
 ---
 
-## 🚀 Memulai Proyek
+## 🚀 Cara Memulai Proyek
 
 ### 1️⃣ Instal Dependensi
 
@@ -71,10 +75,10 @@ Akses aplikasi di: 👉 http://localhost:3000
 File utama untuk mulai eksplorasi: app/page.js
 Setiap perubahan tersimpan akan otomatis merefresh browser. 🔄
 
-## 📂 Sumber Resource
+## 📚 Resources
 
-🎶 Musik & ambience dari repo:  
-👉 [ItzAshOffcl/lofi-resources](https://github.com/ItzAshOffcl/lofi-resources)
+- 🎶 Musik & ambience: [ItzAshOffcl/lofi-resources](https://github.com/ItzAshOffcl/lofi-resources)
+- 🖼️ Wallpaper & inspirasi koding: [DerickPascual/pomodoros](https://github.com/DerickPascual/pomodoros)
 
 ## 📖 Pelajari Lebih Lanjut
 
