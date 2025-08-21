@@ -25,9 +25,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import "../../styles/SettingsForm.css";
-import UserStatistics from "./UserStatistics";
 import { db, auth } from "../../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
@@ -51,7 +49,6 @@ export default function SettingsForm({
   statsPosition,
   setStatsPosition,
   userId, // opsional
-  onTutup, // opsional: untuk menutup modal dari parent
   className = "",
 }) {
   // ---------- state UI & pesan ----------
@@ -130,12 +127,6 @@ export default function SettingsForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uidAktif]);
 
-  // Initialize `bacaTotal` for UserStatistics (Add this state)
-  const [bacaTotal, setBacaTotal] = useState({
-    totalMenit: 0,
-    menitFokus: 0,
-    menitIstirahat: 0,
-  });
 
   // ---------- validasi sederhana ----------
   const validasi = () => {
@@ -341,11 +332,6 @@ export default function SettingsForm({
           <button className="Sf__btn" type="button" onClick={resetKeBawaan}>
             Reset
           </button>
-          {onTutup && (
-            <button className="Sf__btn" type="button" onClick={onTutup}>
-              Tutup
-            </button>
-          )}
           <button
             className="Sf__btn Sf__btn--primary"
             type="submit"

@@ -74,8 +74,8 @@
 /* Tombol dan aksi */
 .Sf__actions {
   display: flex;
-  justify-content: space-between;
-  gap: 8px; /* Gap lebih kecil */
+  justify-content: center;
+  gap: 12px; /* Jarak tombol sedikit lebih lebar */
   margin-top: 16px; /* Margin lebih kecil */
 }
 
@@ -83,7 +83,7 @@
 .Sf__btn {
   font-family: var(--font-pixel);
   background: var(--aksen-amber);
-  padding: 8px 14px; /* Padding lebih kecil */
+  padding: 10px 20px; /* Tombol sedikit lebih lebar */
   border: 2px solid #ffffff;
   border-radius: 8px;
   cursor: pointer;
