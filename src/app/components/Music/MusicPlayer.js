@@ -55,7 +55,7 @@ const bangunDaftarLagu = () => {
 
 const SEMUA = "semua"; // opsi filter untuk semua genre
 
-export default function MusicPlayer() {
+export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
   // ---------- Refs & State utama ----------
   const refAudio = useRef(null);
   const refSfx = useRef(null); // efek klik singkat (bukan ambient loop)
@@ -389,20 +389,30 @@ export default function MusicPlayer() {
 
         {/* Volume & opsi */}
         <div className="Mp__opsi">
-          <label className="Mp__label" htmlFor="volume-musik">
-            volume {volumeMusik}%
-          </label>
-          <input
-            id="volume-musik"
-            className="Mp__slider"
-            type="range"
-            min="0"
-            max="100"
-            step="1"
-            value={volumeMusik}
-            onChange={handleUbahVolume}
-            aria-label="Atur volume musik"
-          />
+          <div className="Mp__opsi-left">
+            <button
+              className="Mp__wallpaper-btn"
+              onClick={onGantiWallpaper}
+              type="button"
+              aria-label="Ganti wallpaper"
+            >
+              {namaWallpaper}
+            </button>
+            <label className="Mp__label" htmlFor="volume-musik">
+              volume {volumeMusik}%
+            </label>
+            <input
+              id="volume-musik"
+              className="Mp__slider"
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              value={volumeMusik}
+              onChange={handleUbahVolume}
+              aria-label="Atur volume musik"
+            />
+          </div>
 
           <div className="Mp__opsi-bar">
             <label className="Mp__label" htmlFor="pilih-genre">
