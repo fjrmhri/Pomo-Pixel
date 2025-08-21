@@ -3,17 +3,30 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
 import "../../styles/SettingsForm.css";
 
+/**
+ * Form login sederhana untuk autentikasi Firebase.
+ * Mengirim status login ke parent melalui setIsLoggedIn.
+ */
 function Login({ setIsLoggedIn }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  // Tangani submit form login
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // pastikan callback tersedia
+    if (typeof setIsLoggedIn !== "function") {
+      setErrorMessage("Fungsi setIsLoggedIn belum tersedia.");
+      return;
+    }
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      setIsLoggedIn(true); // User berhasil login
+      setIsLoggedIn(true); // user berhasil login
     } catch (error) {
+      console.error("Gagal login:", error);
       setErrorMessage("Gagal login: " + error.message);
     }
   };
