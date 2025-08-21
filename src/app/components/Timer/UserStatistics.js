@@ -24,7 +24,7 @@ import { onAuthStateChanged } from "firebase/auth";
 const NAMA_KOLEKSI = "users";
 const SUBCOLL_STAT = "statistik"; // users/<uid>/statistik
 const DOK_AGREGAT = "agregat"; // users/<uid>/statistik/agregat
-const SUBCOLL_HARIAN = "harian"; // users/<uid>/statistik/harian/<YYYY-MM-DD>
+const SUBCOLL_HARIAN = "statistik_harian"; // users/<uid>/statistik_harian/<YYYY-MM-DD>
 
 // Util tanggal "hari ini" (Asia/Jakarta akan mengikuti waktu browser user)
 const formatTanggal = (d = new Date()) => {
@@ -146,11 +146,9 @@ export default function UserStatistics({
             db,
             NAMA_KOLEKSI,
             uidAktif,
-            SUBCOLL_STAT,
             SUBCOLL_HARIAN,
-            hariIni,
-            "someDocumentId"
-          ); // Add a valid documentId
+            hariIni
+          );
 
           const h = await getDoc(refHarian);
           if (h.exists()) {
