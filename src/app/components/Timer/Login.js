@@ -33,6 +33,7 @@ function Login({ setIsLoggedIn }) {
 
   return (
     <div className="Sf">
+      <h2 className="Sf__section-title">Login</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="Sf__group">
           <label htmlFor="login-email" className="Sf__label">
