@@ -66,7 +66,7 @@ export default function Page() {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       setSudahLogin(!!user);
-      setIdPengguna(user ? user.uid : null);
+      setIdPengguna(user ? user.displayName : null);
     });
     return () => unsub();
   }, []);
