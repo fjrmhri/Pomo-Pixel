@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { db, auth } from "../../firebase";
 import { doc, setDoc } from "firebase/firestore";
 
 function Register({ setIsLoggedIn }) {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -22,7 +23,9 @@ function Register({ setIsLoggedIn }) {
         password
       );
       const user = userCredential.user;
+      await updateProfile(user, { displayName: name });
       await setDoc(doc(db, "users", user.uid), {
+        name,
         email,
         totalTime: 0,
         timeStudied: 0,
@@ -37,6 +40,13 @@ function Register({ setIsLoggedIn }) {
   return (
     <div className="form-container">
       <form onSubmit={handleSubmit}>
+        <label>Nama</label>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
         <label>Email</label>
         <input
           type="email"
