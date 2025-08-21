@@ -220,30 +220,6 @@ export default function Page() {
    * =================================================================== */
   const [bukaPengaturan, setBukaPengaturan] = useState(false);
 
-  const simpanPengaturan = (baru) => {
-    const norm = {
-      workLen: Math.max(1, Number(baru.workLen ?? pengaturanTimer.workLen)),
-      shortBreakLen: Math.max(
-        1,
-        Number(baru.shortBreakLen ?? pengaturanTimer.shortBreakLen)
-      ),
-      longBreakLen: Math.max(
-        1,
-        Number(baru.longBreakLen ?? pengaturanTimer.longBreakLen)
-      ),
-      longBrInterval: Math.max(
-        2,
-        Number(baru.longBrInterval ?? pengaturanTimer.longBrInterval)
-      ),
-      volume: Math.min(
-        100,
-        Math.max(0, Number(baru.volume ?? pengaturanTimer.volume))
-      ),
-    };
-    setPengaturanTimer(norm);
-    setBukaPengaturan(false);
-  };
-
   /* ===================================================================
    *  6) Info login untuk anak
    * =================================================================== */
@@ -383,10 +359,27 @@ export default function Page() {
         lebar="md"
       >
         <SettingsForm
-          pengaturan={pengaturanTimer}
-          setPengaturan={setPengaturanTimer}
-          onSimpan={simpanPengaturan}
-          onSelesai={() => setBukaPengaturan(false)}
+          workLen={pengaturanTimer.workLen}
+          setWorkLen={(v) =>
+            setPengaturanTimer((prev) => ({ ...prev, workLen: v }))
+          }
+          shortBreakLen={pengaturanTimer.shortBreakLen}
+          setShortBreakLen={(v) =>
+            setPengaturanTimer((prev) => ({ ...prev, shortBreakLen: v }))
+          }
+          longBreakLen={pengaturanTimer.longBreakLen}
+          setLongBreakLen={(v) =>
+            setPengaturanTimer((prev) => ({ ...prev, longBreakLen: v }))
+          }
+          longBrInterval={pengaturanTimer.longBrInterval}
+          setLongBrInterval={(v) =>
+            setPengaturanTimer((prev) => ({ ...prev, longBrInterval: v }))
+          }
+          volume={pengaturanTimer.volume}
+          setVolume={(v) =>
+            setPengaturanTimer((prev) => ({ ...prev, volume: v }))
+          }
+          onTutup={() => setBukaPengaturan(false)}
         />
       </Modal>
 
