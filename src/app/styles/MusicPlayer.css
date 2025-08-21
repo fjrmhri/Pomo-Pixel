@@ -156,7 +156,7 @@
 .Mp__opsi-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   flex: 1;
 }
 
@@ -170,7 +170,7 @@
   padding: 3px 5px;
   cursor: pointer;
   white-space: nowrap;
-  width: 10ch; /* samakan panjang dengan teks 'background' */
+  width: 12ch; /* lebar tambahan agar teks 'background' muat */
   text-align: center;
 }
 
