@@ -323,16 +323,6 @@ export default function Page() {
         </div>
       </div>
 
-      {/* Pop-up login/register */}
-      {loginOpen && (
-        <div className="login-popup-overlay">
-          <div className="login-popup">
-            <LoginRegisterForm setIsLoggedIn={setIsLoggedIn} />
-            <button onClick={() => setLoginOpen(false)}>Tutup</button>
-          </div>
-        </div>
-      )}
-
       {/* Timer */}
       <Timer
         workLen={pengaturanTimer.workLen}
@@ -408,7 +398,7 @@ export default function Page() {
         judul="Akun"
         deskripsi="Kelola login / register akun Anda."
       >
-        <LoginRegisterForm />
+        <LoginRegisterForm setIsLoggedIn={setIsLoggedIn} />
       </Modal>
     </main>
   );
