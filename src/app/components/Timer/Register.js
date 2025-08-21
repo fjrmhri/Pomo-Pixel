@@ -4,6 +4,10 @@ import { db, auth } from "../../firebase";
 import { doc, setDoc } from "firebase/firestore";
 import "../../styles/SettingsForm.css";
 
+/**
+ * Form registrasi akun pengguna baru.
+ * Menyimpan data dasar ke Firestore dan memberi tahu parent saat sukses.
+ */
 function Register({ setIsLoggedIn }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -11,12 +15,20 @@ function Register({ setIsLoggedIn }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  // Tangani submit form registrasi
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (password !== confirmPassword) {
       setErrorMessage("Password tidak cocok!");
       return;
     }
+
+    if (typeof setIsLoggedIn !== "function") {
+      setErrorMessage("Fungsi setIsLoggedIn belum tersedia.");
+      return;
+    }
+
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -32,8 +44,9 @@ function Register({ setIsLoggedIn }) {
         timeStudied: 0,
         timeOnBreak: 0,
       });
-      setIsLoggedIn(true); // Successfully logged in
+      setIsLoggedIn(true);
     } catch (error) {
+      console.error("Gagal registrasi:", error);
       setErrorMessage("Terjadi kesalahan: " + error.message);
     }
   };

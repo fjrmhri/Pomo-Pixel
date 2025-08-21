@@ -15,7 +15,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Wallpaper from "./components/Music/Wallpaper";
 import MusicPlayer from "./components/Music/MusicPlayer";
-import NextImage from "next/image";
 import Image from "next/image";
 import Dashboard from "./components/Timer/Dashboard";
 import Timer from "./components/Timer/Timer";
