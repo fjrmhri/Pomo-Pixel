@@ -400,8 +400,6 @@ export default function Page() {
       <Modal
         buka={loginOpen}
         tutup={() => setLoginOpen(false)}
-        judul="Akun"
-        deskripsi="Kelola login / register akun Anda."
       >
         <LoginRegisterForm setIsLoggedIn={setIsLoggedIn} />
       </Modal>

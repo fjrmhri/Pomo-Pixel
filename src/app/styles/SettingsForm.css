@@ -7,8 +7,7 @@
   padding: 16px;
   border-radius: 0;
   background: transparent;
-  border: 2px solid #fff;
-  box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
+  /* removed border and shadow for cleaner look */
 }
 
 /* Judul section SettingsForm */
@@ -49,17 +48,17 @@
   padding: 6px; /* Padding lebih kecil */
   border-radius: 0;
   background: transparent; /* Menghapus latar belakang */
-  border: 2px solid #ffffff;
-  box-shadow: inset 0 0 0 2px #000;
+  border: none;
+  box-shadow: none;
   color: var(--foreground);
   font-size: 14px;
   font-family: var(--font-pixel);
-  transition: border 0.3s ease-in-out;
+  transition: none;
 }
 
 .Sf__number:focus,
 .Sf__range:focus {
-  border-color: var(--aksen-amber); /* Highlight saat focus */
+  outline: none;
 }
 
 .Sf__range {
@@ -70,8 +69,8 @@
 .Sf__range::-webkit-slider-thumb {
   background-color: var(--aksen-amber);
   border-radius: 0;
-  border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff, 0 0 0 3px #000;
+  border: none;
+  box-shadow: none;
   width: 14px; /* Ukuran thumb lebih kecil */
   height: 14px;
 }
@@ -89,8 +88,8 @@
   font-family: var(--font-pixel);
   background: var(--aksen-amber);
   padding: 10px 20px; /* Tombol sedikit lebih lebar */
-  border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  border: none;
+  box-shadow: none;
   border-radius: 0;
   cursor: pointer;
   transition: transform 0.2s ease, background 0.3s ease;
@@ -118,8 +117,8 @@
   background: rgba(255, 0, 0, 0.2);
   padding: 6px;
   border-radius: 0;
-  border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  border: none;
+  box-shadow: none;
   text-align: center;
   margin-top: 8px; /* Margin lebih kecil */
 }
@@ -130,8 +129,8 @@
   background: rgba(0, 255, 0, 0.2);
   padding: 6px;
   border-radius: 0;
-  border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  border: none;
+  box-shadow: none;
   text-align: center;
   margin-top: 8px; /* Margin lebih kecil */
 }
