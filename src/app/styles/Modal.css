@@ -60,6 +60,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  flex: 1;
+  justify-content: center;
 }
 
 .Md__ikon {
@@ -68,8 +70,10 @@
 
 .Md__judul-text {
   margin: 0;
-  font-size: 14px;
-  letter-spacing: 1px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  letter-spacing: 0;
+  text-align: center;
 }
 
 /* Tombol tutup (pixel) ------------------------------------------------- */
