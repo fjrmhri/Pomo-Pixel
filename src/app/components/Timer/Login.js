@@ -1,42 +1,27 @@
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
-import "../../styles/SettingsForm.css";
 
-/**
- * Form login sederhana untuk autentikasi Firebase.
- * Mengirim status login ke parent melalui setIsLoggedIn.
- */
 function Login({ setIsLoggedIn }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Tangani submit form login
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // pastikan callback tersedia
-    if (typeof setIsLoggedIn !== "function") {
-      setErrorMessage("Fungsi setIsLoggedIn belum tersedia.");
-      return;
-    }
-
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      setIsLoggedIn(true); // user berhasil login
+      setIsLoggedIn(true); // User berhasil login
     } catch (error) {
-      console.error("Gagal login:", error);
       setErrorMessage("Gagal login: " + error.message);
     }
   };
 
   return (
-    <div className="Sf">
-      <h2 className="Sf__section-title">Login</h2>
+    <div className="pixel-card w-full max-w-md mx-auto p-6">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="Sf__group">
-          <label htmlFor="login-email" className="Sf__label">
+        <div className="flex flex-col gap-1">
+          <label htmlFor="login-email" className="text-sm">
             Email
           </label>
           <input
@@ -44,12 +29,12 @@ function Login({ setIsLoggedIn }) {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="Sf__number"
+            className="pixel-frame bg-transparent px-3 py-2 text-[var(--foreground)] focus:border-[var(--aksen-amber)]"
             required
           />
         </div>
-        <div className="Sf__group">
-          <label htmlFor="login-password" className="Sf__label">
+        <div className="flex flex-col gap-1">
+          <label htmlFor="login-password" className="text-sm">
             Password
           </label>
           <input
@@ -57,18 +42,22 @@ function Login({ setIsLoggedIn }) {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="Sf__number"
+            className="pixel-frame bg-transparent px-3 py-2 text-[var(--foreground)] focus:border-[var(--aksen-amber)]"
             required
           />
         </div>
         <button
           type="submit"
-          className="Sf__btn Sf__btn--primary w-full mt-2"
+          className="pixel-btn pixel-btn--primary w-full mt-2"
         >
           Login
         </button>
       </form>
-      {errorMessage && <div className="Sf__error">{errorMessage}</div>}
+      {errorMessage && (
+        <div className="text-red-400 text-xs mt-3 text-center">
+          {errorMessage}
+        </div>
+      )}
     </div>
   );
 }
