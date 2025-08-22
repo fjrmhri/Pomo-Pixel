@@ -73,6 +73,9 @@ NEXT_PUBLIC_GITHUB_CLIENT_ID=your-github-client-id
 GITHUB_CLIENT_SECRET=your-github-client-secret
 NEXT_PUBLIC_GITHUB_REDIRECT_URI=http://localhost:3000/
 
+# URL di atas adalah halaman yang menerima `code` dari GitHub.  
+# Token akan ditukar melalui route server: `/api/github/callback`.
+
 ```
 
 ### 3️⃣ Jalankan Server Pengembangan
