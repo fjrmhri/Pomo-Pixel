@@ -131,6 +131,22 @@ export default function Page() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!githubUser) return;
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("gh_token") : null;
+    if (!token) return;
+    const id = setInterval(async () => {
+      try {
+        const ev = await fetchUserEvents(token, githubUser.login);
+        setGithubEvents(ev);
+      } catch (e) {
+        console.error(e);
+      }
+    }, 60000);
+    return () => clearInterval(id);
+  }, [githubUser]);
+
   /* ===================================================================
    *  2) Pengaturan & Periode Aktif
    * =================================================================== */

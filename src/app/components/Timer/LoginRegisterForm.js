@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Login from "./Login";
 import Register from "./Register";
-import { redirectToGitHub } from "../../github";
 import "../../styles/SettingsForm.css";
 
 function LoginRegisterForm({ setIsLoggedIn }) {
@@ -18,13 +17,6 @@ function LoginRegisterForm({ setIsLoggedIn }) {
       ) : (
         <Register setIsLoggedIn={setIsLoggedIn} />
       )}
-      <button
-        type="button"
-        onClick={() => redirectToGitHub()}
-        className="Sf__btn Sf__btn--primary w-full"
-      >
-        Login with GitHub
-      </button>
       <button
         type="button"
         onClick={() =>
