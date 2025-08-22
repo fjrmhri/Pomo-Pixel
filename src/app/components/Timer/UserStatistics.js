@@ -285,7 +285,7 @@ export default function UserStatistics({
         <div className="Stat__github">
           <h4 className="Stat__kartu-judul">GitHub Activity</h4>
           <ul className="Stat__github-list">
-            {githubEvents.map((ev) => (
+            {githubEvents.slice(0, 5).map((ev) => (
               <li key={ev.id} className="Stat__github-item">
                 <span className="repo">{ev.repo}</span>
                 <span className="commit">{ev.commit?.slice(0, 7)}</span>

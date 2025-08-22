@@ -29,7 +29,7 @@ function LoginRegisterForm({ setIsLoggedIn }) {
       <button
         type="button"
         onClick={() => redirectToGitHub()}
-        className="Sf__btn Sf__btn--primary w-full"
+        className="Sf__btn Sf__btn--primary w-full mt-2"
       >
         Login with GitHub
       </button>
