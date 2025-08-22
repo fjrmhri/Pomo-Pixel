@@ -18,7 +18,7 @@ function Login({ setIsLoggedIn }) {
   };
 
   return (
-    <div className="pixel-card w-full max-w-md mx-auto p-6">
+    <div className="w-full max-w-md mx-auto p-6 bg-[var(--glass)] backdrop-blur-[6px]">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
           <label htmlFor="login-email" className="text-sm">
