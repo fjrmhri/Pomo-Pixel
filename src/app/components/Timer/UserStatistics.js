@@ -14,6 +14,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import "../../styles/UserStatistics.css";
+import "../../styles/SettingsForm.css";
+import Modal from "./Modal";
+import { redirectToGitHub } from "../../github";
 
 import { db, auth } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
@@ -49,6 +52,7 @@ export default function UserStatistics({
   const [uidAktif, setUidAktif] = useState(userId || null);
   const [sedangMuat, setSedangMuat] = useState(false);
   const [pesanError, setPesanError] = useState("");
+  const [bukaGithub, setBukaGithub] = useState(false);
 
   // data bacaan (fallback-friendly)
   const [bacaTotal, setBacaTotal] = useState({
@@ -222,89 +226,137 @@ export default function UserStatistics({
 
   // ---------------- UI ----------------
   return (
-    <section className={`Stat ${className || ""}`}>
-      <div className="Stat__section-title">Statistik</div>
-      {/* Tabs */}
-      <div className="Stat__tab">
-        <button
-          className={`Stat__tabbtn ${
-            modeTampil === "total" ? "is-aktif" : ""
-          }`}
-          onClick={() => setModeTampil("total")}
-          type="button"
-        >
-          total
-        </button>
-        <button
-          className={`Stat__tabbtn ${
-            modeTampil === "harian" ? "is-aktif" : ""
-          }`}
-          onClick={() => setModeTampil("harian")}
-          type="button"
-          title="Statistik untuk hari kalender ini"
-        >
-          hari ini
-        </button>
-      </div>
-
-      {/* Status */}
-      <div className="Stat__status">
-        <span className={`Stat__dot ${loggedIn || uidAktif ? "on" : "off"}`} />
-        <span className="Stat__status-teks">
-          {sedangMuat
-            ? "memuat…"
-            : loggedIn || uidAktif
-            ? "tersambung data"
-            : "mode lokal"}
-          <span className="Stat__sub"> • {dataTampil.judulKecil}</span>
-        </span>
-      </div>
-
-      {/* Grid angka */}
-      <div className="Stat__grid" role="list">
-        <article className="Stat__kartu" role="listitem">
-          <h4 className="Stat__kartu-judul">fokus</h4>
-          <p className="Stat__angka">{Number(dataTampil.fokus || 0)}</p>
-          <span className="Stat__unit">menit</span>
-        </article>
-
-        <article className="Stat__kartu" role="listitem">
-          <h4 className="Stat__kartu-judul">istirahat</h4>
-          <p className="Stat__angka">{Number(dataTampil.istirahat || 0)}</p>
-          <span className="Stat__unit">menit</span>
-        </article>
-
-        <article className="Stat__kartu Stat__kartu-total" role="listitem">
-          <h4 className="Stat__kartu-judul">total</h4>
-          <p className="Stat__angka">{Number(dataTampil.total || 0)}</p>
-          <span className="Stat__unit">menit</span>
-        </article>
-      </div>
-
-      {githubUser && githubEvents.length > 0 && (
-        <div className="Stat__github">
-          <h4 className="Stat__kartu-judul">GitHub Activity</h4>
-          <ul className="Stat__github-list">
-            {githubEvents.slice(0, 5).map((ev) => (
-              <li key={ev.id} className="Stat__github-item">
-                <span className="repo">{ev.repo}</span>
-                <span className="commit">{ev.commit?.slice(0, 7)}</span>
-                <span className="changes">+{ev.additions}/-{ev.deletions}</span>
-                <span className="time">
-                  {new Date(ev.time).toLocaleString()}
-                </span>
-              </li>
-            ))}
-          </ul>
+    <>
+      <section className={`Stat ${className || ""}`}>
+        <div className="flex items-center gap-2 mb-4">
+          <button
+            type="button"
+            className="Sf__btn Sf__btn--primary"
+            onClick={() => {
+              if (githubUser) {
+                setBukaGithub(true);
+              } else {
+                redirectToGitHub();
+              }
+            }}
+          >
+            {githubUser ? "GitHub" : "Login GitHub"}
+          </button>
+          <div className="Stat__section-title flex-1 text-center">Statistik</div>
         </div>
-      )}
 
-      {/* Pesan error (jika ada) */}
-      {pesanError && (
-        <div className="Stat__alert error" role="alert">
-          {pesanError}
+        {/* Tabs */}
+        <div className="Stat__tab">
+          <button
+            className={`Stat__tabbtn ${
+              modeTampil === "total" ? "is-aktif" : ""
+            }`}
+            onClick={() => setModeTampil("total")}
+            type="button"
+          >
+            total
+          </button>
+          <button
+            className={`Stat__tabbtn ${
+              modeTampil === "harian" ? "is-aktif" : ""
+            }`}
+            onClick={() => setModeTampil("harian")}
+            type="button"
+            title="Statistik untuk hari kalender ini"
+          >
+            hari ini
+          </button>
         </div>
-      )}
-    </section>
+
+        {/* Status */}
+        <div className="Stat__status">
+          <span className={`Stat__dot ${loggedIn || uidAktif ? "on" : "off"}`} />
+          <span className="Stat__status-teks">
+            {sedangMuat
+              ? "memuat…"
+              : loggedIn || uidAktif
+              ? "tersambung data"
+              : "mode lokal"}
+            <span className="Stat__sub"> • {dataTampil.judulKecil}</span>
+          </span>
+        </div>
+
+        {/* Grid angka */}
+        <div className="Stat__grid" role="list">
+          <article className="Stat__kartu" role="listitem">
+            <h4 className="Stat__kartu-judul">fokus</h4>
+            <p className="Stat__angka">{Number(dataTampil.fokus || 0)}</p>
+            <span className="Stat__unit">menit</span>
+          </article>
+
+          <article className="Stat__kartu" role="listitem">
+            <h4 className="Stat__kartu-judul">istirahat</h4>
+            <p className="Stat__angka">{Number(dataTampil.istirahat || 0)}</p>
+            <span className="Stat__unit">menit</span>
+          </article>
+
+          <article className="Stat__kartu Stat__kartu-total" role="listitem">
+            <h4 className="Stat__kartu-judul">total</h4>
+            <p className="Stat__angka">{Number(dataTampil.total || 0)}</p>
+            <span className="Stat__unit">menit</span>
+          </article>
+        </div>
+
+        {/* Pesan error (jika ada) */}
+        {pesanError && (
+          <div className="Stat__alert error" role="alert">
+            {pesanError}
+          </div>
+        )}
+      </section>
+
+      <Modal
+        buka={bukaGithub}
+        tutup={() => setBukaGithub(false)}
+        judul="GitHub Data"
+        lebar="lg"
+      >
+        {githubUser ? (
+          <div className="Stat__github">
+            {githubEvents.length > 0 && (
+              <ul className="Stat__github-list">
+                {githubEvents.map((ev) => (
+                  <li key={ev.id} className="Stat__github-item">
+                    <span className="repo">{ev.repo}</span>
+                    <span className="commit">{ev.commit?.slice(0, 7)}</span>
+                    <span className="changes">+{ev.additions}/-{ev.deletions}</span>
+                    <span className="time">
+                      {new Date(ev.time).toLocaleString()}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <p className="mt-4 text-center">
+              {githubUser && (
+                <>
+                  <img
+                    src={`https://github-readme-stats.vercel.app/api?username=${githubUser.login}&show_icons=true&title_color=ffcc00&icon_color=00ffff&text_color=daf7dc&bg_color=1e1e2f&hide=issues&count_private=true&include_all_commits=true`}
+                    width="48%"
+                  />
+                  <img
+                    src={`https://github-readme-stats.vercel.app/api/top-langs/?username=${githubUser.login}&layout=compact&text_color=daf7dc&bg_color=1e1e2f&hide=php`}
+                    width="37.5%"
+                  />
+                </>
+              )}
+            </p>
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="Sf__btn Sf__btn--primary w-full"
+            onClick={() => redirectToGitHub()}
+          >
+            Login with GitHub
+          </button>
+        )}
+      </Modal>
+    </>
   );
 }
