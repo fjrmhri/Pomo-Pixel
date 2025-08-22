@@ -2,12 +2,7 @@ import { useState } from "react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { db, auth } from "../../firebase";
 import { doc, setDoc } from "firebase/firestore";
-import "../../styles/SettingsForm.css";
 
-/**
- * Form registrasi akun pengguna baru.
- * Menyimpan data dasar ke Firestore dan memberi tahu parent saat sukses.
- */
 function Register({ setIsLoggedIn }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -15,20 +10,12 @@ function Register({ setIsLoggedIn }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Tangani submit form registrasi
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (password !== confirmPassword) {
       setErrorMessage("Password tidak cocok!");
       return;
     }
-
-    if (typeof setIsLoggedIn !== "function") {
-      setErrorMessage("Fungsi setIsLoggedIn belum tersedia.");
-      return;
-    }
-
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -44,19 +31,17 @@ function Register({ setIsLoggedIn }) {
         timeStudied: 0,
         timeOnBreak: 0,
       });
-      setIsLoggedIn(true);
+      setIsLoggedIn(true); // Successfully logged in
     } catch (error) {
-      console.error("Gagal registrasi:", error);
       setErrorMessage("Terjadi kesalahan: " + error.message);
     }
   };
 
   return (
-    <div className="Sf">
-      <h2 className="Sf__section-title">Register</h2>
+    <div className="pixel-card w-full max-w-md mx-auto p-6">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="Sf__group">
-          <label htmlFor="register-name" className="Sf__label">
+        <div className="flex flex-col gap-1">
+          <label htmlFor="register-name" className="text-sm">
             Nama
           </label>
           <input
@@ -64,12 +49,12 @@ function Register({ setIsLoggedIn }) {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="Sf__number"
+            className="pixel-frame bg-transparent px-3 py-2 text-[var(--foreground)] focus:border-[var(--aksen-amber)]"
             required
           />
         </div>
-        <div className="Sf__group">
-          <label htmlFor="register-email" className="Sf__label">
+        <div className="flex flex-col gap-1">
+          <label htmlFor="register-email" className="text-sm">
             Email
           </label>
           <input
@@ -77,12 +62,12 @@ function Register({ setIsLoggedIn }) {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="Sf__number"
+            className="pixel-frame bg-transparent px-3 py-2 text-[var(--foreground)] focus:border-[var(--aksen-amber)]"
             required
           />
         </div>
-        <div className="Sf__group">
-          <label htmlFor="register-password" className="Sf__label">
+        <div className="flex flex-col gap-1">
+          <label htmlFor="register-password" className="text-sm">
             Password
           </label>
           <input
@@ -90,12 +75,12 @@ function Register({ setIsLoggedIn }) {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="Sf__number"
+            className="pixel-frame bg-transparent px-3 py-2 text-[var(--foreground)] focus:border-[var(--aksen-amber)]"
             required
           />
         </div>
-        <div className="Sf__group">
-          <label htmlFor="register-confirm" className="Sf__label">
+        <div className="flex flex-col gap-1">
+          <label htmlFor="register-confirm" className="text-sm">
             Confirm Password
           </label>
           <input
@@ -103,18 +88,22 @@ function Register({ setIsLoggedIn }) {
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="Sf__number"
+            className="pixel-frame bg-transparent px-3 py-2 text-[var(--foreground)] focus:border-[var(--aksen-amber)]"
             required
           />
         </div>
         <button
           type="submit"
-          className="Sf__btn Sf__btn--primary w-full mt-2"
+          className="pixel-btn pixel-btn--primary w-full mt-2"
         >
           Register
         </button>
       </form>
-      {errorMessage && <div className="Sf__error">{errorMessage}</div>}
+      {errorMessage && (
+        <div className="text-red-400 text-xs mt-3 text-center">
+          {errorMessage}
+        </div>
+      )}
     </div>
   );
 }
