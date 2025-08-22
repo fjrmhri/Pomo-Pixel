@@ -19,6 +19,7 @@ function Login({ setIsLoggedIn }) {
 
   return (
     <div className="w-full max-w-md mx-auto p-6 bg-[var(--glass)] backdrop-blur-[6px]">
+      <div className="Sf__section-title">Login</div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
           <label htmlFor="login-email" className="text-sm">
@@ -48,7 +49,7 @@ function Login({ setIsLoggedIn }) {
         </div>
         <button
           type="submit"
-          className="pixel-btn pixel-btn--primary w-full mt-2"
+          className="Sf__btn Sf__btn--primary w-full mt-2"
         >
           Login
         </button>
