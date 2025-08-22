@@ -40,6 +40,8 @@ export default function UserStatistics({
   totalTime,
   timeStudied,
   timeOnBreak,
+  githubUser,
+  githubEvents = [],
   className = "",
 }) {
   // ---------------- State UI ----------------
@@ -278,6 +280,24 @@ export default function UserStatistics({
           <span className="Stat__unit">menit</span>
         </article>
       </div>
+
+      {githubUser && githubEvents.length > 0 && (
+        <div className="Stat__github">
+          <h4 className="Stat__kartu-judul">GitHub Activity</h4>
+          <ul className="Stat__github-list">
+            {githubEvents.map((ev) => (
+              <li key={ev.id} className="Stat__github-item">
+                <span className="repo">{ev.repo}</span>
+                <span className="commit">{ev.commit?.slice(0, 7)}</span>
+                <span className="changes">+{ev.additions}/-{ev.deletions}</span>
+                <span className="time">
+                  {new Date(ev.time).toLocaleString()}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Pesan error (jika ada) */}
       {pesanError && (

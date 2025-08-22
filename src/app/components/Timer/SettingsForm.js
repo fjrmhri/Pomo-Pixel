@@ -28,7 +28,8 @@ import { useEffect, useRef, useState } from "react";
 import "../../styles/SettingsForm.css";
 import { db, auth } from "../../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { logoutGitHub } from "../../github";
 
 const NAMA_KOLEKSI = "users";
 const NAMA_DOKUMEN_PREFERENSI = "preferensi"; // users/<uid>/preferensi
@@ -50,6 +51,7 @@ export default function SettingsForm({
   setStatsPosition,
   userId, // opsional
   className = "",
+  onLogoutGitHub,
 }) {
   // ---------- state UI & pesan ----------
   const [sedangMuat, setSedangMuat] = useState(false);
@@ -338,6 +340,19 @@ export default function SettingsForm({
             disabled={sedangSimpan}
           >
             {sedangSimpan ? "Menyimpan..." : "Simpan"}
+          </button>
+          <button
+            className="Sf__btn Sf__btn--secondary"
+            type="button"
+            onClick={async () => {
+              try {
+                await signOut(auth);
+              } catch {}
+              logoutGitHub();
+              onLogoutGitHub?.();
+            }}
+          >
+            Log Out
           </button>
         </div>
 

@@ -25,6 +25,11 @@ import LoginRegisterForm from "./components/Timer/LoginRegisterForm";
 import { auth, db } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc, increment } from "firebase/firestore";
+import {
+  exchangeCodeForToken,
+  fetchGitHubUser,
+  fetchUserEvents,
+} from "./github";
 
 // ---------- util tanggal ----------
 const formatTanggal = (d = new Date()) => {
@@ -75,6 +80,8 @@ export default function Page() {
   const [bukaStatistik, setBukaStatistik] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [githubUser, setGithubUser] = useState(null);
+  const [githubEvents, setGithubEvents] = useState([]);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -89,6 +96,40 @@ export default function Page() {
       setLoginOpen(false);
     }
   }, [isLoggedIn, sudahLogin]);
+
+  // GitHub OAuth: cek kode dari redirect dan muat data jika token ada
+  useEffect(() => {
+    const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+    const code = params ? params.get("code") : null;
+    const tokenLocal = typeof window !== "undefined" ? localStorage.getItem("gh_token") : null;
+
+    const handleToken = async (token) => {
+      try {
+        const u = await fetchGitHubUser(token);
+        setGithubUser(u);
+        const ev = await fetchUserEvents(token, u.login);
+        setGithubEvents(ev);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    if (tokenLocal) {
+      handleToken(tokenLocal);
+    } else if (code) {
+      exchangeCodeForToken(code).then((t) => {
+        if (t) {
+          if (typeof window !== "undefined") {
+            localStorage.setItem("gh_token", t);
+            const url = new URL(window.location.href);
+            url.searchParams.delete("code");
+            window.history.replaceState({}, "", url.toString());
+          }
+          handleToken(t);
+        }
+      });
+    }
+  }, []);
 
   /* ===================================================================
    *  2) Pengaturan & Periode Aktif
@@ -248,8 +289,13 @@ export default function Page() {
    *  6) Info login untuk anak
    * =================================================================== */
   const infoLogin = useMemo(
-    () => ({ loggedIn: sudahLogin, userId: idPengguna }),
-    [sudahLogin, idPengguna]
+    () => ({
+      loggedIn: sudahLogin,
+      userId: idPengguna,
+      githubUser,
+      githubEvents,
+    }),
+    [sudahLogin, idPengguna, githubUser, githubEvents]
   );
 
   /* ===================================================================
@@ -303,7 +349,7 @@ export default function Page() {
           />
         </button>
         {/* akun */}
-        {!sudahLogin && !isLoggedIn && (
+        {!(sudahLogin && githubUser) && (
           <button className="account-button" onClick={() => setLoginOpen(true)}>
             <Image
               src="/images/info.png"
@@ -317,11 +363,13 @@ export default function Page() {
         )}
         <div className="Db__status">
           <span
-            className={`Db__dot ${sudahLogin ? "is-on" : "is-off"}`}
-            aria-label={sudahLogin ? "login" : "offline"}
+            className={`Db__dot ${sudahLogin || githubUser ? "is-on" : "is-off"}`}
+            aria-label={sudahLogin || githubUser ? "login" : "offline"}
           />
           <span className="Db__status-teks">
-            {sudahLogin
+            {githubUser
+              ? `halo, ${githubUser.login}`
+              : sudahLogin
               ? idPengguna
                 ? `halo, ${idPengguna}`
                 : "login"
@@ -354,6 +402,8 @@ export default function Page() {
           totalTime={statRingkas.totalTime}
           timeStudied={statRingkas.timeStudied}
           timeOnBreak={statRingkas.timeOnBreak}
+          githubUser={infoLogin.githubUser}
+          githubEvents={infoLogin.githubEvents}
         />
       </Modal>
 
@@ -393,6 +443,10 @@ export default function Page() {
             setPengaturanTimer((prev) => ({ ...prev, volume: v }))
           }
           onTutup={() => setBukaPengaturan(false)}
+          onLogoutGitHub={() => {
+            setGithubUser(null);
+            setGithubEvents([]);
+          }}
         />
       </Modal>
 
