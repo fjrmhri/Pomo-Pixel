@@ -60,7 +60,7 @@ bun install
 
 ### 2️⃣ Buat File .env.local di Root
 
-Berikut isi filennya:
+Berikut isi file:
 
 ```bash
 NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
