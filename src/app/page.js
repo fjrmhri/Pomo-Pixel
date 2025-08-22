@@ -22,6 +22,7 @@ import UserStatistics from "./components/Timer/UserStatistics";
 import Modal from "./components/Timer/Modal";
 import SettingsForm from "./components/Timer/SettingsForm";
 import LoginRegisterForm from "./components/Timer/LoginRegisterForm";
+import GithubStats from "./components/Timer/GithubStats";
 import { auth, db } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc, increment } from "firebase/firestore";
