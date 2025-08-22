@@ -167,7 +167,7 @@ export default function Timer({
       setSisaDetik(sisa);
     }
     setBerjalan(false);
-    setPesanInfo("dijeda");
+    setPesanInfo("");
     try {
       onJeda?.();
     } catch {}
