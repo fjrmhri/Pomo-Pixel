@@ -1,20 +1,21 @@
 <p align="center">
-  <img src="https://img.shields.io/github/stars/USERNAME/REPO?style=for-the-badge&logo=github&color=8b5cf6" alt="Stars"/>
-  <img src="https://img.shields.io/github/license/USERNAME/REPO?style=for-the-badge&color=10b981" alt="License"/>
+  <img src="https://img.shields.io/github/stars/fjrmhri/Pomo-Pixel?style=for-the-badge&logo=github&color=8b5cf6" alt="Stars"/>
+  <img src="https://img.shields.io/github/license/fjrmhri/Pomo-Pixel?style=for-the-badge&color=10b981" alt="License"/>
   <img src="https://img.shields.io/badge/Next.js-Framework-black?style=for-the-badge&logo=next.js" alt="Next.js"/>
   <img src="https://img.shields.io/badge/TailwindCSS-Styling-38bdf8?style=for-the-badge&logo=tailwind-css" alt="TailwindCSS"/>
 </p>
 
-# 🎧✨ Proyek Website Pemutar Musik Lofi Interaktif
+# 🎧✨ Proyek Website Pomodoro Timer dan Pemutar Musik Lofi Interaktif
 
 ## 📝 Deskripsi Proyek
 
-**Pomo-Pixel** adalah aplikasi web pemutar musik lofi interaktif yang menghadirkan suasana fokus dan santai. Dibangun dengan Next.js dan Tailwind CSS, aplikasi ini memadukan musik, wallpaper dinamis, dan efek atmosfer untuk menemani sesi belajar maupun kerja.
+**Pomo-Pixel** adalah aplikasi web pomodoro timer + pemutar musik lofi interaktif yang menghadirkan suasana fokus dan santai. Dibangun dengan Next.js dan Tailwind CSS, aplikasi ini memadukan musik, wallpaper dinamis, dan efek atmosfer untuk menemani sesi belajar maupun kerja.
 
 Fitur utama:
 
+- ⏳ **Pomodoro timer** meningkatkan fokus dan produktivitas
 - 🎵 Pemutar musik **lofi** dengan koleksi track _chill_, _jazzy_, dan _sleepy_
-- 🌌 **Live wallpaper** bergaya Jepang yang bisa diganti sesuai mood
+- 🌌 **Live wallpaper** bergaya Pixel yang bisa diganti sesuai mood
 - 🎥 **Video overlay transparan** dengan suasana (siang, malam, hujan)
 - 🎚️ Kontrol musik, efek ambient (rain, forest, ocean, dll), dan brightness
 
@@ -34,7 +35,7 @@ Fitur utama:
 - 🎨 **Tailwind CSS** – Styling cepat & responsif
 - 🎵 **HTML5 Audio** – Pemutar musik & efek suara
 - 🎥 **Custom Overlay Video** – Efek atmosfer transparan
-- 🌄 **Image & Video Assets** – Wallpaper & ambience
+- 🌄 **Image & GIF Assets** – Wallpaper
 
 ---
 
@@ -75,9 +76,9 @@ Akses aplikasi di: 👉 http://localhost:3000
 File utama untuk mulai eksplorasi: app/page.js
 Setiap perubahan tersimpan akan otomatis merefresh browser. 🔄
 
-## 📚 Resources
+## 📚 Resources dan credit
 
-- 🎶 Musik & ambience: [ItzAshOffcl/lofi-resources](https://github.com/ItzAshOffcl/lofi-resources)
+- 🎶 Musik: [ItzAshOffcl/lofi-resources](https://github.com/ItzAshOffcl/lofi-resources)
 - 🖼️ Wallpaper & inspirasi koding: [DerickPascual/pomodoros](https://github.com/DerickPascual/pomodoros)
 
 ## 📖 Pelajari Lebih Lanjut
