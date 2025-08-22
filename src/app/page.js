@@ -99,9 +99,13 @@ export default function Page() {
 
   // GitHub OAuth: cek kode dari redirect dan muat data jika token ada
   useEffect(() => {
-    const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+    const params =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search)
+        : null;
     const code = params ? params.get("code") : null;
-    const tokenLocal = typeof window !== "undefined" ? localStorage.getItem("gh_token") : null;
+    const tokenLocal =
+      typeof window !== "undefined" ? localStorage.getItem("gh_token") : null;
 
     const handleToken = async (token) => {
       try {
@@ -334,6 +338,22 @@ export default function Page() {
       <div className="area-kanan-atas">
         {/* status login */}
 
+        {/* githubstats */}
+        <button
+          className="Db__ikonbtn"
+          onClick={() => setBukaStatistik((prev) => !prev)}
+          aria-label="GithubStats"
+        >
+          <Image
+            src="/images/github.png"
+            alt="ikon github"
+            width={24}
+            height={24}
+            className="Db__ikonimg"
+            priority
+          />
+        </button>
+
         {/* statistik */}
         <button
           className="Db__ikonbtn"
@@ -379,7 +399,9 @@ export default function Page() {
         )}
         <div className="Db__status">
           <span
-            className={`Db__dot ${sudahLogin || githubUser ? "is-on" : "is-off"}`}
+            className={`Db__dot ${
+              sudahLogin || githubUser ? "is-on" : "is-off"
+            }`}
             aria-label={sudahLogin || githubUser ? "login" : "offline"}
           />
           <span className="Db__status-teks">
@@ -467,11 +489,15 @@ export default function Page() {
       </Modal>
 
       {/* Modal login/register */}
-      <Modal
-        buka={loginOpen}
-        tutup={() => setLoginOpen(false)}
-      >
+      <Modal buka={loginOpen} tutup={() => setLoginOpen(false)}>
         <LoginRegisterForm setIsLoggedIn={setIsLoggedIn} />
+      </Modal>
+
+      <Modal>
+        <GithubStats
+          githubUser={infoLogin.githubUser}
+          githubEvents={infoLogin.githubEvents}
+        />
       </Modal>
     </main>
   );

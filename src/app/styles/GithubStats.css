@@ -1,0 +1,201 @@
+/* Monocraft -------------------------------------------------------------- */
+@font-face {
+  font-family: "Monocraft";
+  src: url("/fonts/Monocraft.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Kartu Statistik -------------------------------------------------------- */
+.Stat {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 16px;
+  font-family: "Monocraft", monospace;
+  pointer-events: auto;
+  overflow-y: auto;
+  max-height: 100%;
+  width: 100%;
+}
+
+.Stat__section-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 16px;
+  text-align: center;
+}
+/* Tabs ------------------------------------------------------------------- */
+.Stat__tab {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.Stat__tabbtn {
+  font-family: "Monocraft", monospace;
+  font-size: 10px;
+  color: #111827;
+  background: #60a5fa;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 6px 8px;
+  cursor: pointer;
+  transition: transform 80ms ease;
+}
+
+.Stat__tabbtn:hover {
+  transform: translateY(-1px);
+}
+
+.Stat__tabbtn.is-aktif {
+  background: #fbbf24;
+}
+
+/* Status ----------------------------------------------------------------- */
+.Stat__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #cbd5e1;
+  margin-bottom: 8px;
+}
+
+.Stat__dot {
+  width: 8px;
+  height: 8px;
+  border: none;
+  box-shadow: none;
+  background: #9ca3af;
+}
+.Stat__dot.on {
+  background: #22c55e;
+}
+.Stat__dot.off {
+  background: #ef4444;
+}
+
+.Stat__status-teks {
+  color: #cbd5e1;
+}
+
+.Stat__sub {
+  opacity: 0.85;
+}
+
+/* Grid kartu angka ------------------------------------------------------- */
+.Stat__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.Stat__kartu {
+  background: rgba(17, 24, 39, 0.65);
+  border: 2px solid #ffffff;
+  box-shadow: none;
+  padding: 10px 8px;
+  text-align: center;
+  border-radius: 0;
+}
+
+.Stat__kartu-judul {
+  margin: 0 0 6px 0;
+  font-size: 12px;
+  color: #e5e7eb;
+  letter-spacing: 0.5px;
+}
+
+.Stat__angka {
+  margin: 0;
+  font-size: clamp(20px, 5vw, 28px);
+  line-height: 1;
+  color: #fef08a;
+  text-shadow: 0 2px 0 #000, 0 0 10px rgba(255, 255, 255, 0.15);
+}
+
+.Stat__unit {
+  display: block;
+  margin-top: 6px;
+  font-size: 10px;
+  color: #cbd5e1;
+}
+
+.Stat__kartu-total .Stat__angka {
+  color: #86efac;
+}
+
+/* GitHub activity ------------------------------------------------------- */
+.Stat__github {
+  margin-top: 12px;
+}
+.Stat__github-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 4px;
+}
+.Stat__github-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 4px;
+  background: rgba(17, 24, 39, 0.65);
+  border: 1px solid #ffffff;
+  padding: 4px;
+  font-size: 10px;
+  color: #e5e7eb;
+}
+.Stat__github-item .repo {
+  font-weight: bold;
+}
+.Stat__github-item .commit {
+  font-family: monospace;
+}
+.Stat__github-item .changes {
+  color: #86efac;
+}
+.Stat__github-item .time {
+  text-align: right;
+}
+
+/* Alert ------------------------------------------------------------------ */
+.Stat__alert {
+  margin-top: 10px;
+  background: #b91c1c;
+  color: #fff;
+  border: none;
+  box-shadow: none;
+  padding: 8px 10px;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Responsif -------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .Stat__bungkus {
+    width: 95vw;
+    max-height: 80vh;
+  }
+  .Stat {
+    padding: 10px;
+  }
+  .Stat__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .Stat__bungkus {
+    width: 96vw;
+    max-height: 80vh;
+  }
+  .Stat__grid {
+    grid-template-columns: 1fr;
+  }
+}

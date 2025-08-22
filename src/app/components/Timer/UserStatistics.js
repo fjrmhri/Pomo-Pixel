@@ -229,20 +229,9 @@ export default function UserStatistics({
     <>
       <section className={`Stat ${className || ""}`}>
         <div className="flex items-center gap-2 mb-4">
-          <button
-            type="button"
-            className="Sf__btn Sf__btn--primary"
-            onClick={() => {
-              if (githubUser) {
-                setBukaGithub(true);
-              } else {
-                redirectToGitHub();
-              }
-            }}
-          >
-            {githubUser ? "GitHub" : "Login GitHub"}
-          </button>
-          <div className="Stat__section-title flex-1 text-center">Statistik</div>
+          <div className="Stat__section-title flex-1 text-center">
+            Statistik
+          </div>
         </div>
 
         {/* Tabs */}
@@ -270,7 +259,9 @@ export default function UserStatistics({
 
         {/* Status */}
         <div className="Stat__status">
-          <span className={`Stat__dot ${loggedIn || uidAktif ? "on" : "off"}`} />
+          <span
+            className={`Stat__dot ${loggedIn || uidAktif ? "on" : "off"}`}
+          />
           <span className="Stat__status-teks">
             {sedangMuat
               ? "memuat…"
@@ -324,7 +315,9 @@ export default function UserStatistics({
                   <li key={ev.id} className="Stat__github-item">
                     <span className="repo">{ev.repo}</span>
                     <span className="commit">{ev.commit?.slice(0, 7)}</span>
-                    <span className="changes">+{ev.additions}/-{ev.deletions}</span>
+                    <span className="changes">
+                      +{ev.additions}/-{ev.deletions}
+                    </span>
                     <span className="time">
                       {new Date(ev.time).toLocaleString()}
                     </span>
