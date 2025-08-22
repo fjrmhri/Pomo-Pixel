@@ -13,7 +13,7 @@
  */
 
 import { useEffect, useMemo, useState } from "react";
-import "../../styles/GithubStats.css.css";
+import "../../styles/GithubStats.css";
 import "../../styles/SettingsForm.css";
 import Modal from "./Modal";
 import { redirectToGitHub } from "../../github";
