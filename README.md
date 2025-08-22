@@ -17,8 +17,6 @@ Fitur utama:
 - ⏳ **Pomodoro timer** meningkatkan fokus dan produktivitas
 - 🎵 Pemutar musik **lofi** dengan koleksi track _chill_, _jazzy_, dan _sleepy_
 - 🌌 **Live wallpaper** bergaya Pixel yang bisa diganti sesuai mood
-- 🎥 **Video overlay transparan** dengan suasana (siang, malam, hujan)
-- 🎚️ Kontrol musik, efek ambient (rain, forest, ocean, dll), dan brightness
 
 > Dibuat untuk menemani kamu belajar, bekerja, atau sekadar bersantai. 🌙🍵
 
