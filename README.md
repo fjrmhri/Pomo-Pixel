@@ -76,10 +76,10 @@ Akses aplikasi di: 👉 http://localhost:3000
 File utama untuk mulai eksplorasi: app/page.js
 Setiap perubahan tersimpan akan otomatis merefresh browser. 🔄
 
-## 📚 Resources dan credit
+## 📚 Resources dan Credit
 
 - 🎶 Musik: [ItzAshOffcl/lofi-resources](https://github.com/ItzAshOffcl/lofi-resources)
-- 🖼️ Wallpaper & inspirasi koding: [DerickPascual/pomodoros](https://github.com/DerickPascual/pomodoros)
+- 🖼️ Wallpaper & inspirasi kode: [DerickPascual/pomodoros](https://github.com/DerickPascual/pomodoros)
 
 ## 📖 Pelajari Lebih Lanjut
 
