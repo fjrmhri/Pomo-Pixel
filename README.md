@@ -17,6 +17,7 @@ Fitur utama:
 - ⏳ **Pomodoro timer** meningkatkan fokus dan produktivitas
 - 🎵 Pemutar musik **lofi** dengan koleksi track _chill_, _jazzy_, dan _sleepy_
 - 🌌 **Live wallpaper** bergaya Pixel yang bisa diganti sesuai mood
+- 🔐 Login via email atau GitHub untuk menyimpan statistik dan melihat aktivitas repositori
 
 > Dibuat untuk menemani kamu belajar, bekerja, atau sekadar bersantai. 🌙🍵
 
@@ -68,6 +69,9 @@ NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-storage-bucket
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
 NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your-measurement-id
+NEXT_PUBLIC_GITHUB_CLIENT_ID=your-github-client-id
+GITHUB_CLIENT_SECRET=your-github-client-secret
+NEXT_PUBLIC_GITHUB_REDIRECT_URI=http://localhost:3000/
 
 ```
 
