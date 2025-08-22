@@ -33,6 +33,7 @@ Fitur utama:
 
 - ⚡ **Next.js** – Framework React modern
 - 🎨 **Tailwind CSS** – Styling cepat & responsif
+- 🔥 **Firebase** – Backend untuk autentikasi dan penyimpanan data
 - 🎵 **HTML5 Audio** – Pemutar musik & efek suara
 - 🎥 **Custom Overlay Video** – Efek atmosfer transparan
 - 🌄 **Image & GIF Assets** – Wallpaper
@@ -56,7 +57,22 @@ bun install
 
 ```
 
-### 2️⃣ Jalankan Server Pengembangan
+### 2️⃣ Buat File .env.local di Root
+
+Berikut isi filennya:
+
+```bash
+NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-auth-domain
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-storage-bucket
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
+NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your-measurement-id
+
+```
+
+### 3️⃣ Jalankan Server Pengembangan
 
 ```bash
 npm run dev
@@ -69,14 +85,14 @@ bun dev
 
 ```
 
-### 3️⃣ Buka di Browser
+### 4️⃣ Buka di Browser
 
 Akses aplikasi di: 👉 http://localhost:3000
 
 File utama untuk mulai eksplorasi: app/page.js
-Setiap perubahan tersimpan akan otomatis merefresh browser. 🔄
+Setiap perubahan tersimpan akan otomatis merefresh browser.
 
-## 📚 Resources dan Credit
+## 📚 Resources dan Kredit
 
 - 🎶 Musik: [ItzAshOffcl/lofi-resources](https://github.com/ItzAshOffcl/lofi-resources)
 - 🖼️ Wallpaper & inspirasi kode: [DerickPascual/pomodoros](https://github.com/DerickPascual/pomodoros)
