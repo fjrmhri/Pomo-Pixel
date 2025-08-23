@@ -21,15 +21,16 @@
 
 /* Konten modal (tema pixel) -------------------------------------------- */
 .Md__konten {
-  width: min(85vw, 600px); /* Lebar modal sedikit lebih kecil */
-  height: 70vh; /* Tinggi modal lebih ringkas namun seragam */
+  width: min(70vw, 480px); /* Lebar modal lebih ringkas */
+  max-height: 60vh; /* Tinggi maksimum agar tetap proporsional */
+  height: auto;
   overflow: auto;
   background: rgba(10, 10, 10, 0.75); /* Latar belakang lebih transparan */
   color: #e5e7eb;
   border: 2px solid #ffffff;
   box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
   border-radius: 0; /* square edges */
-  padding: 12px 16px; /* Padding lebih ringkas */
+  padding: 8px 12px; /* Padding lebih ringkas */
   font-family: "Monocraft", monospace;
   outline: none;
   z-index: 1000; /* Menjaga modal tetap di atas */
@@ -40,8 +41,9 @@
 .Md__konten--sm,
 .Md__konten--md,
 .Md__konten--lg {
-  width: min(85vw, 600px);
-  height: 70vh; /* Samakan tinggi untuk semua varian */
+  width: min(70vw, 480px);
+  max-height: 60vh; /* Samakan tinggi untuk semua varian */
+  height: auto;
 }
 
 /* Header --------------------------------------------------------------- */
@@ -105,8 +107,9 @@
 /* Responsif ------------------------------------------------------------ */
 @media (max-width: 640px) {
   .Md__konten {
-    padding: 12px;
-    width: min(90vw, 420px); /* Lebar modal lebih kecil untuk perangkat kecil */
-    height: 70vh; /* Pertahankan tinggi agar proporsional */
+    padding: 8px;
+    width: min(90vw, 340px); /* Lebar modal lebih kecil untuk perangkat kecil */
+    max-height: 60vh; /* Pertahankan tinggi agar proporsional */
+    height: auto;
   }
 }
