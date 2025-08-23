@@ -134,39 +134,57 @@
 .Stat__github {
   margin-top: 12px;
 }
-.Stat__github-images {
-  display: flex;
-  width: 100%;
-}
-.Stat__github-image {
-  flex: 1;
-  border: 2px solid #fbbf24;
-  border-radius: 8px;
-  display: block;
-  width: 100%;
-}
-.Stat__history {
-  margin-top: 12px;
-}
-.Stat__history-filter {
-  text-align: center;
-  margin-bottom: 8px;
-}
-.Stat__history-select {
-  font-family: "Monocraft", monospace;
-  background: #1e1e2f;
-  color: #e5e7eb;
-  border: 2px solid #fbbf24;
-  border-radius: 4px;
-  padding: 4px 8px;
-}
-.Stat__github-list {
-  list-style: none;
-  padding: 0;
-  margin: 12px 0 0 0;
-  display: grid;
-  gap: 4px;
-}
+  .Stat__github-images {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 0;
+  }
+  .Stat__github-image {
+    display: block;
+    border: none;
+    border-radius: 0;
+  }
+  .Stat__github-image--stats {
+    width: 48%;
+  }
+  .Stat__github-image--langs {
+    width: 37.5%;
+  }
+  .Stat__history {
+    margin-top: 12px;
+    text-align: center;
+  }
+  .Stat__history-filter {
+    margin: 0 auto 8px;
+    border: 1px solid #ffffff;
+    display: inline-block;
+    padding: 4px;
+  }
+  .Stat__history-select {
+    font-family: "Monocraft", monospace;
+    background: #1e1e2f;
+    color: #e5e7eb;
+    border: 1px solid #ffffff;
+    border-radius: 4px;
+    padding: 4px 8px;
+  }
+  .Stat__history-empty {
+    margin-top: 12px;
+    text-align: center;
+    color: #e5e7eb;
+    font-size: 12px;
+  }
+  .Stat__github-list {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0 0;
+    display: grid;
+    gap: 4px;
+    width: 100%;
+    text-align: left;
+  }
 .Stat__github-item {
   display: grid;
   grid-template-columns: 1fr auto auto auto;
