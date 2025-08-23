@@ -158,7 +158,7 @@
 }
 .Stat__history-filter {
   margin: 0 auto 8px;
-  border: 1px solid #ffffff;
+  border: 1px solid #ffffff00;
   display: inline-block;
   padding: 4px;
 }
@@ -244,8 +244,8 @@
   .Stat__grid {
     grid-template-columns: 1fr;
   }
-  .Stat__github-images {
-    width: 48%;
+  .Stat__github-image {
+    width: 49%;
     object-fit: cover;
   }
 }
