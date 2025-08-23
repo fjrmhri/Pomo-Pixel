@@ -11,7 +11,7 @@ function LoginRegisterForm({ setIsLoggedIn }) {
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-4 w-full h-full overflow-y-auto">
       {currentForm === "login" ? (
         <Login setIsLoggedIn={setIsLoggedIn} />
       ) : (

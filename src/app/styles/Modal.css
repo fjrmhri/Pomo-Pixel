@@ -21,8 +21,8 @@
 
 /* Konten modal (tema pixel) -------------------------------------------- */
 .Md__konten {
-  width: min(90vw, 750px); /* Samakan lebar untuk semua modal */
-  height: 80vh; /* Samakan tinggi dan jaga agar responsif */
+  width: min(85vw, 600px); /* Lebar modal sedikit lebih kecil */
+  height: 70vh; /* Tinggi modal lebih ringkas namun seragam */
   overflow: auto;
   background: rgba(10, 10, 10, 0.75); /* Latar belakang lebih transparan */
   color: #e5e7eb;
@@ -40,7 +40,8 @@
 .Md__konten--sm,
 .Md__konten--md,
 .Md__konten--lg {
-  width: min(90vw, 750px);
+  width: min(85vw, 600px);
+  height: 70vh; /* Samakan tinggi untuk semua varian */
 }
 
 /* Header --------------------------------------------------------------- */
@@ -105,6 +106,7 @@
 @media (max-width: 640px) {
   .Md__konten {
     padding: 12px;
-    width: min(90vw, 500px); /* Lebar modal lebih kecil untuk perangkat kecil */
+    width: min(90vw, 420px); /* Lebar modal lebih kecil untuk perangkat kecil */
+    height: 70vh; /* Pertahankan tinggi agar proporsional */
   }
 }
