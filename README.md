@@ -18,6 +18,7 @@ Fitur utama:
 - 🎵 Pemutar musik **lofi** dengan koleksi track _chill_, _jazzy_, dan _sleepy_
 - 🌌 **Live wallpaper** bergaya Pixel yang bisa diganti sesuai mood
 - 🔐 Login via email atau GitHub untuk menyimpan statistik dan melihat aktivitas repositori
+- 👨‍💻 Login via **Github** Fitur untuk melihat **github stats, push, dan pull requests**
 
 > Dibuat untuk menemani kamu belajar, bekerja, atau sekadar bersantai. 🌙🍵
 
@@ -73,7 +74,7 @@ NEXT_PUBLIC_GITHUB_CLIENT_ID=your-github-client-id
 GITHUB_CLIENT_SECRET=your-github-client-secret
 NEXT_PUBLIC_GITHUB_REDIRECT_URI=http://localhost:3000/
 
-# URL di atas adalah halaman yang menerima `code` dari GitHub.  
+# URL di atas adalah halaman yang menerima `code` dari GitHub.
 # Token akan ditukar melalui route server: `/api/github/callback`.
 
 ```
@@ -107,5 +108,6 @@ Setiap perubahan tersimpan akan otomatis merefresh browser.
 
 - 📚 [Next.js Documentation](https://nextjs.org/docs) – Fitur & API lengkap
 - 🧑‍💻 [Learn Next.js](https://nextjs.org/learn) – Tutorial interaktif resmi
+- ⚙️ [Learn Github Api](https://docs.github.com/en/rest?apiVersion=2022-11-28) - Dokumentasi Github Rest API
 
 ✨ Nikmati vibes lofi, biarkan musik menemani aktivitasmu 🎶☕🌙
