@@ -44,46 +44,48 @@ export default function GithubStats({
         <div className="Stat__github">
           <div className="Stat__github-images">
             <img
-              className="Stat__github-image"
-              src={`https://github-readme-stats.vercel.app/api?username=${githubUser.login}&show_icons=true&title_color=ffcc00&icon_color=00ffff&text_color=daf7dc&bg_color=1e1e2f&hide=issues&count_private=true&include_all_commits=true`}
+              className="Stat__github-image Stat__github-image--stats"
+              src={`https://github-readme-stats.vercel.app/api?username=${githubUser.login}&show_icons=true&title_color=ffcc00&icon_color=00ffff&text_color=daf7dc&bg_color=1e1e2f&hide=issues&count_private=true&include_all_commits=true&hide_border=true`}
               alt="GitHub Stats"
             />
             <img
-              className="Stat__github-image"
-              src={`https://github-readme-stats.vercel.app/api/top-langs/?username=${githubUser.login}&layout=compact&text_color=daf7dc&bg_color=1e1e2f&hide=php`}
+              className="Stat__github-image Stat__github-image--langs"
+              src={`https://github-readme-stats.vercel.app/api/top-langs/?username=${githubUser.login}&layout=compact&text_color=daf7dc&bg_color=1e1e2f&hide=php&hide_border=true`}
               alt="Top Languages"
             />
           </div>
 
-          {githubEvents.length > 0 && (
-            <div className="Stat__history">
-              <div className="Stat__history-filter">
-                <select
-                  className="Stat__history-select"
-                  value={periode}
-                  onChange={(e) => setPeriode(e.target.value)}
-                >
-                  <option value="today">Hari ini</option>
-                  <option value="week">Minggu ini</option>
-                  <option value="month">Bulan ini</option>
-                </select>
-              </div>
-              {filteredEvents.length > 0 && (
-                <ul className="Stat__github-list">
-                  {filteredEvents.map((ev) => (
-                    <li key={ev.id} className="Stat__github-item">
-                      <span className="repo">{ev.repo}</span>
-                      <span className="commit">{ev.commit?.slice(0, 7)}</span>
-                      <span className="changes">+{ev.additions}/-{ev.deletions}</span>
-                      <span className="time">
-                        {new Date(ev.time).toLocaleString()}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              )}
+          <div className="Stat__history">
+            <div className="Stat__history-filter">
+              <select
+                className="Stat__history-select"
+                value={periode}
+                onChange={(e) => setPeriode(e.target.value)}
+              >
+                <option value="today">Hari ini</option>
+                <option value="week">Minggu ini</option>
+                <option value="month">Bulan ini</option>
+              </select>
             </div>
-          )}
+            {filteredEvents.length > 0 ? (
+              <ul className="Stat__github-list">
+                {filteredEvents.map((ev) => (
+                  <li key={ev.id} className="Stat__github-item">
+                    <span className="repo">{ev.repo}</span>
+                    <span className="commit">{ev.commit?.slice(0, 7)}</span>
+                    <span className="changes">+{ev.additions}/-{ev.deletions}</span>
+                    <span className="time">
+                      {new Date(ev.time).toLocaleString()}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="Stat__history-empty">
+                Belum ada push atau pull request
+              </div>
+            )}
+          </div>
         </div>
       ) : (
         <button
