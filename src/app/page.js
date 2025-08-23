@@ -434,7 +434,7 @@ export default function Page() {
       <Modal
         buka={bukaStatistik}
         tutup={() => setBukaStatistik(false)}
-        lebar="md"
+        lebar="lg"
       >
         <UserStatistics
           loggedIn={infoLogin.loggedIn}
@@ -457,7 +457,7 @@ export default function Page() {
       <Modal
         buka={bukaPengaturan}
         tutup={() => setBukaPengaturan(false)}
-        lebar="md"
+        lebar="lg"
       >
         <SettingsForm
           workLen={pengaturanTimer.workLen}
@@ -489,7 +489,7 @@ export default function Page() {
       </Modal>
 
       {/* Modal login/register */}
-      <Modal buka={loginOpen} tutup={() => setLoginOpen(false)}>
+      <Modal buka={loginOpen} tutup={() => setLoginOpen(false)} lebar="lg">
         <LoginRegisterForm setIsLoggedIn={setIsLoggedIn} />
       </Modal>
 
