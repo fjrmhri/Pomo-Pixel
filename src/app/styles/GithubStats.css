@@ -134,6 +134,32 @@
 .Stat__github {
   margin-top: 12px;
 }
+.Stat__github-images {
+  display: flex;
+  width: 100%;
+}
+.Stat__github-image {
+  flex: 1;
+  border: 2px solid #fbbf24;
+  border-radius: 8px;
+  display: block;
+  width: 100%;
+}
+.Stat__history {
+  margin-top: 12px;
+}
+.Stat__history-filter {
+  text-align: center;
+  margin-bottom: 8px;
+}
+.Stat__history-select {
+  font-family: "Monocraft", monospace;
+  background: #1e1e2f;
+  color: #e5e7eb;
+  border: 2px solid #fbbf24;
+  border-radius: 4px;
+  padding: 4px 8px;
+}
 .Stat__github-list {
   list-style: none;
   padding: 0;
@@ -197,5 +223,8 @@
   }
   .Stat__grid {
     grid-template-columns: 1fr;
+  }
+  .Stat__github-images {
+    flex-direction: column;
   }
 }
