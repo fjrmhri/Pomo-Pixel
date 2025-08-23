@@ -489,7 +489,7 @@ export default function Page() {
       </Modal>
 
       {/* Modal login/register */}
-      <Modal buka={loginOpen} tutup={() => setLoginOpen(false)}>
+      <Modal buka={loginOpen} tutup={() => setLoginOpen(false)} lebar="md">
         <LoginRegisterForm setIsLoggedIn={setIsLoggedIn} />
       </Modal>
 
@@ -497,7 +497,7 @@ export default function Page() {
       <Modal
         buka={bukaGithubStats}
         tutup={() => setBukaGithubStats(false)}
-        lebar="lg"
+        lebar="md"
       >
         <GithubStats
           githubUser={infoLogin.githubUser}
