@@ -2,6 +2,7 @@
 
 import "./globals.css";
 import { useEffect } from "react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 // Hapus ekspor metadata, karena itu tidak diperbolehkan di dalam komponen client-side
 export default function RootLayout({ children }) {
@@ -27,6 +28,7 @@ export default function RootLayout({ children }) {
         }}
       >
         {children}
+        <SpeedInsights /> {/* <SpeedInsights /> */}
       </body>
     </html>
   );
