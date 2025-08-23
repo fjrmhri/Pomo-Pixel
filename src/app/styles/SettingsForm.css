@@ -88,15 +88,16 @@
 
 /* Tombol utama */
 .Sf__btn {
-  font-family: var(--font-pixel);
-  background: var(--aksen-amber);
-  padding: 10px 20px; /* Tombol sedikit lebih lebar */
-  border: none;
-  box-shadow: none;
+  font-family: var(--font-pixel, "Monocraft", monospace);
+  font-size: 12px;
+  color: #111827;
+  background: #cbd5e1;
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
   border-radius: 0;
+  padding: 5px 10px;
   cursor: pointer;
-  transition: transform 0.2s ease, background 0.3s ease;
-  font-size: 14px;
+  transition: transform 80ms ease;
 }
 
 .Sf__btn:hover {
