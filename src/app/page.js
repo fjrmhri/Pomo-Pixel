@@ -79,6 +79,7 @@ export default function Page() {
   const [sudahLogin, setSudahLogin] = useState(false);
   const [idPengguna, setIdPengguna] = useState(null);
   const [bukaStatistik, setBukaStatistik] = useState(false);
+  const [bukaGithubStats, setBukaGithubStats] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [githubUser, setGithubUser] = useState(null);
@@ -342,8 +343,8 @@ export default function Page() {
         {/* githubstats */}
         <button
           className="Db__ikonbtn"
-          onClick={() => setBukaStatistik((prev) => !prev)}
-          aria-label="GithubStats"
+          onClick={() => setBukaGithubStats((prev) => !prev)}
+          aria-label="github stats"
         >
           <Image
             src="/images/github.png"
@@ -441,8 +442,6 @@ export default function Page() {
           totalTime={statRingkas.totalTime}
           timeStudied={statRingkas.timeStudied}
           timeOnBreak={statRingkas.timeOnBreak}
-          githubUser={infoLogin.githubUser}
-          githubEvents={infoLogin.githubEvents}
         />
       </Modal>
 
@@ -494,7 +493,12 @@ export default function Page() {
         <LoginRegisterForm setIsLoggedIn={setIsLoggedIn} />
       </Modal>
 
-      <Modal>
+      {/* GitHub Stats Modal */}
+      <Modal
+        buka={bukaGithubStats}
+        tutup={() => setBukaGithubStats(false)}
+        lebar="lg"
+      >
         <GithubStats
           githubUser={infoLogin.githubUser}
           githubEvents={infoLogin.githubEvents}

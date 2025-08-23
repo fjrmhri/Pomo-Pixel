@@ -14,9 +14,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import "../../styles/UserStatistics.css";
-import "../../styles/SettingsForm.css";
-import Modal from "./Modal";
-import { redirectToGitHub } from "../../github";
 
 import { db, auth } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
@@ -43,8 +40,6 @@ export default function UserStatistics({
   totalTime,
   timeStudied,
   timeOnBreak,
-  githubUser,
-  githubEvents = [],
   className = "",
 }) {
   // ---------------- State UI ----------------
@@ -52,7 +47,6 @@ export default function UserStatistics({
   const [uidAktif, setUidAktif] = useState(userId || null);
   const [sedangMuat, setSedangMuat] = useState(false);
   const [pesanError, setPesanError] = useState("");
-  const [bukaGithub, setBukaGithub] = useState(false);
 
   // data bacaan (fallback-friendly)
   const [bacaTotal, setBacaTotal] = useState({
@@ -300,56 +294,6 @@ export default function UserStatistics({
           </div>
         )}
       </section>
-
-      <Modal
-        buka={bukaGithub}
-        tutup={() => setBukaGithub(false)}
-        judul="GitHub Data"
-        lebar="lg"
-      >
-        {githubUser ? (
-          <div className="Stat__github">
-            {githubEvents.length > 0 && (
-              <ul className="Stat__github-list">
-                {githubEvents.map((ev) => (
-                  <li key={ev.id} className="Stat__github-item">
-                    <span className="repo">{ev.repo}</span>
-                    <span className="commit">{ev.commit?.slice(0, 7)}</span>
-                    <span className="changes">
-                      +{ev.additions}/-{ev.deletions}
-                    </span>
-                    <span className="time">
-                      {new Date(ev.time).toLocaleString()}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-            <p className="mt-4 text-center">
-              {githubUser && (
-                <>
-                  <img
-                    src={`https://github-readme-stats.vercel.app/api?username=${githubUser.login}&show_icons=true&title_color=ffcc00&icon_color=00ffff&text_color=daf7dc&bg_color=1e1e2f&hide=issues&count_private=true&include_all_commits=true`}
-                    width="48%"
-                  />
-                  <img
-                    src={`https://github-readme-stats.vercel.app/api/top-langs/?username=${githubUser.login}&layout=compact&text_color=daf7dc&bg_color=1e1e2f&hide=php`}
-                    width="37.5%"
-                  />
-                </>
-              )}
-            </p>
-          </div>
-        ) : (
-          <button
-            type="button"
-            className="Sf__btn Sf__btn--primary w-full"
-            onClick={() => redirectToGitHub()}
-          >
-            Login with GitHub
-          </button>
-        )}
-      </Modal>
     </>
   );
 }
