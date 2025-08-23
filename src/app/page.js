@@ -351,7 +351,7 @@ export default function Page() {
             alt="ikon github"
             width={24}
             height={24}
-            className="Db__ikonimg"
+            className="Db__ikonimg Db__ikonimg--github"
             priority
           />
         </button>
