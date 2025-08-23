@@ -21,8 +21,8 @@
 
 /* Konten modal (tema pixel) -------------------------------------------- */
 .Md__konten {
-  width: min(80vw, 500px); /* Lebar lebih kecil untuk lebih compact */
-  max-height: min(75vh, 700px); /* Menurunkan batas tinggi */
+  width: min(90vw, 750px); /* Samakan lebar untuk semua modal */
+  height: 80vh; /* Samakan tinggi dan jaga agar responsif */
   overflow: auto;
   background: rgba(10, 10, 10, 0.75); /* Latar belakang lebih transparan */
   color: #e5e7eb;
@@ -36,15 +36,11 @@
   transition: transform 0.2s ease-out; /* Efek transisi */
 }
 
-/* Ukuran varian */
-.Md__konten--sm {
-  width: min(90vw, 400px); /* Lebar lebih kecil */
-}
-.Md__konten--md {
-  width: min(85vw, 550px); /* Lebar sedikit lebih besar */
-}
+/* Ukuran varian - dibuat seragam */
+.Md__konten--sm,
+.Md__konten--md,
 .Md__konten--lg {
-  width: min(90vw, 750px); /* Lebar lebih besar untuk ukuran besar */
+  width: min(90vw, 750px);
 }
 
 /* Header --------------------------------------------------------------- */
