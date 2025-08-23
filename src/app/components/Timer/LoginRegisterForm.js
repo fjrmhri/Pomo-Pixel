@@ -3,11 +3,22 @@ import Login from "./Login";
 import Register from "./Register";
 import "../../styles/SettingsForm.css";
 
+/**
+ * Komponen untuk menampilkan form login atau register.
+ */
 function LoginRegisterForm({ setIsLoggedIn }) {
   const [currentForm, setCurrentForm] = useState("login");
 
+  /**
+   * Ganti form yang sedang ditampilkan.
+   * @param {string} formName Nama form yang akan ditampilkan
+   */
   const toggleForm = (formName) => {
-    setCurrentForm(formName);
+    try {
+      setCurrentForm(formName);
+    } catch (error) {
+      console.error("Gagal mengganti form:", error);
+    }
   };
 
   return (
