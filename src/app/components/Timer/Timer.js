@@ -50,6 +50,7 @@ export default function Timer({
   const [jumlahWorkSelesai, setJumlahWorkSelesai] = useState(0); // hitung sesi fokus selesai (untuk long break)
   const [pesanError, setPesanError] = useState("");
   const [pesanInfo, setPesanInfo] = useState("");
+  const [autoMulai, setAutoMulai] = useState(false); // flag: auto start periode berikutnya
 
   // untuk kalkulasi tick berbasis waktu nyata (anti drift)
   const refInterval = useRef(null);
@@ -236,10 +237,10 @@ export default function Timer({
         0;
       const next = nextIsLong ? PERIODE.long : PERIODE.short;
       setJumlahWorkSelesai((n) => n + 1);
-      gantiPeriode(next);
+      gantiPeriode(next, true);
     } else {
       // selesai break → kembali ke work
-      gantiPeriode(PERIODE.work);
+      gantiPeriode(PERIODE.work, true);
     }
   }, [
     periode,
@@ -250,11 +251,12 @@ export default function Timer({
     longBrInterval,
     onCatatMenit,
     volume,
+    gantiPeriode,
   ]);
 
-  // ganti periode + reset waktu (timer tetap paused setelah transisi)
+  // ganti periode + reset waktu (opsi auto mulai setelah transisi)
   const gantiPeriode = useCallback(
-    (p) => {
+    (p, autoStart = false) => {
       setPeriode(p);
       setSisaDetik(
         durasiPeriodeDetik(p, { workLen, shortBreakLen, longBreakLen })
@@ -269,12 +271,21 @@ export default function Timer({
             : "istirahat panjang"
         }`
       );
+      setAutoMulai(autoStart);
       try {
         setCurrentPeriod?.(p);
       } catch {}
     },
     [setCurrentPeriod, workLen, shortBreakLen, longBreakLen]
   );
+
+  // auto mulai periode baru bila di-set oleh gantiPeriode
+  useEffect(() => {
+    if (autoMulai) {
+      setAutoMulai(false);
+      mulai();
+    }
+  }, [autoMulai, mulai]);
 
   // ------------------- keyboard shortcut -------------------
   useEffect(() => {
