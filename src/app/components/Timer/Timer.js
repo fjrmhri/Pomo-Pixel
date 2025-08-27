@@ -188,6 +188,31 @@ export default function Timer({
     } catch {}
   }, [periode, workLen, shortBreakLen, longBreakLen, onReset]);
 
+  // ganti periode + reset waktu (opsi auto mulai setelah transisi)
+  const gantiPeriode = useCallback(
+    (p, autoStart = false) => {
+      setPeriode(p);
+      setSisaDetik(
+        durasiPeriodeDetik(p, { workLen, shortBreakLen, longBreakLen })
+      );
+      setBerjalan(false);
+      setPesanInfo(
+        `berikutnya: ${
+          p === "work"
+            ? "fokus"
+            : p === "short"
+            ? "istirahat singkat"
+            : "istirahat panjang"
+        }`
+      );
+      setAutoMulai(autoStart);
+      try {
+        setCurrentPeriod?.(p);
+      } catch {}
+    },
+    [setCurrentPeriod, workLen, shortBreakLen, longBreakLen]
+  );
+
   // ------------------- saat sesi selesai -------------------
   const handleSesiSelesai = useCallback(() => {
     // bunyikan notifikasi
@@ -253,31 +278,6 @@ export default function Timer({
     volume,
     gantiPeriode,
   ]);
-
-  // ganti periode + reset waktu (opsi auto mulai setelah transisi)
-  const gantiPeriode = useCallback(
-    (p, autoStart = false) => {
-      setPeriode(p);
-      setSisaDetik(
-        durasiPeriodeDetik(p, { workLen, shortBreakLen, longBreakLen })
-      );
-      setBerjalan(false);
-      setPesanInfo(
-        `berikutnya: ${
-          p === "work"
-            ? "fokus"
-            : p === "short"
-            ? "istirahat singkat"
-            : "istirahat panjang"
-        }`
-      );
-      setAutoMulai(autoStart);
-      try {
-        setCurrentPeriod?.(p);
-      } catch {}
-    },
-    [setCurrentPeriod, workLen, shortBreakLen, longBreakLen]
-  );
 
   // auto mulai periode baru bila di-set oleh gantiPeriode
   useEffect(() => {
