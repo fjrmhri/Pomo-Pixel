@@ -128,11 +128,21 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
 
     const onLoadedMetadata = () => {
       setDurasiDetik(el.duration || 0);
+      setWaktuSaatIni(0);
       // autoplay ketika user sebelumnya sudah menekan play
       if (sedangMain) {
-        el.play().catch(() => {
-          // autoplay mungkin diblokir — biarkan user tekan tombol play
-        });
+        el
+          .play()
+          .then(() => {
+            setSedangMain(true);
+          })
+          .catch(() => {
+            // autoplay mungkin diblokir — update status dan beri pesan
+            setSedangMain(false);
+            setPesanKesalahan(
+              "Tidak dapat mulai otomatis. Coba tekan tombol Play."
+            );
+          });
       }
     };
 
@@ -228,6 +238,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
   const handleBerikut = (dariError = false) => {
     mainkanSfxSingkat();
     setWaktuSaatIni(0);
+    setDurasiDetik(0);
 
     setIndeksLagu((idx) => {
       const nextIdx = acakAktif
