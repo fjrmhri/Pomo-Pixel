@@ -1,67 +1,86 @@
 <p align="center">
   <img src="https://img.shields.io/github/stars/fjrmhri/Pomo-Pixel?style=for-the-badge&logo=github&color=8b5cf6" alt="Stars"/>
   <img src="https://img.shields.io/github/license/fjrmhri/Pomo-Pixel?style=for-the-badge&color=10b981" alt="License"/>
-  <img src="https://img.shields.io/badge/Next.js-Framework-black?style=for-the-badge&logo=next.js" alt="Next.js"/>
-  <img src="https://img.shields.io/badge/Firebase-Platform-FFCA28?style=for-the-badge&logo=firebase" alt="Firebase"/>
-  <img src="https://img.shields.io/badge/TailwindCSS-Styling-38bdf8?style=for-the-badge&logo=tailwind-css" alt="TailwindCSS"/>
+  <img src="https://img.shields.io/badge/Next.js-15.3.4-black?style=for-the-badge&logo=next.js" alt="Next.js"/>
+  <img src="https://img.shields.io/badge/Firebase-12.1.0-FFCA28?style=for-the-badge&logo=firebase" alt="Firebase"/>
+  <img src="https://img.shields.io/badge/TailwindCSS-4-38bdf8?style=for-the-badge&logo=tailwind-css" alt="TailwindCSS"/>
 </p>
 
-# 🎧✨ Proyek Website Pomodoro Timer dan Pemutar Musik Lofi Interaktif
+# ⏱️🎵 Pomo-Pixel - Pomodoro Timer & Lofi Player
 
-## 📝 Deskripsi Proyek
-
-**Pomo-Pixel** adalah aplikasi web pomodoro timer + pemutar musik lofi interaktif yang menghadirkan suasana fokus dan santai. Dibangun dengan Next.js dan Tailwind CSS, aplikasi ini memadukan musik, wallpaper dinamis, dan efek atmosfer untuk menemani sesi belajar maupun kerja.
-
-Fitur utama:
-
-- ⏳ **Pomodoro timer** meningkatkan fokus dan produktivitas
-- 🎵 Pemutar musik **lofi** dengan koleksi track _chill_, _jazzy_, dan _sleepy_
-- 🌌 **Live wallpaper** bergaya Pixel yang bisa diganti sesuai mood
-- 🔐 Login via email atau GitHub untuk menyimpan statistik dan melihat aktivitas repositori
-- 👨‍💻 Login via **Github** Fitur untuk melihat **github stats, push, dan pull requests**
-
-> Dibuat untuk menemani kamu belajar, bekerja, atau sekadar bersantai. 🌙🍵
+**Pomo-Pixel** adalah aplikasi web produktivitas yang memadukan *pomodoro timer*, pemutar musik lofi, dan wallpaper pixel yang menenangkan. Dibangun dengan Next.js dan Tailwind CSS, proyek ini menghadirkan lingkungan fokus yang santai, lengkap dengan autentikasi pengguna dan pencatatan statistik belajar.
 
 ---
 
-## 🖼️ Preview Gambar
+## ✨ Fitur Utama
 
-![Preview](./public/preview/preview.png)
+### ⏳ Pomodoro Timer
+- Periode **fokus**, **istirahat singkat**, dan **istirahat panjang** yang dapat dikustomisasi
+- Tombol **mulai/jeda/reset** dengan transisi otomatis antar periode
+- **Notifikasi suara** dan indikator waktu real-time
+- **Keyboard shortcut** (Space untuk mulai/jeda, R untuk reset, 1/2/3 untuk ganti periode)
+
+### 🎶 Pemutar Musik Lofi
+- Lebih dari **90 track** lofi dalam genre *chill*, *jazzy*, dan *sleepy*
+- Kontrol: play/pause, prev/next, seek bar, volume, **shuffle**, dan **repeat**
+- **Pengaturan tersimpan** di localStorage agar preferensi tetap terjaga
+- Efek suara ringan saat ganti lagu dan integrasi dengan wallpaper
+
+### 🌌 Wallpaper Pixel & Ambience
+- Koleksi **live wallpaper** bergaya pixel yang dapat diganti sesuai mood
+- Overlay video transparan untuk efek atmosfer yang imersif
+- Sinkronisasi dengan pemutar musik untuk pengalaman visual-audio yang harmonis
+
+### 🔐 Autentikasi & GitHub Stats
+- Login via **email** atau **GitHub OAuth**
+- Simpan statistik fokus/istirahat ke **Firebase Firestore**
+- Tampilkan **GitHub stats** beserta riwayat push & pull request terbaru
+
+### 📊 Dasbor Statistik
+- Panel statistik harian dan total menit yang dihabiskan
+- Pemilihan periode via tombol atau shortcut keyboard
+- Komponen terpisah untuk login, registrasi, dan pengaturan timer
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Teknologi
 
-- ⚡ **Next.js** – Framework React modern
-- 🎨 **Tailwind CSS** – Styling cepat & responsif
-- 🔥 **Firebase** – Backend untuk autentikasi dan penyimpanan data
-- 🎵 **HTML5 Audio** – Pemutar musik & efek suara
-- 🎥 **Custom Overlay Video** – Efek atmosfer transparan
-- 🌄 **Image & GIF Assets** – Wallpaper
+### Frontend
+- **Next.js 15** dengan App Router
+- **React 19**
+
+### Styling & Animasi
+- **Tailwind CSS 4** & plugin forms, typography, animate
+- CSS modular untuk komponen (Timer, MusicPlayer, dll.)
+
+### Backend & Autentikasi
+- **Firebase Authentication & Firestore**
+- **GitHub REST API** untuk OAuth dan riwayat aktivitas
+
+### Tools
+- Node.js 18+
+- Linting menggunakan `next lint`
 
 ---
 
-## 🚀 Cara Memulai Proyek
+## 🚀 Instalasi & Menjalankan
 
-### 1️⃣ Instal Dependensi
+### Prasyarat
+- **Node.js 18** atau lebih tinggi
+- **npm** atau package manager lain
 
-Jalankan salah satu perintah berikut:
-
+### Instalasi
 ```bash
-npm install
-# atau
-yarn install
-# atau
-pnpm install
-# atau
-bun install
+# Clone repository
+git clone https://github.com/fjrmhri/Pomo-Pixel.git
+cd Pomo-Pixel
 
+# Install dependencies
+npm install
 ```
 
-### 2️⃣ Buat File .env.local di Root
-
-Berikut isi file:
-
+### Konfigurasi Environment
+Buat file `.env.local` di root dengan isi berikut:
 ```bash
 NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-auth-domain
@@ -73,41 +92,63 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your-measurement-id
 NEXT_PUBLIC_GITHUB_CLIENT_ID=your-github-client-id
 GITHUB_CLIENT_SECRET=your-github-client-secret
 NEXT_PUBLIC_GITHUB_REDIRECT_URI=http://localhost:3000/
-
-# URL di atas adalah halaman yang menerima `code` dari GitHub.
-# Token akan ditukar melalui route server: `/api/github/callback`.
-
 ```
 
-### 3️⃣ Jalankan Server Pengembangan
-
+### Mode Pengembangan
 ```bash
 npm run dev
-# atau
-yarn dev
-# atau
-pnpm dev
-# atau
-bun dev
+```
+Buka [http://localhost:3000](http://localhost:3000) untuk melihat aplikasi.
 
+### Build Produksi
+```bash
+npm run build
+npm start
 ```
 
-### 4️⃣ Buka di Browser
+### Linting
+```bash
+npm run lint
+```
 
-Akses aplikasi di: 👉 http://localhost:3000
+---
 
-File utama untuk mulai eksplorasi: app/page.js
-Setiap perubahan tersimpan akan otomatis merefresh browser.
+## 📂 Struktur Proyek
+```
+src/
+└── app/
+    ├── components/
+    │   ├── Music/             # Pemutar musik & pengaturan wallpaper
+    │   └── Timer/             # Timer, dashboard, login, statistik, GitHub stats
+    ├── api/github/            # Endpoint OAuth callback
+    └── styles/                # File CSS modular
+public/
+├── tracks/                    # Kumpulan musik lofi
+├── images/                    # Wallpaper pixel
+├── effects/, sounds/          # SFX dan audio lainnya
+└── preview/                   # Gambar pratinjau
+```
 
-## 📚 Resources dan Kredit
+---
 
+## 📄 Lisensi
+Proyek ini menggunakan lisensi [MIT](LICENSE).
+
+---
+
+## 🙏 Kredit & Aset
 - 🎶 Musik: [ItzAshOffcl/lofi-resources](https://github.com/ItzAshOffcl/lofi-resources)
 - 🖼️ Wallpaper & inspirasi kode: [DerickPascual/pomodoros](https://github.com/DerickPascual/pomodoros)
 
-## 📖 Pelajari Lebih Lanjut
+---
 
-- 📚 [Next.js Documentation](https://nextjs.org/docs) – Fitur & API lengkap
-- 🧑‍💻 [Learn Next.js](https://nextjs.org/learn) – Tutorial interaktif resmi
-- ⚙️ [Learn Github Api](https://docs.github.com/en/rest?apiVersion=2022-11-28) - Dokumentasi Github Rest API
+## 🤝 Kontribusi
+1. Fork repository
+2. Buat branch fitur (`git checkout -b fitur-baru`)
+3. Commit perubahan (`git commit -m 'Tambah fitur'`)
+4. Push ke branch (`git push origin fitur-baru`)
+5. Buka Pull Request
 
-✨ Nikmati vibes lofi, biarkan musik menemani aktivitasmu 🎶☕🌙
+---
+
+**Nikmati vibes lofi, biarkan musik menemani aktivitasmu 🎶☕🌙**
