@@ -12,6 +12,14 @@
 
 ---
 
+## 📸 Preview Aplikasi
+
+<p align="center">
+  <img src="public/preview/preview.png" alt="Preview Pomo-Pixel" />
+</p>
+
+---
+
 ## ✨ Fitur Utama
 
 ### ⏳ Pomodoro Timer
