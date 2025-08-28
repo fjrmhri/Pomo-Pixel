@@ -36,8 +36,6 @@
 
 ### 🌌 Wallpaper Pixel & Ambience
 - Koleksi **live wallpaper** bergaya pixel yang dapat diganti sesuai mood
-- Overlay video transparan untuk efek atmosfer yang imersif
-- Sinkronisasi dengan pemutar musik untuk pengalaman visual-audio yang harmonis
 
 ### 🔐 Autentikasi & GitHub Stats
 - Login via **email** atau **GitHub OAuth**
