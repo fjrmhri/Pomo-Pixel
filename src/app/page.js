@@ -344,6 +344,7 @@ export default function Page() {
 
         {/* lokasi: waktu atau cuaca */}
         <LocationWidget mode={pengaturanTimer.locMode} />
+        <LocationWidget />
 
         {/* githubstats */}
         <button

@@ -45,6 +45,7 @@
 ### 🕒 Waktu & Cuaca Berdasarkan Lokasi
 - Meminta izin lokasi saat pertama kali membuka aplikasi
 - Tampilkan **jam real-time** atau **cuaca** (pilih salah satu lewat menu Pengaturan)
+- Tampilkan **jam real-time** atau **cuaca** (pilih salah satu)
 - Jika izin lokasi ditolak, fitur ini disembunyikan otomatis
 
 ### 📊 Dasbor Statistik
