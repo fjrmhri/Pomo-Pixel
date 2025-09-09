@@ -42,10 +42,38 @@
 - Simpan statistik fokus/istirahat ke **Firebase Firestore**
 - Tampilkan **GitHub stats** beserta riwayat push & pull request terbaru
 
+### 🕒 Waktu & Cuaca Berdasarkan Lokasi
+- Meminta izin lokasi saat pertama kali membuka aplikasi
+- Tampilkan **jam real-time** atau **cuaca** (pilih salah satu)
+- Jika izin lokasi ditolak, fitur ini disembunyikan otomatis
+
 ### 📊 Dasbor Statistik
 - Panel statistik harian dan total menit yang dihabiskan
 - Pemilihan periode via tombol atau shortcut keyboard
 - Komponen terpisah untuk login, registrasi, dan pengaturan timer
+
+---
+
+## 🧭 Alur Penggunaan Pomodoro
+
+**Masuk ke Website**  
+Begitu pengguna mengakses website, mereka akan langsung diarahkan ke sesi Fokus (Focus Session).
+
+**Sesi Fokus**  
+Pengguna dapat mengatur waktu fokus sesuai preferensi mereka.  
+Setelah waktu fokus selesai, website akan otomatis berpindah ke sesi Istirahat Singkat (Short Break).
+
+**Sesi Istirahat Singkat**  
+Pengguna bisa mengatur durasi istirahat singkat.  
+Setelah sesi istirahat singkat selesai, website akan kembali ke sesi Fokus.
+
+**Interval Long Break**  
+Website akan mencatat setiap kali sesi fokus dan sesi istirahat singkat selesai.  
+Setelah mencapai interval yang ditentukan oleh pengguna (misalnya 4 kali sesi fokus dan istirahat singkat), website akan otomatis berpindah ke sesi Istirahat Panjang (Long Break).  
+Pengguna bisa mengatur durasi istirahat panjang sesuai keinginan.
+
+**Looping Proses**  
+Setelah sesi istirahat panjang selesai, website akan kembali ke sesi Fokus dan mulai siklus kembali.
 
 ---
 
