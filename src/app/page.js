@@ -23,6 +23,7 @@ import Modal from "./components/Timer/Modal";
 import SettingsForm from "./components/Timer/SettingsForm";
 import LoginRegisterForm from "./components/Timer/LoginRegisterForm";
 import GithubStats from "./components/Timer/GithubStats";
+import LocationWidget from "./components/Timer/LocationWidget";
 import { auth, db } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc, increment } from "firebase/firestore";
@@ -339,6 +340,9 @@ export default function Page() {
       {/* Tombol kanan-atas: akun + pengaturan + statistik + status */}
       <div className="area-kanan-atas">
         {/* status login */}
+
+        {/* lokasi: waktu atau cuaca */}
+        <LocationWidget />
 
         {/* githubstats */}
         <button
