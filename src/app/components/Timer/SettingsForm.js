@@ -45,6 +45,8 @@ export default function SettingsForm({
   setLongBrInterval,
   volume,
   setVolume,
+  locMode,
+  setLocMode,
   timerPosition,
   setTimerPosition,
   statsPosition,
@@ -67,6 +69,7 @@ export default function SettingsForm({
     longBrInterval || 4
   );
   const [nilaiVolume, setNilaiVolume] = useState(volume ?? 80);
+  const [nilaiLocMode, setNilaiLocMode] = useState(locMode || "time");
 
   // user login saat ini
   const [uidAktif, setUidAktif] = useState(userId || null);
@@ -105,6 +108,7 @@ export default function SettingsForm({
             setNilaiLong(Number(v.longBreakLen ?? nilaiLong));
             setNilaiIntervalLong(Number(v.longBrInterval ?? nilaiIntervalLong));
             setNilaiVolume(Number(v.volume ?? nilaiVolume));
+            setNilaiLocMode(String(v.locMode ?? nilaiLocMode));
           }
         } else {
           // dari localStorage
@@ -116,6 +120,7 @@ export default function SettingsForm({
             setNilaiLong(Number(v.longBreakLen ?? nilaiLong));
             setNilaiIntervalLong(Number(v.longBrInterval ?? nilaiIntervalLong));
             setNilaiVolume(Number(v.volume ?? nilaiVolume));
+            setNilaiLocMode(String(v.locMode ?? nilaiLocMode));
           }
         }
       } catch (e) {
@@ -178,6 +183,7 @@ export default function SettingsForm({
             longBreakLen: Number(nilaiLong),
             longBrInterval: Number(nilaiIntervalLong),
             volume: Number(nilaiVolume),
+            locMode: String(nilaiLocMode),
             z: Date.now(), // timestamp sederhana untuk troubleshooting
           },
           { merge: true }
@@ -192,6 +198,7 @@ export default function SettingsForm({
             longBreakLen: Number(nilaiLong),
             longBrInterval: Number(nilaiIntervalLong),
             volume: Number(nilaiVolume),
+            locMode: String(nilaiLocMode),
           })
         );
       }
@@ -202,6 +209,7 @@ export default function SettingsForm({
       setLongBreakLen?.(Number(nilaiLong));
       setLongBrInterval?.(Number(nilaiIntervalLong));
       setVolume?.(Number(nilaiVolume));
+      setLocMode?.(String(nilaiLocMode));
 
       setPesanSukses("Pengaturan berhasil disimpan.");
     } catch (e) {
@@ -221,6 +229,7 @@ export default function SettingsForm({
     setNilaiLong(15);
     setNilaiIntervalLong(4);
     setNilaiVolume(80);
+    setNilaiLocMode("time");
     setPesanSukses("");
     setPesanError("");
   };
@@ -326,6 +335,17 @@ export default function SettingsForm({
               value={nilaiVolume}
               onChange={(e) => setNilaiVolume(e.target.value)}
             />
+          </div>
+          <div className="Sf__group">
+            <label className="Sf__label">Info Lokasi</label>
+            <select
+              className="Sf__select"
+              value={nilaiLocMode}
+              onChange={(e) => setNilaiLocMode(e.target.value)}
+            >
+              <option value="time">Waktu Real-Time</option>
+              <option value="weather">Cuaca</option>
+            </select>
           </div>
         </div>
 

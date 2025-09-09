@@ -45,7 +45,8 @@
 
 /* Input number dan range */
 .Sf__number,
-.Sf__range {
+.Sf__range,
+.Sf__select {
   width: 100%;
   height: 32px; /* Ukuran lebih kecil */
   padding: 6px; /* Padding lebih kecil */
@@ -60,7 +61,8 @@
 }
 
 .Sf__number:focus,
-.Sf__range:focus {
+.Sf__range:focus,
+.Sf__select:focus {
   outline: none;
 }
 

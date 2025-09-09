@@ -6,6 +6,15 @@ import "../../styles/LocationWidget.css";
 /**
  * LocationWidget
  * ------------------------------------------------------------------
+ * Meminta izin lokasi sekali saat mount. Jika diizinkan, widget menampilkan
+ * jam real-time atau cuaca (mode ditentukan lewat pengaturan aplikasi).
+ * - Jam diperbarui tiap detik.
+ * - Cuaca diambil dari API open-meteo.com berdasarkan koordinat pengguna.
+ */
+export default function LocationWidget({ mode = "time", className = "" }) {
+  const [permission, setPermission] = useState("pending"); // pending | granted | denied
+  const [coords, setCoords] = useState(null);
+=======
  * Meminta izin lokasi sekali saat mount. Jika diizinkan, pengguna dapat
  * memilih menampilkan jam real-time atau cuaca saat ini (hanya satu opsi).
  * - Jam diperbarui tiap detik.
@@ -71,6 +80,11 @@ export default function LocationWidget({ className = "" }) {
     return () => controller.abort();
   }, [permission, mode, coords]);
 
+  if (permission !== "granted" || (mode !== "time" && mode !== "weather"))
+    return null;
+
+  return (
+    <div className={`Loc ${className}`}>
   if (permission !== "granted") return null;
 
   return (

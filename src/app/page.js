@@ -55,6 +55,7 @@ const DEFAULT_PENGATURAN = {
   longBreakLen: 15,
   longBrInterval: 4,
   volume: 80,
+  locMode: "time",
 };
 
 const DEFAULT_WALLPAPER = "/images/background.jpg";
@@ -342,6 +343,7 @@ export default function Page() {
         {/* status login */}
 
         {/* lokasi: waktu atau cuaca */}
+        <LocationWidget mode={pengaturanTimer.locMode} />
         <LocationWidget />
 
         {/* githubstats */}
@@ -483,6 +485,10 @@ export default function Page() {
           volume={pengaturanTimer.volume}
           setVolume={(v) =>
             setPengaturanTimer((prev) => ({ ...prev, volume: v }))
+          }
+          locMode={pengaturanTimer.locMode}
+          setLocMode={(v) =>
+            setPengaturanTimer((prev) => ({ ...prev, locMode: v }))
           }
           onTutup={() => setBukaPengaturan(false)}
           onLogoutGitHub={() => {
