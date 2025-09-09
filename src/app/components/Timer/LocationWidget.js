@@ -11,21 +11,18 @@ import "../../styles/LocationWidget.css";
  * - Jam diperbarui tiap detik.
  * - Cuaca diambil dari API open-meteo.com berdasarkan koordinat pengguna.
  */
-export default function LocationWidget({ mode = "time", className = "" }) {
+export default function LocationWidget({ className = "" }) {
   const [permission, setPermission] = useState("pending"); // pending | granted | denied
   const [coords, setCoords] = useState(null);
+  const [mode, setMode] = useState(() => {
+    // Ambil mode yang disimpan di localStorage atau default ke "time"
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("lp_loc_mode") || "time";
+    }
+    return "time";
+  });
   const [clock, setClock] = useState(() => new Date());
   const [weather, setWeather] = useState(null);
-
-  // Ambil mode dari localStorage saat pertama kali
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedMode = localStorage.getItem("lp_loc_mode");
-      if (savedMode) {
-        setMode(savedMode);
-      }
-    }
-  }, []);
 
   // Minta geolocation saat pertama kali
   useEffect(() => {
