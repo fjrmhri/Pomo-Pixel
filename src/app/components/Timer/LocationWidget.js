@@ -14,7 +14,6 @@ import "../../styles/LocationWidget.css";
 export default function LocationWidget({ mode = "time", className = "" }) {
   const [permission, setPermission] = useState("pending"); // pending | granted | denied
   const [coords, setCoords] = useState(null);
-=======
  * Meminta izin lokasi sekali saat mount. Jika diizinkan, pengguna dapat
  * memilih menampilkan jam real-time atau cuaca saat ini (hanya satu opsi).
  * - Jam diperbarui tiap detik.
