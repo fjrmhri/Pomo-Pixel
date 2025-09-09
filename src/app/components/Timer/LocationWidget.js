@@ -14,25 +14,20 @@ import "../../styles/LocationWidget.css";
 export default function LocationWidget({ mode = "time", className = "" }) {
   const [permission, setPermission] = useState("pending"); // pending | granted | denied
   const [coords, setCoords] = useState(null);
-  /**
- * Meminta izin lokasi sekali saat mount. Jika diizinkan, pengguna dapat
- * memilih menampilkan jam real-time atau cuaca saat ini (hanya satu opsi).
- * - Jam diperbarui tiap detik.
- * - Cuaca diambil dari API open-meteo.com berdasarkan koordinat pengguna.
- */
-export default function LocationWidget({ className = "" }) {
-  const [permission, setPermission] = useState("pending"); // pending | granted | denied
-  const [coords, setCoords] = useState(null);
-  const [mode, setMode] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("lp_loc_mode") || "time";
-    }
-    return "time";
-  });
   const [clock, setClock] = useState(() => new Date());
   const [weather, setWeather] = useState(null);
 
-  // minta geolocation saat pertama kali
+  // Ambil mode dari localStorage saat pertama kali
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedMode = localStorage.getItem("lp_loc_mode");
+      if (savedMode) {
+        setMode(savedMode);
+      }
+    }
+  }, []);
+
+  // Minta geolocation saat pertama kali
   useEffect(() => {
     if (!navigator.geolocation) {
       setPermission("denied");
@@ -52,21 +47,21 @@ export default function LocationWidget({ className = "" }) {
     );
   }, []);
 
-  // simpan mode pilihan ke localStorage
+  // Simpan mode pilihan ke localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("lp_loc_mode", mode);
     }
   }, [mode]);
 
-  // update jam tiap detik ketika mode time
+  // Update jam tiap detik ketika mode time
   useEffect(() => {
     if (mode !== "time") return;
     const id = setInterval(() => setClock(new Date()), 1000);
     return () => clearInterval(id);
   }, [mode]);
 
-  // ambil data cuaca ketika mode weather
+  // Ambil data cuaca ketika mode weather
   useEffect(() => {
     if (permission !== "granted" || mode !== "weather" || !coords) return;
     const controller = new AbortController();
@@ -80,15 +75,12 @@ export default function LocationWidget({ className = "" }) {
     return () => controller.abort();
   }, [permission, mode, coords]);
 
+  // Jika izin lokasi belum diberikan atau mode tidak valid, tidak tampilkan widget
   if (permission !== "granted" || (mode !== "time" && mode !== "weather"))
     return null;
 
   return (
     <div className={`Loc ${className}`}>
-  if (permission !== "granted") return null;
-
-  return (
-    <div className={`Loc ${className}`}> 
       <div className="Loc__toggle">
         <button
           className={`Loc__btn ${mode === "time" ? "is-aktif" : ""}`}
@@ -108,7 +100,7 @@ export default function LocationWidget({ className = "" }) {
           ? clock.toLocaleTimeString()
           : weather
           ? `${weather.temperature}°C`
-          : "..."}
+          : "Loading..."}
       </div>
     </div>
   );
