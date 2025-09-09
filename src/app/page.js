@@ -23,6 +23,7 @@ import Modal from "./components/Timer/Modal";
 import SettingsForm from "./components/Timer/SettingsForm";
 import LoginRegisterForm from "./components/Timer/LoginRegisterForm";
 import GithubStats from "./components/Timer/GithubStats";
+import LocationWidget from "./components/Timer/LocationWidget";
 import { auth, db } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc, increment } from "firebase/firestore";
@@ -54,6 +55,7 @@ const DEFAULT_PENGATURAN = {
   longBreakLen: 15,
   longBrInterval: 4,
   volume: 80,
+  locMode: "time",
 };
 
 const DEFAULT_WALLPAPER = "/images/background.jpg";
@@ -340,6 +342,9 @@ export default function Page() {
       <div className="area-kanan-atas">
         {/* status login */}
 
+        {/* lokasi: waktu atau cuaca */}
+        <LocationWidget mode={pengaturanTimer.locMode} />
+
         {/* githubstats */}
         <button
           className="Db__ikonbtn"
@@ -479,6 +484,10 @@ export default function Page() {
           volume={pengaturanTimer.volume}
           setVolume={(v) =>
             setPengaturanTimer((prev) => ({ ...prev, volume: v }))
+          }
+          locMode={pengaturanTimer.locMode}
+          setLocMode={(v) =>
+            setPengaturanTimer((prev) => ({ ...prev, locMode: v }))
           }
           onTutup={() => setBukaPengaturan(false)}
           onLogoutGitHub={() => {
