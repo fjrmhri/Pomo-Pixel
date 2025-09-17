@@ -3,6 +3,7 @@
 import "./globals.css";
 import { useEffect } from "react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react"; // gunakan 'react' jika bukan Next.js App Router
 
 // Hapus ekspor metadata, karena itu tidak diperbolehkan di dalam komponen client-side
 export default function RootLayout({ children }) {
@@ -21,6 +22,9 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
+      <head>
+        <title>Pomo Pixel</title>
+      </head>
       <body
         className="font-mono antialiased"
         style={{
@@ -29,6 +33,7 @@ export default function RootLayout({ children }) {
       >
         {children}
         <SpeedInsights /> {/* <SpeedInsights /> */}
+        <Analytics />
       </body>
     </html>
   );
