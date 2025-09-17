@@ -238,7 +238,8 @@ export default function SettingsForm({
     try {
       setTimerPosition?.({ x: 0, y: 0 });
       setPesanSukses("Posisi Timer direset.");
-    } catch {
+    } catch (error) {
+      console.error("SettingsForm: gagal mereset posisi Timer:", error);
       setPesanError("Gagal mereset posisi Timer (fungsi tidak tersedia).");
     }
   };
@@ -247,7 +248,8 @@ export default function SettingsForm({
     try {
       setStatsPosition?.({ x: 0, y: 0 });
       setPesanSukses("Posisi Statistik direset.");
-    } catch {
+    } catch (error) {
+      console.error("SettingsForm: gagal mereset posisi Statistik:", error);
       setPesanError("Gagal mereset posisi Statistik (fungsi tidak tersedia).");
     }
   };
@@ -261,7 +263,9 @@ export default function SettingsForm({
         Math.max(Number(nilaiVolume || 0) / 100, 0),
         1
       );
-      refSfx.current.play().catch(() => {});
+      refSfx.current.play().catch((error) => {
+        console.warn("SettingsForm: browser menolak memutar bunyi percobaan:", error);
+      });
     } catch (e) {
       console.error(e);
       setPesanError("Tidak dapat memutar bunyi percobaan.");
@@ -366,9 +370,15 @@ export default function SettingsForm({
             onClick={async () => {
               try {
                 await signOut(auth);
-              } catch {}
-              logoutGitHub();
-              onLogoutGitHub?.();
+              } catch (error) {
+                console.error("SettingsForm: gagal logout Firebase:", error);
+              }
+              try {
+                logoutGitHub();
+                onLogoutGitHub?.();
+              } catch (error) {
+                console.error("SettingsForm: gagal logout GitHub:", error);
+              }
             }}
           >
             Log Out

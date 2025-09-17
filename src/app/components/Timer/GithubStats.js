@@ -91,7 +91,13 @@ export default function GithubStats({
         <button
           type="button"
           className="Sf__btn Sf__btn--primary w-full"
-          onClick={() => redirectToGitHub()}
+          onClick={() => {
+            try {
+              redirectToGitHub();
+            } catch (error) {
+              console.error("GithubStats: gagal menginisiasi login GitHub:", error);
+            }
+          }}
         >
           Login with GitHub
         </button>

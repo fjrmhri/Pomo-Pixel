@@ -34,6 +34,7 @@ function Register({ setIsLoggedIn }) {
       setIsLoggedIn(true); // Successfully logged in
     } catch (error) {
       setErrorMessage("Terjadi kesalahan: " + error.message);
+      console.error("Register: gagal membuat akun baru:", error);
     }
   };
 
