@@ -14,6 +14,7 @@ function Login({ setIsLoggedIn }) {
       setIsLoggedIn(true); // User berhasil login
     } catch (error) {
       setErrorMessage("Gagal login: " + error.message);
+      console.error("Login: gagal login pengguna:", error);
     }
   };
 

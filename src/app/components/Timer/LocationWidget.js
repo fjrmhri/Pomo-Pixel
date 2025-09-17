@@ -21,6 +21,7 @@ export default function LocationWidget({ mode, className = "" }) {
   useEffect(() => {
     if (!navigator.geolocation) {
       setPermission("denied");
+      console.warn("LocationWidget: geolocation tidak tersedia pada browser ini.");
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -31,8 +32,9 @@ export default function LocationWidget({ mode, className = "" }) {
           lon: pos.coords.longitude,
         });
       },
-      () => {
+      (error) => {
         setPermission("denied");
+        console.warn("LocationWidget: gagal mendapatkan izin lokasi:", error);
       }
     );
   }, []);
@@ -54,7 +56,11 @@ export default function LocationWidget({ mode, className = "" }) {
     )
       .then((r) => r.json())
       .then((d) => setWeather(d.current_weather))
-      .catch(() => {});
+      .catch((error) => {
+        if (error?.name === "AbortError") return;
+        console.error("LocationWidget: gagal memuat data cuaca:", error);
+        setWeather(null);
+      });
     return () => controller.abort();
   }, [permission, mode, coords]);
 

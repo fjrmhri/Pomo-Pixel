@@ -37,15 +37,22 @@ export default function Timer({
 
   className = "",
 }) {
+  const getDurasiPeriodeDetik = useCallback(
+    (p) => {
+      if (p === PERIODE.work) return Math.max(1, Number(workLen || 25)) * 60;
+      if (p === PERIODE.short)
+        return Math.max(1, Number(shortBreakLen || 5)) * 60;
+      if (p === PERIODE.long) return Math.max(1, Number(longBreakLen || 15)) * 60;
+      return 25 * 60;
+    },
+    [workLen, shortBreakLen, longBreakLen]
+  );
+
   // ------------------- state dasar -------------------
   const [periode, setPeriode] = useState(currentPeriod || PERIODE.work);
   const [berjalan, setBerjalan] = useState(false);
   const [sisaDetik, setSisaDetik] = useState(() =>
-    durasiPeriodeDetik(currentPeriod || PERIODE.work, {
-      workLen,
-      shortBreakLen,
-      longBreakLen,
-    })
+    getDurasiPeriodeDetik(currentPeriod || PERIODE.work)
   );
   const [jumlahWorkSelesai, setJumlahWorkSelesai] = useState(0); // hitung sesi fokus selesai (untuk long break)
   const [pesanError, setPesanError] = useState("");
@@ -62,44 +69,23 @@ export default function Timer({
   // sinkronisasi periode dari props (mis. tombol di Dashboard)
   useEffect(() => {
     if (!currentPeriod) return;
-    // kalau periode dari parent berubah, dan timer sedang PAUSE → reset durasi
     setPeriode(currentPeriod);
     if (!berjalan) {
-      setSisaDetik(
-        durasiPeriodeDetik(currentPeriod, {
-          workLen,
-          shortBreakLen,
-          longBreakLen,
-        })
-      );
-      setPesanInfo(""); // hapus info lama
+      setSisaDetik(getDurasiPeriodeDetik(currentPeriod));
+      setPesanInfo("");
     } else {
-      // jika sedang berjalan, biarkan sisaDetik tetap (biar tidak "loncat")
       setPesanInfo(
         "Periode diubah saat timer berjalan. Durasi berjalan tetap dipertahankan."
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPeriod]);
+  }, [berjalan, currentPeriod, getDurasiPeriodeDetik]);
 
   // saat durasi props berubah & timer TIDAK berjalan → reset detik
   useEffect(() => {
     if (!berjalan) {
-      setSisaDetik(
-        durasiPeriodeDetik(periode, { workLen, shortBreakLen, longBreakLen })
-      );
+      setSisaDetik(getDurasiPeriodeDetik(periode));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workLen, shortBreakLen, longBreakLen]);
-
-  // helper: durasi detik berdasarkan periode
-  function durasiPeriodeDetik(p, { workLen, shortBreakLen, longBreakLen }) {
-    if (p === PERIODE.work) return Math.max(1, Number(workLen || 25)) * 60;
-    if (p === PERIODE.short)
-      return Math.max(1, Number(shortBreakLen || 5)) * 60;
-    if (p === PERIODE.long) return Math.max(1, Number(longBreakLen || 15)) * 60;
-    return 25 * 60;
-  }
+  }, [berjalan, getDurasiPeriodeDetik, periode]);
 
   // format mm:ss
   const fmt = useMemo(() => formatMMSS(sisaDetik), [sisaDetik]);
@@ -112,11 +98,7 @@ export default function Timer({
     if (berjalan) return; // sudah berjalan
 
     // validasi dasar
-    const dur = durasiPeriodeDetik(periode, {
-      workLen,
-      shortBreakLen,
-      longBreakLen,
-    });
+    const dur = getDurasiPeriodeDetik(periode);
     if (dur <= 0) {
       setPesanError("Durasi periode tidak valid. Periksa pengaturan.");
       return;
@@ -146,14 +128,14 @@ export default function Timer({
     setBerjalan(true);
     try {
       onMulai?.();
-    } catch {}
+    } catch (error) {
+      console.error("Timer: callback onMulai gagal dijalankan:", error);
+    }
   }, [
     berjalan,
+    getDurasiPeriodeDetik,
     periode,
     sisaDetik,
-    workLen,
-    shortBreakLen,
-    longBreakLen,
     onMulai,
   ]);
 
@@ -171,7 +153,9 @@ export default function Timer({
     setPesanInfo("");
     try {
       onJeda?.();
-    } catch {}
+    } catch (error) {
+      console.error("Timer: callback onJeda gagal dijalankan:", error);
+    }
   }, [berjalan, onJeda]);
 
   const reset = useCallback(() => {
@@ -179,22 +163,20 @@ export default function Timer({
     refInterval.current = null;
     refTargetTime.current = null;
     setBerjalan(false);
-    setSisaDetik(
-      durasiPeriodeDetik(periode, { workLen, shortBreakLen, longBreakLen })
-    );
+    setSisaDetik(getDurasiPeriodeDetik(periode));
     setPesanInfo("direset");
     try {
       onReset?.();
-    } catch {}
-  }, [periode, workLen, shortBreakLen, longBreakLen, onReset]);
+    } catch (error) {
+      console.error("Timer: callback onReset gagal dijalankan:", error);
+    }
+  }, [getDurasiPeriodeDetik, onReset, periode]);
 
   // ganti periode + reset waktu (opsi auto mulai setelah transisi)
   const gantiPeriode = useCallback(
     (p, autoStart = false) => {
       setPeriode(p);
-      setSisaDetik(
-        durasiPeriodeDetik(p, { workLen, shortBreakLen, longBreakLen })
-      );
+      setSisaDetik(getDurasiPeriodeDetik(p));
       setBerjalan(false);
       setPesanInfo(
         `berikutnya: ${
@@ -208,9 +190,11 @@ export default function Timer({
       setAutoMulai(autoStart);
       try {
         setCurrentPeriod?.(p);
-      } catch {}
+      } catch (error) {
+        console.error("Timer: callback setCurrentPeriod gagal dijalankan:", error);
+      }
     },
-    [setCurrentPeriod, workLen, shortBreakLen, longBreakLen]
+    [getDurasiPeriodeDetik, setCurrentPeriod]
   );
 
   // ------------------- saat sesi selesai -------------------
@@ -231,9 +215,7 @@ export default function Timer({
     }
 
     // catat menit ke callback
-    const menitSesi =
-      durasiPeriodeDetik(periode, { workLen, shortBreakLen, longBreakLen }) /
-      60;
+    const menitSesi = getDurasiPeriodeDetik(periode) / 60;
 
     try {
       if (typeof onCatatMenit === "function") {
@@ -253,7 +235,9 @@ export default function Timer({
           });
         }
       }
-    } catch {}
+    } catch (error) {
+      console.error("Timer: callback onCatatMenit gagal dijalankan:", error);
+    }
 
     // transisi periode berikutnya
     if (periode === PERIODE.work) {
@@ -269,14 +253,12 @@ export default function Timer({
     }
   }, [
     periode,
-    workLen,
-    shortBreakLen,
-    longBreakLen,
     jumlahWorkSelesai,
     longBrInterval,
     onCatatMenit,
     volume,
     gantiPeriode,
+    getDurasiPeriodeDetik,
   ]);
 
   // auto mulai periode baru bila di-set oleh gantiPeriode
@@ -314,13 +296,9 @@ export default function Timer({
 
   // ring progress (%)
   const persentase = useMemo(() => {
-    const total = durasiPeriodeDetik(periode, {
-      workLen,
-      shortBreakLen,
-      longBreakLen,
-    });
+    const total = getDurasiPeriodeDetik(periode);
     return total > 0 ? Math.round(((total - sisaDetik) / total) * 100) : 0;
-  }, [sisaDetik, periode, workLen, shortBreakLen, longBreakLen]);
+  }, [getDurasiPeriodeDetik, periode, sisaDetik]);
 
   return (
     <div className={`Tm__bungkus ${className}`}>

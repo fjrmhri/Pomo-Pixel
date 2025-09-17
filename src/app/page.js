@@ -12,7 +12,7 @@
  * - Modal login/register
  */
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Wallpaper from "./components/Music/Wallpaper";
 import MusicPlayer from "./components/Music/MusicPlayer";
 import Image from "next/image";
@@ -47,6 +47,7 @@ const KEY_PENGATURAN = "lp_pengaturan_v1";
 const KEY_PERIODE = "lp_periode_v1";
 const KEY_WALLPAPER = "lp_wallpaper_src_v1";
 const KEY_STATS_TOTAL = "lp_stats_total_v1";
+const KEY_GITHUB_TOKEN = "gh_token";
 
 // ---------- nilai default ----------
 const DEFAULT_PENGATURAN = {
@@ -74,6 +75,41 @@ const WALLPAPERS = [
   "your_name.jpg",
 ];
 
+const logError = (context, error) => {
+  console.error(`[page] ${context}`, error);
+};
+
+const safeReadLocalStorage = (key, context) => {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage.getItem(key);
+  } catch (error) {
+    logError(`gagal membaca localStorage untuk ${key}${context ? ` (${context})` : ""}`, error);
+    return null;
+  }
+};
+
+const safeWriteLocalStorage = (key, value, context) => {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(key, value);
+  } catch (error) {
+    logError(`gagal menyimpan localStorage untuk ${key}${context ? ` (${context})` : ""}`, error);
+  }
+};
+
+const safeParseJSON = (value, fallback, context) => {
+  if (!value) return fallback;
+  try {
+    return JSON.parse(value);
+  } catch (error) {
+    logError(`gagal mengurai JSON${context ? ` (${context})` : ""}`, error);
+    return fallback;
+  }
+};
+
+const buildWallpaperSrc = (fileName) => `/images/${fileName}`;
+
 export default function Page() {
   /* ===================================================================
    *  1) Status Login Firebase
@@ -89,71 +125,96 @@ export default function Page() {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
-      setSudahLogin(!!user);
-      setIdPengguna(user ? user.displayName : null);
+      try {
+        setSudahLogin(Boolean(user));
+        setIdPengguna(user ? user.displayName || user.uid || null : null);
+      } catch (error) {
+        logError("gagal memperbarui status login", error);
+      }
     });
     return () => unsub();
   }, []);
 
   useEffect(() => {
-    if (isLoggedIn || sudahLogin) {
+    if (!loginOpen) return;
+    if (isLoggedIn || sudahLogin || githubUser) {
       setLoginOpen(false);
     }
-  }, [isLoggedIn, sudahLogin]);
+  }, [githubUser, isLoggedIn, sudahLogin, loginOpen]);
 
-  // GitHub OAuth: cek kode dari redirect dan muat data jika token ada
-  useEffect(() => {
-    const params =
-      typeof window !== "undefined"
-        ? new URLSearchParams(window.location.search)
-        : null;
-    const code = params ? params.get("code") : null;
-    const tokenLocal =
-      typeof window !== "undefined" ? localStorage.getItem("gh_token") : null;
-
-    const handleToken = async (token) => {
-      try {
-        const u = await fetchGitHubUser(token);
-        setGithubUser(u);
-        const ev = await fetchUserEvents(token, u.login);
-        setGithubEvents(ev);
-      } catch (e) {
-        console.error(e);
-      }
-    };
-
-    if (tokenLocal) {
-      handleToken(tokenLocal);
-    } else if (code) {
-      exchangeCodeForToken(code).then((t) => {
-        if (t) {
-          if (typeof window !== "undefined") {
-            localStorage.setItem("gh_token", t);
-            const url = new URL(window.location.href);
-            url.searchParams.delete("code");
-            window.history.replaceState({}, "", url.toString());
-          }
-          handleToken(t);
-        }
-      });
+  const handleGitHubToken = useCallback(async (token) => {
+    if (!token) return;
+    try {
+      const user = await fetchGitHubUser(token);
+      setGithubUser(user);
+      const events = await fetchUserEvents(token, user.login);
+      setGithubEvents(events);
+    } catch (error) {
+      logError("gagal memuat data GitHub", error);
+      setGithubUser(null);
+      setGithubEvents([]);
     }
   }, []);
 
+  // GitHub OAuth: cek kode dari redirect dan muat data jika token ada
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    const tokenLocal = safeReadLocalStorage(
+      KEY_GITHUB_TOKEN,
+      "membaca token GitHub"
+    );
+
+    if (tokenLocal) {
+      void handleGitHubToken(tokenLocal);
+      return;
+    }
+
+    if (!code) return;
+
+    exchangeCodeForToken(code)
+      .then((token) => {
+        if (!token) return;
+        safeWriteLocalStorage(KEY_GITHUB_TOKEN, token, "menyimpan token GitHub");
+        try {
+          const url = new URL(window.location.href);
+          url.searchParams.delete("code");
+          window.history.replaceState({}, "", url.toString());
+        } catch (error) {
+          logError("gagal membersihkan parameter kode GitHub", error);
+        }
+        void handleGitHubToken(token);
+      })
+      .catch((error) => {
+        logError("gagal menukar kode GitHub menjadi token", error);
+      });
+  }, [handleGitHubToken]);
+
+  const refreshGithubEvents = useCallback(async () => {
+    if (!githubUser) return;
+    const token = safeReadLocalStorage(
+      KEY_GITHUB_TOKEN,
+      "memuat token GitHub untuk refresh"
+    );
+    if (!token) return;
+    try {
+      const events = await fetchUserEvents(token, githubUser.login);
+      setGithubEvents(events);
+    } catch (error) {
+      logError("gagal memperbarui aktivitas GitHub", error);
+    }
+  }, [githubUser]);
+
   useEffect(() => {
     if (!githubUser) return;
-    const token =
-      typeof window !== "undefined" ? localStorage.getItem("gh_token") : null;
-    if (!token) return;
-    const id = setInterval(async () => {
-      try {
-        const ev = await fetchUserEvents(token, githubUser.login);
-        setGithubEvents(ev);
-      } catch (e) {
-        console.error(e);
-      }
+    void refreshGithubEvents();
+    const id = setInterval(() => {
+      void refreshGithubEvents();
     }, 60000);
     return () => clearInterval(id);
-  }, [githubUser]);
+  }, [githubUser, refreshGithubEvents]);
 
   /* ===================================================================
    *  2) Pengaturan & Periode Aktif
@@ -162,33 +223,43 @@ export default function Page() {
   const [periodeAktif, setPeriodeAktif] = useState("work");
 
   useEffect(() => {
-    try {
-      const rawCfg = localStorage.getItem(KEY_PENGATURAN);
-      if (rawCfg) {
-        const cfg = JSON.parse(rawCfg);
-        setPengaturanTimer((prev) => ({ ...prev, ...cfg }));
-      }
-      const p = localStorage.getItem(KEY_PERIODE);
-      if (p === "work" || p === "short" || p === "long") setPeriodeAktif(p);
-    } catch (e) {
-      console.warn("[page] gagal memuat pengaturan/periode:", e);
+    const rawCfg = safeReadLocalStorage(
+      KEY_PENGATURAN,
+      "memuat pengaturan timer"
+    );
+    const cfg = safeParseJSON(rawCfg, null, "memuat pengaturan timer");
+    if (cfg && typeof cfg === "object") {
+      setPengaturanTimer((prev) => ({ ...prev, ...cfg }));
+    }
+
+    const periodeTersimpan = safeReadLocalStorage(
+      KEY_PERIODE,
+      "memuat periode aktif"
+    );
+    if (["work", "short", "long"].includes(periodeTersimpan || "")) {
+      setPeriodeAktif(periodeTersimpan);
     }
   }, []);
 
   useEffect(() => {
     try {
-      localStorage.setItem(KEY_PENGATURAN, JSON.stringify(pengaturanTimer));
-    } catch (e) {
-      console.warn("[page] gagal menyimpan pengaturan:", e);
+      const json = JSON.stringify(pengaturanTimer);
+      safeWriteLocalStorage(
+        KEY_PENGATURAN,
+        json,
+        "menyimpan pengaturan timer"
+      );
+    } catch (error) {
+      logError("gagal menyerialisasi pengaturan timer", error);
     }
   }, [pengaturanTimer]);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(KEY_PERIODE, String(periodeAktif));
-    } catch (e) {
-      console.warn("[page] gagal menyimpan periode:", e);
-    }
+    safeWriteLocalStorage(
+      KEY_PERIODE,
+      String(periodeAktif),
+      "menyimpan periode aktif"
+    );
   }, [periodeAktif]);
 
   /* ===================================================================
@@ -201,59 +272,82 @@ export default function Page() {
   });
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(KEY_STATS_TOTAL);
-      if (raw) {
-        const d = JSON.parse(raw);
-        setStatRingkas({
-          totalTime: Number(d.totalMenit || 0),
-          timeStudied: Number(d.menitFokus || 0),
-          timeOnBreak: Number(d.menitIstirahat || 0),
-        });
-      }
-    } catch (e) {
-      console.warn("[page] gagal memuat statistik ringkas:", e);
-    }
+    const raw = safeReadLocalStorage(
+      KEY_STATS_TOTAL,
+      "memuat statistik ringkas"
+    );
+    const data = safeParseJSON(raw, null, "memuat statistik ringkas");
+    if (!data || typeof data !== "object") return;
+    setStatRingkas({
+      totalTime: Number(data.totalMenit || 0),
+      timeStudied: Number(data.menitFokus || 0),
+      timeOnBreak: Number(data.menitIstirahat || 0),
+    });
   }, []);
 
-  const catatMenitSesi = async ({
-    fokusMenit = 0,
-    istirahatMenit = 0,
-    totalMenit = 0,
-    periodeSelesai = "",
-  }) => {
-    setStatRingkas((prev) => ({
-      totalTime: (prev.totalTime || 0) + Number(totalMenit || 0),
-      timeStudied: (prev.timeStudied || 0) + Number(fokusMenit || 0),
-      timeOnBreak: (prev.timeOnBreak || 0) + Number(istirahatMenit || 0),
-    }));
+  const catatMenitSesi = useCallback(
+    async ({
+      fokusMenit = 0,
+      istirahatMenit = 0,
+      totalMenit = 0,
+      periodeSelesai = "",
+    }) => {
+      const total = Number(totalMenit || 0);
+      const fokus = Number(fokusMenit || 0);
+      const istirahat = Number(istirahatMenit || 0);
 
-    try {
-      const raw = localStorage.getItem(KEY_STATS_TOTAL);
-      const d = raw
-        ? JSON.parse(raw)
-        : { totalMenit: 0, menitFokus: 0, menitIstirahat: 0 };
-      const baru = {
-        totalMenit: Number(d.totalMenit || 0) + Number(totalMenit || 0),
-        menitFokus: Number(d.menitFokus || 0) + Number(fokusMenit || 0),
-        menitIstirahat:
-          Number(d.menitIstirahat || 0) + Number(istirahatMenit || 0),
+      setStatRingkas((prev) => ({
+        totalTime: (prev.totalTime || 0) + total,
+        timeStudied: (prev.timeStudied || 0) + fokus,
+        timeOnBreak: (prev.timeOnBreak || 0) + istirahat,
+      }));
+
+      const raw = safeReadLocalStorage(
+        KEY_STATS_TOTAL,
+        "membaca statistik ringkas"
+      );
+      const parsedStats = safeParseJSON(
+        raw,
+        null,
+        "membaca statistik ringkas"
+      );
+      const sebelumnya =
+        parsedStats && typeof parsedStats === "object"
+          ? parsedStats
+          : {
+              totalMenit: 0,
+              menitFokus: 0,
+              menitIstirahat: 0,
+            };
+
+      const agregat = {
+        totalMenit: Number(sebelumnya.totalMenit || 0) + total,
+        menitFokus: Number(sebelumnya.menitFokus || 0) + fokus,
+        menitIstirahat: Number(sebelumnya.menitIstirahat || 0) + istirahat,
       };
-      localStorage.setItem(KEY_STATS_TOTAL, JSON.stringify(baru));
-    } catch (e) {
-      console.warn("[page] gagal menyimpan agregat ke localStorage:", e);
-    }
 
-    // Firestore (opsional jika login)
-    if (sudahLogin && idPengguna) {
+      try {
+        safeWriteLocalStorage(
+          KEY_STATS_TOTAL,
+          JSON.stringify(agregat),
+          "menyimpan statistik ringkas"
+        );
+      } catch (error) {
+        logError("gagal menyerialisasi statistik ringkas", error);
+      }
+
+      if (!sudahLogin || !idPengguna) {
+        return;
+      }
+
       try {
         const tanggal = formatTanggal();
         await setDoc(
           doc(db, "users", idPengguna, "statistik", "agregat"),
           {
-            totalMenit: increment(Number(totalMenit || 0)),
-            menitFokus: increment(Number(fokusMenit || 0)),
-            menitIstirahat: increment(Number(istirahatMenit || 0)),
+            totalMenit: increment(total),
+            menitFokus: increment(fokus),
+            menitIstirahat: increment(istirahat),
             diperbaruiPada: new Date(),
             terakhirPeriode: String(periodeSelesai || ""),
           },
@@ -262,19 +356,20 @@ export default function Page() {
         await setDoc(
           doc(db, "users", idPengguna, "statistik", "harian", tanggal),
           {
-            totalMenit: increment(Number(totalMenit || 0)),
-            menitFokus: increment(Number(fokusMenit || 0)),
-            menitIstirahat: increment(Number(istirahatMenit || 0)),
+            totalMenit: increment(total),
+            menitFokus: increment(fokus),
+            menitIstirahat: increment(istirahat),
             tanggal,
             diperbaruiPada: new Date(),
           },
           { merge: true }
         );
-      } catch (e) {
-        console.error("[page] gagal menyimpan statistik ke Firestore:", e);
+      } catch (error) {
+        logError("gagal menyimpan statistik ke Firestore", error);
       }
-    }
-  };
+    },
+    [idPengguna, sudahLogin]
+  );
 
   /* ===================================================================
    *  4) Wallpaper
@@ -283,26 +378,28 @@ export default function Page() {
   const [wallpaperIdx, setWallpaperIdx] = useState(0);
 
   useEffect(() => {
-    try {
-      const w = localStorage.getItem(KEY_WALLPAPER);
-      if (w) {
-        setWallpaperSrc(w);
-        const idx = WALLPAPERS.findIndex((n) => w.endsWith(n));
-        if (idx >= 0) setWallpaperIdx(idx);
-      }
-    } catch {}
+    const stored = safeReadLocalStorage(
+      KEY_WALLPAPER,
+      "memuat wallpaper"
+    );
+    if (!stored) return;
+    setWallpaperSrc(stored);
+    const idx = WALLPAPERS.findIndex((nama) => stored.endsWith(nama));
+    if (idx >= 0) {
+      setWallpaperIdx(idx);
+    }
   }, []);
 
-  const gantiWallpaper = () => {
-    const next = (wallpaperIdx + 1) % WALLPAPERS.length;
-    const nama = WALLPAPERS[next];
-    const src = `/images/${nama}`;
-    setWallpaperIdx(next);
-    setWallpaperSrc(src);
-    try {
-      localStorage.setItem(KEY_WALLPAPER, src);
-    } catch {}
-  };
+  const gantiWallpaper = useCallback(() => {
+    setWallpaperIdx((current) => {
+      const next = (current + 1) % WALLPAPERS.length;
+      const nama = WALLPAPERS[next];
+      const src = buildWallpaperSrc(nama);
+      setWallpaperSrc(src);
+      safeWriteLocalStorage(KEY_WALLPAPER, src, "menyimpan wallpaper");
+      return next;
+    });
+  }, []);
 
   /* ===================================================================
    *  5) Modal Pengaturan
