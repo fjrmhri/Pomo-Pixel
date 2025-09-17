@@ -11,16 +11,9 @@ import "../../styles/LocationWidget.css";
  * - Jam diperbarui tiap detik.
  * - Cuaca diambil dari API open-meteo.com berdasarkan koordinat pengguna.
  */
-export default function LocationWidget({ className = "" }) {
+export default function LocationWidget({ mode, className = "" }) {
   const [permission, setPermission] = useState("pending"); // pending | granted | denied
   const [coords, setCoords] = useState(null);
-  const [mode, setMode] = useState(() => {
-    // Ambil mode yang disimpan di localStorage atau default ke "time"
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("lp_loc_mode") || "time";
-    }
-    return "time";
-  });
   const [clock, setClock] = useState(() => new Date());
   const [weather, setWeather] = useState(null);
 
@@ -43,13 +36,6 @@ export default function LocationWidget({ className = "" }) {
       }
     );
   }, []);
-
-  // Simpan mode pilihan ke localStorage
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("lp_loc_mode", mode);
-    }
-  }, [mode]);
 
   // Update jam tiap detik ketika mode time
   useEffect(() => {
@@ -78,20 +64,6 @@ export default function LocationWidget({ className = "" }) {
 
   return (
     <div className={`Loc ${className}`}>
-      <div className="Loc__toggle">
-        <button
-          className={`Loc__btn ${mode === "time" ? "is-aktif" : ""}`}
-          onClick={() => setMode("time")}
-        >
-          Time
-        </button>
-        <button
-          className={`Loc__btn ${mode === "weather" ? "is-aktif" : ""}`}
-          onClick={() => setMode("weather")}
-        >
-          Weather
-        </button>
-      </div>
       <div className="Loc__content">
         {mode === "time"
           ? clock.toLocaleTimeString()

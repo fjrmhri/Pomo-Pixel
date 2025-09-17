@@ -134,7 +134,6 @@ export default function SettingsForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uidAktif]);
 
-
   // ---------- validasi sederhana ----------
   const validasi = () => {
     const e = [];
@@ -337,7 +336,7 @@ export default function SettingsForm({
             />
           </div>
           <div className="Sf__group">
-            <label className="Sf__label">Info Lokasi</label>
+            <label className="Sf__label">Info</label>
             <select
               className="Sf__select"
               value={nilaiLocMode}

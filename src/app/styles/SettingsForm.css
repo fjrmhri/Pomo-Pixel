@@ -60,6 +60,12 @@
   transition: none;
 }
 
+.Sf__select option {
+  background: transparent; /* background option */
+  color: var(--background, transparent); /* warna tulisan option */
+  font-family: var(--font-pixel);
+}
+
 .Sf__number:focus,
 .Sf__range:focus,
 .Sf__select:focus {
