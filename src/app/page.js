@@ -12,7 +12,7 @@
  * - Modal login/register
  */
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Wallpaper from "./components/Music/Wallpaper";
 import MusicPlayer from "./components/Music/MusicPlayer";
 import Image from "next/image";
@@ -122,11 +122,14 @@ export default function Page() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [githubUser, setGithubUser] = useState(null);
   const [githubEvents, setGithubEvents] = useState([]);
+  const loginStateRef = useRef(false);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       try {
-        setSudahLogin(Boolean(user));
+        const loggedIn = Boolean(user);
+        setSudahLogin(loggedIn);
+        setIsLoggedIn(loggedIn);
         setIdPengguna(user ? user.displayName || user.uid || null : null);
       } catch (error) {
         logError("gagal memperbarui status login", error);
@@ -136,8 +139,11 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    if (!loginOpen) return;
-    if (isLoggedIn || sudahLogin || githubUser) {
+    const logged = Boolean(isLoggedIn || sudahLogin || githubUser);
+    const wasLogged = loginStateRef.current;
+    loginStateRef.current = logged;
+
+    if (loginOpen && logged && !wasLogged) {
       setLoginOpen(false);
     }
   }, [githubUser, isLoggedIn, sudahLogin, loginOpen]);

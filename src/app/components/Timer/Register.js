@@ -39,7 +39,7 @@ function Register({ setIsLoggedIn }) {
   };
 
   return (
-    <div className="w-full h-full overflow-y-auto max-w-md mx-auto p-6 bg-transparent">
+    <div className="pixel-card w-full h-full overflow-y-auto max-w-md mx-auto p-6">
       <div className="Sf__section-title">Register</div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
@@ -51,7 +51,7 @@ function Register({ setIsLoggedIn }) {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="pixel-frame bg-transparent px-3 py-2 text-[var(--foreground)] focus:border-[var(--aksen-amber)]"
+            className="pixel-frame px-3 py-2 text-[color:var(--overlay-foreground)] focus:border-[var(--aksen-amber)]"
             required
           />
         </div>
@@ -64,7 +64,7 @@ function Register({ setIsLoggedIn }) {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="pixel-frame bg-transparent px-3 py-2 text-[var(--foreground)] focus:border-[var(--aksen-amber)]"
+            className="pixel-frame px-3 py-2 text-[color:var(--overlay-foreground)] focus:border-[var(--aksen-amber)]"
             required
           />
         </div>
@@ -77,7 +77,7 @@ function Register({ setIsLoggedIn }) {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="pixel-frame bg-transparent px-3 py-2 text-[var(--foreground)] focus:border-[var(--aksen-amber)]"
+            className="pixel-frame px-3 py-2 text-[color:var(--overlay-foreground)] focus:border-[var(--aksen-amber)]"
             required
           />
         </div>
@@ -90,7 +90,7 @@ function Register({ setIsLoggedIn }) {
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="pixel-frame bg-transparent px-3 py-2 text-[var(--foreground)] focus:border-[var(--aksen-amber)]"
+            className="pixel-frame px-3 py-2 text-[color:var(--overlay-foreground)] focus:border-[var(--aksen-amber)]"
             required
           />
         </div>
