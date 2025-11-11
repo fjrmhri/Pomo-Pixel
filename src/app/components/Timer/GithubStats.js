@@ -73,7 +73,9 @@ export default function GithubStats({
                   <li key={ev.id} className="Stat__github-item">
                     <span className="repo">{ev.repo}</span>
                     <span className="commit">{ev.commit?.slice(0, 7)}</span>
-                    <span className="changes">+{ev.additions}/-{ev.deletions}</span>
+                    <span className="changes">
+                      +{ev.additions}/-{ev.deletions}
+                    </span>
                     <span className="time">
                       {new Date(ev.time).toLocaleString()}
                     </span>
@@ -95,7 +97,10 @@ export default function GithubStats({
             try {
               redirectToGitHub();
             } catch (error) {
-              console.error("GithubStats: gagal menginisiasi login GitHub:", error);
+              console.error(
+                "GithubStats: gagal menginisiasi login GitHub:",
+                error
+              );
             }
           }}
         >
@@ -105,4 +110,3 @@ export default function GithubStats({
     </section>
   );
 }
-

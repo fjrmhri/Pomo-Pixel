@@ -274,7 +274,7 @@ export default function SettingsForm({
 
   // ---------- isi form ----------
   return (
-    <div className={`Sf pixel-card ${className}`}>
+    <div className={`Sf pixel-card pixel-card--borderless ${className}`}>
       <form className="Sf__inner" onSubmit={simpanPreferensi}>
         {/* Header */}
         <div className="Sf__section-title">Pengaturan Pomodoro</div>

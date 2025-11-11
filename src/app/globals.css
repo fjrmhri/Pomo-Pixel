@@ -150,6 +150,10 @@ textarea {
   box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
   border-radius: 6px;
 }
+.pixel-card--borderless {
+  border: none;
+  box-shadow: none;
+}
 
 .pixel-btn {
   font-family: var(--font-pixel);

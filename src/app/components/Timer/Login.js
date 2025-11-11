@@ -19,7 +19,7 @@ function Login({ setIsLoggedIn }) {
   };
 
   return (
-    <div className="pixel-card w-full h-full overflow-y-auto max-w-md mx-auto p-6">
+    <div className="pixel-card pixel-card--borderless w-full h-full overflow-y-auto max-w-md mx-auto p-6">
       <div className="Sf__section-title">Login</div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
