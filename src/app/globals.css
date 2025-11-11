@@ -37,9 +37,13 @@
   --aksen-amber: #fbbf24;
   --aksen-violet: #a78bfa;
 
-  /* glass */
-  --glass: rgba(10, 10, 10, 0.62);
-  --glass-strong: rgba(10, 10, 10, 0.78);
+  /* glass overlay */
+  --overlay-background: rgba(15, 23, 42, 0.62);
+  --overlay-background-strong: rgba(15, 23, 42, 0.78);
+  --overlay-foreground: #e2e8f0;
+  --overlay-foreground-muted: #94a3b8;
+  --glass: var(--overlay-background);
+  --glass-strong: var(--overlay-background-strong);
 
   /* font */
   --font-pixel: "Monocraft", monospace;
@@ -57,8 +61,8 @@
   :root {
     --background: #fafafa;
     --foreground: #111827;
-    --glass: rgba(255, 255, 255, 0.62);
-    --glass-strong: rgba(255, 255, 255, 0.78);
+    --glass: var(--overlay-background);
+    --glass-strong: var(--overlay-background-strong);
   }
 }
 
@@ -131,16 +135,17 @@ textarea {
 /* ============================ */
 
 .pixel-frame {
-  background: transparent;
+  background: var(--overlay-background);
   border: 2px solid #000;
   box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  color: var(--overlay-foreground);
 }
 
 .pixel-card {
-  background: var(--glass);
+  background: var(--overlay-background);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  color: var(--foreground);
+  color: var(--overlay-foreground);
   border: 2px solid #fff;
   box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
   border-radius: 6px;

@@ -22,10 +22,10 @@
 .Tm {
   pointer-events: auto;
   width: min(86vw, 360px);
-  background: var(--glass, rgba(255, 255, 255, 0.12));
+  background: var(--overlay-background-strong);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  color: var(--foreground, #111827);
+  color: var(--overlay-foreground);
   border: 2px solid #fff;
   box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
   border-radius: 0;
@@ -70,7 +70,7 @@
 /* ===== Progress bar ===== */
 .Tm__progress {
   height: 6px;
-  background: #e5e7eb;
+  background: rgba(226, 232, 240, 0.35);
   border: 2px solid #000;
   box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
   border-radius: 0;
@@ -88,7 +88,7 @@
 .Tm__waktu {
   font-size: clamp(28px, 7vw, 46px);
   font-weight: 700;
-  color: #cbd5e1;
+  color: var(--overlay-foreground);
   letter-spacing: 1px;
   display: flex;
   justify-content: center;
@@ -142,7 +142,7 @@
   margin-top: 4px;
   text-align: center;
   font-size: 9px;
-  color: #cbd5e1;
+  color: var(--overlay-foreground-muted);
 }
 
 /* ===== Responsif ===== */
