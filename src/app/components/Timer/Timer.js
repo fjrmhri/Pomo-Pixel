@@ -42,7 +42,8 @@ export default function Timer({
       if (p === PERIODE.work) return Math.max(1, Number(workLen || 25)) * 60;
       if (p === PERIODE.short)
         return Math.max(1, Number(shortBreakLen || 5)) * 60;
-      if (p === PERIODE.long) return Math.max(1, Number(longBreakLen || 15)) * 60;
+      if (p === PERIODE.long)
+        return Math.max(1, Number(longBreakLen || 15)) * 60;
       return 25 * 60;
     },
     [workLen, shortBreakLen, longBreakLen]
@@ -81,11 +82,19 @@ export default function Timer({
   }, [berjalan, currentPeriod, getDurasiPeriodeDetik]);
 
   // saat durasi props berubah & timer TIDAK berjalan → reset detik
+  // Hati-hati: tidak ingin mereset waktu hanya karena kita toggle pause.
+  // Reset hanya bila durasi periode benar-benar berubah (mis. pengaturan diubah).
+  const refLastDur = useRef(getDurasiPeriodeDetik(periode));
   useEffect(() => {
-    if (!berjalan) {
-      setSisaDetik(getDurasiPeriodeDetik(periode));
+    const dur = getDurasiPeriodeDetik(periode);
+    if (dur !== refLastDur.current) {
+      refLastDur.current = dur;
+      if (!berjalan) {
+        setSisaDetik(dur);
+      }
     }
-  }, [berjalan, getDurasiPeriodeDetik, periode]);
+    // hanya re-evaluate ketika fungsi durasi atau periode berubah
+  }, [getDurasiPeriodeDetik, periode, berjalan]);
 
   // format mm:ss
   const fmt = useMemo(() => formatMMSS(sisaDetik), [sisaDetik]);
@@ -131,13 +140,7 @@ export default function Timer({
     } catch (error) {
       console.error("Timer: callback onMulai gagal dijalankan:", error);
     }
-  }, [
-    berjalan,
-    getDurasiPeriodeDetik,
-    periode,
-    sisaDetik,
-    onMulai,
-  ]);
+  }, [berjalan, getDurasiPeriodeDetik, periode, sisaDetik, onMulai]);
 
   const jeda = useCallback(() => {
     if (!berjalan) return;
@@ -191,7 +194,10 @@ export default function Timer({
       try {
         setCurrentPeriod?.(p);
       } catch (error) {
-        console.error("Timer: callback setCurrentPeriod gagal dijalankan:", error);
+        console.error(
+          "Timer: callback setCurrentPeriod gagal dijalankan:",
+          error
+        );
       }
     },
     [getDurasiPeriodeDetik, setCurrentPeriod]

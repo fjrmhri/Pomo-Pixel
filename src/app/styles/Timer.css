@@ -24,8 +24,8 @@
   width: min(86vw, 360px);
   /* make background match Music Player: same color + transparency */
   background: rgba(10, 10, 10, 0.65);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   color: var(--overlay-foreground);
   border: 2px solid #fff;
   box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
