@@ -22,7 +22,8 @@
 .Tm {
   pointer-events: auto;
   width: min(86vw, 360px);
-  background: var(--overlay-background-strong);
+  /* make background match Music Player: same color + transparency */
+  background: rgba(10, 10, 10, 0.65);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   color: var(--overlay-foreground);
