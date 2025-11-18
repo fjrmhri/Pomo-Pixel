@@ -135,14 +135,14 @@ textarea {
 /* ============================ */
 
 .pixel-frame {
-  background: transparent;
+  background: var(--overlay-background);
   border: 2px solid #000;
   box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
   color: var(--overlay-foreground);
 }
 
 .pixel-card {
-  background: var(--overlay-background);
+  background: transparent;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   color: var(--overlay-foreground);
