@@ -68,10 +68,15 @@ export default function Timer({
   const refAudio = useRef(null);
 
   // sinkronisasi periode dari props (mis. tombol di Dashboard)
+  // sinkronisasi periode dari props (mis. tombol di Dashboard)
+  // Hanya re-act ketika `currentPeriod` prop benar-benar berubah.
+  const refLastPropPeriod = useRef(currentPeriod);
   useEffect(() => {
     if (!currentPeriod) return;
+    if (currentPeriod === refLastPropPeriod.current) return;
+    refLastPropPeriod.current = currentPeriod;
     setPeriode(currentPeriod);
-    if (!berjalan) {
+    if (!refInterval.current) {
       setSisaDetik(getDurasiPeriodeDetik(currentPeriod));
       setPesanInfo("");
     } else {
@@ -79,7 +84,7 @@ export default function Timer({
         "Periode diubah saat timer berjalan. Durasi berjalan tetap dipertahankan."
       );
     }
-  }, [berjalan, currentPeriod, getDurasiPeriodeDetik]);
+  }, [currentPeriod, getDurasiPeriodeDetik]);
 
   // saat durasi props berubah & timer TIDAK berjalan → reset detik
   // Hati-hati: tidak ingin mereset waktu hanya karena kita toggle pause.
