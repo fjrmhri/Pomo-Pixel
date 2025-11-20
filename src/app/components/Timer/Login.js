@@ -1,60 +1,57 @@
 import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../firebase";
+import { doc, setDoc } from "firebase/firestore";
+import { signInWithPopup } from "firebase/auth";
+import { auth, db, googleProvider } from "../../firebase";
 
 function Login({ setIsLoggedIn }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [sedangMemuat, setSedangMemuat] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleLoginGoogle = async () => {
+    setErrorMessage("");
+    setSedangMemuat(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      setIsLoggedIn(true); // User berhasil login
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result?.user;
+
+      if (user) {
+        const nama = user.displayName || user.email || "Pengguna";
+        await setDoc(
+          doc(db, "users", user.uid),
+          {
+            name: nama,
+            email: user.email || "",
+            updatedAt: new Date(),
+          },
+          { merge: true }
+        );
+      }
+
+      setIsLoggedIn?.(true);
     } catch (error) {
       setErrorMessage("Gagal login: " + error.message);
       console.error("Login: gagal login pengguna:", error);
+    } finally {
+      setSedangMemuat(false);
     }
   };
 
   return (
     <div className="pixel-card pixel-card--borderless w-full h-full overflow-y-auto max-w-md mx-auto p-6">
       <div className="Sf__section-title">Login</div>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="login-email" className="text-sm">
-            Email
-          </label>
-          <input
-            id="login-email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="pixel-frame px-3 py-2 text-[color:var(--overlay-foreground)] focus:border-[var(--aksen-amber)]"
-            required
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="login-password" className="text-sm">
-            Password
-          </label>
-          <input
-            id="login-password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="pixel-frame px-3 py-2 text-[color:var(--overlay-foreground)] focus:border-[var(--aksen-amber)]"
-            required
-          />
-        </div>
+      <div className="flex flex-col gap-4">
         <button
-          type="submit"
+          type="button"
+          onClick={handleLoginGoogle}
           className="Sf__btn Sf__btn--primary w-full mt-2"
+          disabled={sedangMemuat}
         >
-          Login
+          {sedangMemuat ? "Loading..." : "Login with Google"}
         </button>
-      </form>
+        <p className="text-xs text-center text-[color:var(--overlay-foreground)]">
+          Gunakan akun Google Anda untuk masuk dan sinkronkan progres.
+        </p>
+      </div>
       {errorMessage && (
         <div className="text-red-400 text-xs mt-3 text-center">
           {errorMessage}

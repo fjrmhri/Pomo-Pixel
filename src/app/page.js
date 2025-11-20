@@ -116,6 +116,7 @@ export default function Page() {
    * =================================================================== */
   const [sudahLogin, setSudahLogin] = useState(false);
   const [idPengguna, setIdPengguna] = useState(null);
+  const [namaPengguna, setNamaPengguna] = useState(null);
   const [bukaStatistik, setBukaStatistik] = useState(false);
   const [bukaGithubStats, setBukaGithubStats] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
@@ -130,7 +131,10 @@ export default function Page() {
         const loggedIn = Boolean(user);
         setSudahLogin(loggedIn);
         setIsLoggedIn(loggedIn);
-        setIdPengguna(user ? user.displayName || user.uid || null : null);
+        setIdPengguna(user ? user.uid || null : null);
+        setNamaPengguna(
+          user ? user.displayName || user.email || user.uid || null : null
+        );
       } catch (error) {
         logError("gagal memperbarui status login", error);
       }
@@ -518,8 +522,8 @@ export default function Page() {
             {githubUser
               ? `halo, ${githubUser.login}`
               : sudahLogin
-              ? idPengguna
-                ? `halo, ${idPengguna}`
+              ? namaPengguna
+                ? `halo, ${namaPengguna}`
                 : "login"
               : "offline"}
           </span>
