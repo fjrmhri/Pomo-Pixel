@@ -22,7 +22,7 @@ Pomo-Pixel adalah aplikasi produktivitas bergaya lofi yang menggabungkan **pomod
 - Node.js 18 atau lebih baru.
 - npm (atau package manager setara).
 
-## Instalasi & Menjalankan
+## Instalasi & Menjalankan (Lokal)
 ```bash
 # Klon repositori
 git clone https://github.com/fjrmhri/Pomo-Pixel.git
@@ -36,7 +36,7 @@ npm run dev
 ```
 Buka http://localhost:3000 untuk melihat aplikasi.
 
-Untuk build produksi:
+Untuk build produksi lokal:
 ```bash
 npm run build
 npm start
@@ -67,7 +67,16 @@ Pastikan nilai sesuai kredensial Firebase dan aplikasi OAuth GitHub Anda.
 ## Struktur Singkat
 - `src/app` – Komponen utama (Timer, Music, Wallpaper) dan halaman.
 - `public` – Aset musik, efek suara, dan wallpaper.
-- `deploy` – Skrip bantu untuk proses deploy/hosting.
+
+## Deploy ke Vercel
+Pomo-Pixel didesain untuk dijalankan di [Vercel](https://vercel.com/). Setelah membuat akun dan menyiapkan variabel lingkungan yang sama seperti pada `.env.local`, lakukan langkah berikut:
+
+1. Fork atau import repositori ini ke Vercel.
+2. Pada pengaturan proyek Vercel, tambahkan variabel environment yang sama dengan yang digunakan secara lokal.
+3. Pilih framework **Next.js** (Auto-detect) dan pastikan root proyek berada di direktori ini.
+4. Simpan konfigurasi dan lakukan deploy. Build otomatis akan memanggil `npm install` dan `npm run build` sesuai konfigurasi default Vercel.
+
+Tidak ada konfigurasi tambahan yang diperlukan untuk server khusus, Nginx, atau VPS. Semua deployment dilakukan langsung melalui Vercel.
 
 ## Lisensi
 Proyek ini berlisensi MIT sebagaimana tercantum pada berkas [LICENSE](LICENSE).
