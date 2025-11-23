@@ -7,14 +7,17 @@ if (!CLIENT_ID) {
   throw new Error("NEXT_PUBLIC_GITHUB_CLIENT_ID tidak ditemukan");
 }
 
+const buildAuthorizeUrl = () =>
+  `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
+    REDIRECT_URI
+  )}&scope=repo`;
+
 /**
  * Arahkan pengguna ke halaman otorisasi GitHub.
  */
 export function redirectToGitHub() {
   try {
-    const url = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
-      REDIRECT_URI
-    )}&scope=repo`;
+    const url = buildAuthorizeUrl();
     if (typeof window === "undefined") {
       throw new Error("Window tidak tersedia");
     }

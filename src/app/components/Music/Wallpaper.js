@@ -43,7 +43,7 @@ export default function Wallpaper({
   onGagalMuat,
   className = "",
 }) {
-  // Terjemahkan path Windows (D:\tes\music-player\public\images\...) menjadi URL publik Next: /images/...
+  // Terjemahkan path Windows (D:\\tes\\music-player\\public\\images\\...) menjadi URL publik Next: /images/...
   const sumberFinal = useMemo(() => {
     if (!src || typeof src !== "string" || src.trim() === "") {
       return "/images/background.jpg";
@@ -86,37 +86,35 @@ export default function Wallpaper({
       style={{ ["--kecerahan"]: kecerahan }}
       aria-label="Latar belakang halaman"
     >
-        {gagal ? (
-          // Tampilan fallback jika gambar gagal dimuat
-          <div className="Wallpaper__fallback" role="alert">
-            <p className="Wallpaper__fallback-teks">
-              Gagal memuat wallpaper:{" "}
-              <span className="Wallpaper__path">{sumberFinal}</span>
-            </p>
-            <p className="Wallpaper__fallback-hint">
-              Pastikan file ada di <code>/public/images</code> dan nama filenya
-              benar.
-            </p>
-          </div>
-        ) : (
-          <Image
-            src={sumberFinal}
-            alt={alt}
-            fill
-            // Ukuran responsif supaya Next optimalkan pemuatan
-            sizes="100vw"
-            priority={prioritas}
-            unoptimized={bypassOptimization}
-            // Kelas untuk object-fit cover + efek fade-in
-            className={[
-              "Wallpaper__img",
-              siap ? "Wallpaper__img--tampil" : "Wallpaper__img--loading",
-              efekPixel ? "Wallpaper__img--pixel" : "",
-            ].join(" ")}
-            onLoad={tanganiLoad}
-            onError={tanganiError}
-          />
-        )}
+      {gagal ? (
+        // Tampilan fallback jika gambar gagal dimuat
+        <div className="Wallpaper__fallback" role="alert">
+          <p className="Wallpaper__fallback-teks">
+            Gagal memuat wallpaper: <span className="Wallpaper__path">{sumberFinal}</span>
+          </p>
+          <p className="Wallpaper__fallback-hint">
+            Pastikan file ada di <code>/public/images</code> dan nama filenya benar.
+          </p>
+        </div>
+      ) : (
+        <Image
+          src={sumberFinal}
+          alt={alt}
+          fill
+          // Ukuran responsif supaya Next optimalkan pemuatan
+          sizes="100vw"
+          priority={prioritas}
+          unoptimized={bypassOptimization}
+          // Kelas untuk object-fit cover + efek fade-in
+          className={[
+            "Wallpaper__img",
+            siap ? "Wallpaper__img--tampil" : "Wallpaper__img--loading",
+            efekPixel ? "Wallpaper__img--pixel" : "",
+          ].join(" ")}
+          onLoad={tanganiLoad}
+          onError={tanganiError}
+        />
+      )}
 
       {/* (Opsional) Overlay gradasi tipis agar teks di atas tetap kontras */}
       <div className="Wallpaper__overlay" aria-hidden />
