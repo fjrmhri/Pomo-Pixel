@@ -12,10 +12,10 @@
  * - Modal login/register
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Wallpaper from "./components/Music/Wallpaper";
-import MusicPlayer from "./components/Music/MusicPlayer";
 import Image from "next/image";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, increment, setDoc } from "firebase/firestore";
 import Dashboard from "./components/Timer/Dashboard";
 import Timer from "./components/Timer/Timer";
 import UserStatistics from "./components/Timer/UserStatistics";
@@ -24,14 +24,14 @@ import SettingsForm from "./components/Timer/SettingsForm";
 import LoginRegisterForm from "./components/Timer/LoginRegisterForm";
 import GithubStats from "./components/Timer/GithubStats";
 import LocationWidget from "./components/Timer/LocationWidget";
-import { auth, db } from "./firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, setDoc, increment } from "firebase/firestore";
+import MusicPlayer from "./components/Music/MusicPlayer";
+import Wallpaper from "./components/Music/Wallpaper";
 import {
   exchangeCodeForToken,
   fetchGitHubUser,
   fetchUserEvents,
 } from "./github";
+import { auth, db } from "./firebase";
 
 // ---------- util tanggal ----------
 const formatTanggal = (d = new Date()) => {
