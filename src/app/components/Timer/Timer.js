@@ -60,12 +60,23 @@ export default function Timer({
   const [pesanInfo, setPesanInfo] = useState("");
   const [autoMulai, setAutoMulai] = useState(false); // flag: auto start periode berikutnya
 
+  // Wake Lock API support (untuk mencegah device sleep)
+  const [wakeLockSupported, setWakeLockSupported] = useState(false);
+  const refWakeLock = useRef(null);
+
   // untuk kalkulasi tick berbasis waktu nyata (anti drift)
   const refInterval = useRef(null);
   const refTargetTime = useRef(null);
 
   // audio notifikasi
   const refAudio = useRef(null);
+
+  // Deteksi Wake Lock support
+  useEffect(() => {
+    if (typeof window !== "undefined" && "wakeLock" in navigator) {
+      setWakeLockSupported(true);
+    }
+  }, []);
 
   // sinkronisasi periode dari props (mis. tombol di Dashboard)
   // sinkronisasi periode dari props (mis. tombol di Dashboard)
@@ -104,6 +115,30 @@ export default function Timer({
   // format mm:ss
   const fmt = useMemo(() => formatMMSS(sisaDetik), [sisaDetik]);
 
+  // ------------------- Wake Lock helpers -------------------
+  const requestWakeLock = useCallback(async () => {
+    if (!wakeLockSupported || typeof navigator === "undefined") return;
+    try {
+      if (refWakeLock.current) return; // already acquired
+      refWakeLock.current = await navigator.wakeLock.request("screen");
+      console.log("[Timer] Wake lock acquired");
+
+      refWakeLock.current.addEventListener("release", () => {
+        console.log("[Timer] Wake lock released");
+      });
+    } catch (err) {
+      console.warn("[Timer] Wake lock request gagal:", err.message);
+      // Fallback: tetap jalankan timer dengan koreksi timestamp saja
+    }
+  }, [wakeLockSupported]);
+
+  const releaseWakeLock = useCallback(() => {
+    if (refWakeLock.current) {
+      refWakeLock.current.release();
+      refWakeLock.current = null;
+    }
+  }, []);
+
   // ------------------- kontrol utama -------------------
   const mulai = useCallback(() => {
     setPesanError("");
@@ -134,23 +169,29 @@ export default function Timer({
         clearInterval(refInterval.current);
         refInterval.current = null;
         setBerjalan(false);
+        releaseWakeLock();
         // selesaikan sesi & transisi
         handleSesiSelesai();
       }
     }, 200);
 
     setBerjalan(true);
+
+    // Request wake lock untuk mencegah screen sleep
+    requestWakeLock();
+
     try {
       onMulai?.();
     } catch (error) {
       console.error("Timer: callback onMulai gagal dijalankan:", error);
     }
-  }, [berjalan, getDurasiPeriodeDetik, periode, sisaDetik, onMulai]);
+  }, [berjalan, getDurasiPeriodeDetik, periode, sisaDetik, onMulai, requestWakeLock, releaseWakeLock]);
 
   const jeda = useCallback(() => {
     if (!berjalan) return;
     if (refInterval.current) clearInterval(refInterval.current);
     refInterval.current = null;
+    releaseWakeLock(); // Release wake lock saat pause
     // hitung ulang sisaDetik relative ke target
     if (refTargetTime.current) {
       const now = Date.now();
@@ -164,7 +205,7 @@ export default function Timer({
     } catch (error) {
       console.error("Timer: callback onJeda gagal dijalankan:", error);
     }
-  }, [berjalan, onJeda]);
+  }, [berjalan, onJeda, releaseWakeLock]);
 
   const reset = useCallback(() => {
     if (refInterval.current) clearInterval(refInterval.current);
@@ -298,12 +339,87 @@ export default function Timer({
     return () => window.removeEventListener("keydown", onKey);
   }, [berjalan, mulai, jeda, reset]);
 
+  // ------------------- Sleep/Resume handling -------------------
+  // Handle visibility change (tab hidden/visible, device sleep/wake)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        // Tab kembali visible
+        console.log("[Timer] Tab visible, checking timer state");
+
+        if (berjalan && refTargetTime.current) {
+          // Koreksi sisaDetik berdasarkan timestamp
+          const now = Date.now();
+          const remaining = Math.max(
+            0,
+            Math.ceil((refTargetTime.current - now) / 1000)
+          );
+
+          setSisaDetik(remaining);
+
+          if (remaining <= 0) {
+            // Waktu sudah habis saat tab tidak visible
+            clearInterval(refInterval.current);
+            refInterval.current = null;
+            setBerjalan(false);
+            releaseWakeLock();
+            handleSesiSelesai();
+          } else {
+            // Re-request wake lock (sering ter-release saat visibility hidden)
+            if (wakeLockSupported && !refWakeLock.current) {
+              requestWakeLock();
+            }
+          }
+        }
+      } else {
+        // Tab menjadi hidden - wake lock mungkin ter-release otomatis
+        console.log("[Timer] Tab hidden");
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [berjalan, wakeLockSupported, handleSesiSelesai, requestWakeLock, releaseWakeLock]);
+
+  // Handle pageshow (for mobile browsers with bfcache)
+  useEffect(() => {
+    const handlePageShow = (event) => {
+      if (event.persisted) {
+        // Page restored from bfcache (back-forward cache)
+        console.log("[Timer] Page restored from cache");
+
+        if (berjalan && refTargetTime.current) {
+          const now = Date.now();
+          const remaining = Math.max(
+            0,
+            Math.ceil((refTargetTime.current - now) / 1000)
+          );
+          setSisaDetik(remaining);
+
+          if (remaining <= 0) {
+            clearInterval(refInterval.current);
+            refInterval.current = null;
+            setBerjalan(false);
+            releaseWakeLock();
+            handleSesiSelesai();
+          }
+        }
+      }
+    };
+
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
+  }, [berjalan, handleSesiSelesai, releaseWakeLock]);
+
   // bersih-bersih saat unmount
   useEffect(() => {
     return () => {
       if (refInterval.current) clearInterval(refInterval.current);
+      releaseWakeLock();
     };
-  }, []);
+  }, [releaseWakeLock]);
 
   // ring progress (%)
   const persentase = useMemo(() => {

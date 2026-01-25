@@ -7,17 +7,32 @@ if (!CLIENT_ID) {
   throw new Error("NEXT_PUBLIC_GITHUB_CLIENT_ID tidak ditemukan");
 }
 
-const buildAuthorizeUrl = () =>
+/**
+ * Generate random state string untuk CSRF protection
+ */
+const generateState = () => {
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(
+    ""
+  );
+};
+
+const buildAuthorizeUrl = (state) =>
   `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
     REDIRECT_URI
-  )}&scope=repo`;
+  )}&scope=repo&state=${encodeURIComponent(state)}`;
 
 /**
  * Arahkan pengguna ke halaman otorisasi GitHub.
  */
 export function redirectToGitHub() {
   try {
-    const url = buildAuthorizeUrl();
+    const state = generateState();
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("gh_oauth_state", state);
+    }
+    const url = buildAuthorizeUrl(state);
     if (typeof window === "undefined") {
       throw new Error("Window tidak tersedia");
     }
@@ -34,6 +49,22 @@ export function redirectToGitHub() {
  */
 export async function exchangeCodeForToken(code) {
   try {
+    // Verify CSRF state parameter
+    if (typeof window !== "undefined") {
+      const storedState = sessionStorage.getItem("gh_oauth_state");
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlState = urlParams.get("state");
+
+      if (!storedState || storedState !== urlState) {
+        throw new Error(
+          "Invalid state parameter - possible CSRF attack detected"
+        );
+      }
+
+      // Clear state after verification
+      sessionStorage.removeItem("gh_oauth_state");
+    }
+
     const res = await fetch(
       `/api/github/callback?code=${encodeURIComponent(code)}`
     );

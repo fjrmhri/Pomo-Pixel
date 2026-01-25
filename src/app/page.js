@@ -352,6 +352,9 @@ export default function Page() {
 
       try {
         const tanggal = formatTanggal();
+        // Struktur Firestore:
+        // - users/{uid}/statistik/agregat (total semua waktu)
+        // - users/{uid}/statistik_harian/{YYYY-MM-DD} (data per hari)
         await setDoc(
           doc(db, "users", idPengguna, "statistik", "agregat"),
           {
@@ -364,7 +367,7 @@ export default function Page() {
           { merge: true }
         );
         await setDoc(
-          doc(db, "users", idPengguna, "statistik", "harian", tanggal),
+          doc(db, "users", idPengguna, "statistik_harian", tanggal),
           {
             totalMenit: increment(total),
             menitFokus: increment(fokus),

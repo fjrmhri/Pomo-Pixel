@@ -15,7 +15,7 @@ export async function GET(request) {
     },
     body: JSON.stringify({
       client_id: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID,
-      client_secret: process.env.NEXT_GITHUB_CLIENT_SECRET,
+      client_secret: process.env.GITHUB_CLIENT_SECRET,
       code,
       redirect_uri: process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URI,
     }),

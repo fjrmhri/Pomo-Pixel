@@ -313,6 +313,35 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [handleBerikut, handleSebelumnya, sedangMain]);
 
+  // ---------- Audio recovery after sleep/freeze ----------
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        // Tab kembali visible - coba resume audio jika seharusnya playing
+        const el = refAudio.current;
+        if (!el || !sedangMain) return;
+
+        // Jika seharusnya playing tapi paused, coba resume (best-effort)
+        if (el.paused) {
+          console.log(
+            "[MusicPlayer] Attempting to resume audio after visibility change"
+          );
+          el.play().catch((err) => {
+            console.warn(
+              "[MusicPlayer] Auto-resume blocked by browser policy:",
+              err.message
+            );
+            setPesanKesalahan("Musik terhenti. Tekan play untuk melanjutkan.");
+          });
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [sedangMain]);
+
   // Progress (0..100)
   const progressPersen = useMemo(() => {
     if (!durasiDetik || durasiDetik <= 0) return 0;
