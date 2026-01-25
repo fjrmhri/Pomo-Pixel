@@ -9,6 +9,7 @@
  *   histori commit atau pull request.
  */
 
+import Image from "next/image";
 import "../../styles/GithubStats.css";
 import "../../styles/SettingsForm.css";
 import { redirectToGitHub } from "../../github";
@@ -43,15 +44,21 @@ export default function GithubStats({
       {githubUser ? (
         <div className="Stat__github">
           <div className="Stat__github-images">
-            <img
+            <Image
               className="Stat__github-image Stat__github-image--stats"
               src={`https://github-readme-stats.vercel.app/api?username=${githubUser.login}&show_icons=true&title_color=ffcc00&icon_color=00ffff&text_color=daf7dc&bg_color=1e1e2f&hide=issues&count_private=true&include_all_commits=true&hide_border=true`}
               alt="GitHub Stats"
+              width={495}
+              height={195}
+              unoptimized
             />
-            <img
+            <Image
               className="Stat__github-image Stat__github-image--langs"
               src={`https://github-readme-stats.vercel.app/api/top-langs/?username=${githubUser.login}&layout=compact&text_color=daf7dc&bg_color=1e1e2f&hide=php&hide_border=true`}
               alt="Top Languages"
+              width={337}
+              height={165}
+              unoptimized
             />
           </div>
 
