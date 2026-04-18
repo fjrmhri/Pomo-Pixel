@@ -22,13 +22,14 @@
 .Tm {
   pointer-events: auto;
   width: min(86vw, 360px);
-  /* make background match Music Player: same color + transparency */
-  background: rgba(10, 10, 10, 0.65);
+  background: rgba(10, 10, 10, 0.75);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   color: var(--overlay-foreground);
   border: 2px solid #fff;
-  box-shadow: 0 0 0 2px #000, 0 0 0 4px #fff;
+  box-shadow:
+    0 0 0 2px #000,
+    0 0 0 4px #fff;
   border-radius: 0;
   padding: 12px;
   font-family: var(--font-pixel, "Monocraft", monospace);
@@ -44,6 +45,12 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 1px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.Tm__header:active {
+  cursor: grabbing;
 }
 
 /* Badge periode */
@@ -53,7 +60,9 @@
   padding: 2px 6px;
   border-radius: 0;
   border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 4px #000;
   font-size: 9px;
 }
 
@@ -73,7 +82,9 @@
   height: 6px;
   background: rgba(226, 232, 240, 0.35);
   border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 4px #000;
   border-radius: 0;
   overflow: hidden;
   margin-bottom: 8px;
@@ -112,7 +123,9 @@
   color: #111827;
   background: #cbd5e1;
   border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 4px #000;
   border-radius: 0;
   padding: 5px 10px;
   cursor: pointer;

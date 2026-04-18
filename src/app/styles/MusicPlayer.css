@@ -19,12 +19,16 @@
   pointer-events: auto;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  background: rgba(10, 10, 10, 0.65);
-  color: #e5e7eb;
-  border: 2px solid #ffffff;
-  box-shadow: 0 0 0 2px #000, 0 0 0 3px #fff;
-  border-radius: 0;
-  padding: 6px 10px; /* lebih kecil */
+  /* Use same transparent style as Timer */
+  background: rgba(10, 10, 10, 0.75);
+  color: var(--overlay-foreground);
+  /* Use 2-layer menu border like other menus */
+  border: 2px solid #fff;
+  box-shadow:
+    0 0 0 2px #000,
+    0 0 0 2px #fff; /* reduced to 2-layer */
+  border-radius: 6px; /* match menu rounding */
+  padding: 6px 10px;
   font-family: "Monocraft", monospace;
   max-width: 100%;
   box-sizing: border-box;
@@ -56,10 +60,11 @@
 /* ===== Progress bar + waktu ===== */
 .Mp__progress {
   display: grid;
-  grid-template-columns: 36px 1fr 36px; /* lebih kecil */
+  grid-template-columns: 36px 1fr 36px;
   gap: 5px;
   align-items: center;
   margin-bottom: 6px;
+  border: 0; /* remove extra border layering */
 }
 
 .Mp__waktu {
@@ -91,7 +96,9 @@
   height: 10px;
   background: #22d3ee;
   border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff, 0 0 0 3px #000;
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 3px #000;
   margin-top: -4px;
 }
 
@@ -100,7 +107,9 @@
   height: 10px;
   background: #22d3ee;
   border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff, 0 0 0 3px #000;
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 3px #000;
 }
 
 /* ===== Tombol utama ===== */
@@ -114,12 +123,12 @@
 
 .Mp__tombol {
   font-family: "Monocraft", monospace;
-  font-size: 11px; /* lebih kecil */
+  font-size: 11px;
   color: #111827;
   background: #22d3ee;
   border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff, 0 0 0 3px #000;
-  padding: 4px 6px; /* lebih kecil */
+  box-shadow: 0 0 0 2px #fff; /* single outer white layer to match menu */
+  padding: 4px 6px;
   border-radius: 0;
   cursor: pointer;
   transition: transform 80ms ease;
@@ -166,7 +175,9 @@
   color: #111827;
   background: #a78bfa;
   border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff, 0 0 0 3px #000;
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 3px #000;
   padding: 3px 5px;
   cursor: pointer;
   white-space: nowrap;
@@ -191,11 +202,11 @@
 
 .Mp__chip {
   font-family: "Monocraft", monospace;
-  font-size: 10px; /* lebih kecil */
+  font-size: 10px;
   color: #111827;
   background: #a78bfa;
   border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff, 0 0 0 3px #000;
+  box-shadow: 0 0 0 2px #fff; /* simplified */
   padding: 3px 5px;
   cursor: pointer;
   transition: background 0.15s ease;
@@ -211,9 +222,9 @@
   background: #b91c1c;
   color: #fff;
   border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff, 0 0 0 3px #000;
+  box-shadow: 0 0 0 2px #fff; /* simplified */
   padding: 4px 6px;
-  font-size: 9px; /* lebih kecil */
+  font-size: 9px;
 }
 
 /* ===== Responsif ===== */

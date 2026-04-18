@@ -103,7 +103,7 @@ export default function UserStatistics({
             NAMA_KOLEKSI,
             uidAktif,
             SUBCOLL_STAT,
-            DOK_AGREGAT
+            DOK_AGREGAT,
           );
           const s = await getDoc(refAgregat);
           if (s.exists()) {
@@ -146,7 +146,7 @@ export default function UserStatistics({
             NAMA_KOLEKSI,
             uidAktif,
             SUBCOLL_HARIAN,
-            hariIni
+            hariIni,
           );
 
           const h = await getDoc(refHarian);
@@ -159,7 +159,7 @@ export default function UserStatistics({
               totalMenit: Number(
                 d.totalMenit ??
                   (Number(d.menitFokus || 0) + Number(d.menitIstirahat || 0) ||
-                    0)
+                    0),
               ),
             });
           } else {
@@ -182,7 +182,7 @@ export default function UserStatistics({
               totalMenit: Number(
                 d.totalMenit ??
                   (Number(d.menitFokus ?? 0) + Number(d.menitIstirahat ?? 0) ||
-                    0)
+                    0),
               ),
             });
           }
@@ -190,7 +190,7 @@ export default function UserStatistics({
       } catch (e) {
         console.error(e);
         setPesanError(
-          "Gagal memuat statistik pengguna. Menampilkan nilai tersedia."
+          "Gagal memuat statistik pengguna. Menampilkan nilai tersedia.",
         );
       } finally {
         setSedangMuat(false);
@@ -260,8 +260,8 @@ export default function UserStatistics({
             {sedangMuat
               ? "memuat…"
               : loggedIn || uidAktif
-              ? "tersambung data"
-              : "mode lokal"}
+                ? "tersambung data"
+                : "mode lokal"}
             <span className="Stat__sub"> • {dataTampil.judulKecil}</span>
           </span>
         </div>

@@ -56,7 +56,7 @@ export default function Wallpaper({
 
   const bypassOptimization = useMemo(
     () => /\.gif$/i.test(sumberFinal),
-    [sumberFinal]
+    [sumberFinal],
   );
 
   const [gagal, setGagal] = useState(false);
@@ -66,6 +66,17 @@ export default function Wallpaper({
   useEffect(() => {
     setGagal(false);
     setSiap(false);
+  }, [sumberFinal]);
+
+  // Preload gambar agar browser cache lebih cepat saat switch wallpaper
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const preloader = new window.Image();
+    preloader.src = sumberFinal;
+    return () => {
+      preloader.onload = null;
+      preloader.onerror = null;
+    };
   }, [sumberFinal]);
 
   const tanganiLoad = () => {
@@ -90,10 +101,12 @@ export default function Wallpaper({
         // Tampilan fallback jika gambar gagal dimuat
         <div className="Wallpaper__fallback" role="alert">
           <p className="Wallpaper__fallback-teks">
-            Gagal memuat wallpaper: <span className="Wallpaper__path">{sumberFinal}</span>
+            Gagal memuat wallpaper:{" "}
+            <span className="Wallpaper__path">{sumberFinal}</span>
           </p>
           <p className="Wallpaper__fallback-hint">
-            Pastikan file ada di <code>/public/images</code> dan nama filenya benar.
+            Pastikan file ada di <code>/public/images</code> dan nama filenya
+            benar.
           </p>
         </div>
       ) : (

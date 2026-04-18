@@ -84,7 +84,10 @@ const safeReadLocalStorage = (key, context) => {
   try {
     return window.localStorage.getItem(key);
   } catch (error) {
-    logError(`gagal membaca localStorage untuk ${key}${context ? ` (${context})` : ""}`, error);
+    logError(
+      `gagal membaca localStorage untuk ${key}${context ? ` (${context})` : ""}`,
+      error,
+    );
     return null;
   }
 };
@@ -94,7 +97,10 @@ const safeWriteLocalStorage = (key, value, context) => {
   try {
     window.localStorage.setItem(key, value);
   } catch (error) {
-    logError(`gagal menyimpan localStorage untuk ${key}${context ? ` (${context})` : ""}`, error);
+    logError(
+      `gagal menyimpan localStorage untuk ${key}${context ? ` (${context})` : ""}`,
+      error,
+    );
   }
 };
 
@@ -112,29 +118,49 @@ const buildWallpaperSrc = (fileName) => `/images/${fileName}`;
 
 export default function Page() {
   /* ===================================================================
-   *  1) Status Login Firebase
+   *  1) Status Login Firebase & GitHub
    * =================================================================== */
-  const [sudahLogin, setSudahLogin] = useState(false);
+  const [googleUser, setGoogleUser] = useState(null);
   const [idPengguna, setIdPengguna] = useState(null);
-  const [namaPengguna, setNamaPengguna] = useState(null);
   const [bukaStatistik, setBukaStatistik] = useState(false);
   const [bukaGithubStats, setBukaGithubStats] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [githubUser, setGithubUser] = useState(null);
   const [githubEvents, setGithubEvents] = useState([]);
+  const [displayNameSource, setDisplayNameSource] = useState("google");
   const loginStateRef = useRef(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const raw = window.localStorage.getItem("lp_preferensi_v1");
+    if (!raw) return;
+    try {
+      const data = JSON.parse(raw);
+      if (
+        data &&
+        (data.displayNameSource === "google" ||
+          data.displayNameSource === "github")
+      ) {
+        setDisplayNameSource(data.displayNameSource);
+      }
+    } catch (error) {
+      logError("gagal membaca preferensi display name", error);
+    }
+  }, []);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       try {
-        const loggedIn = Boolean(user);
-        setSudahLogin(loggedIn);
-        setIsLoggedIn(loggedIn);
-        setIdPengguna(user ? user.uid || null : null);
-        setNamaPengguna(
-          user ? user.displayName || user.email || user.uid || null : null
+        setGoogleUser(
+          user
+            ? {
+                uid: user.uid,
+                displayName: user.displayName,
+                email: user.email,
+              }
+            : null,
         );
+        setIdPengguna(user ? user.uid || null : null);
       } catch (error) {
         logError("gagal memperbarui status login", error);
       }
@@ -143,14 +169,29 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    const logged = Boolean(isLoggedIn || sudahLogin || githubUser);
+    const logged = Boolean(googleUser || githubUser);
     const wasLogged = loginStateRef.current;
     loginStateRef.current = logged;
 
     if (loginOpen && logged && !wasLogged) {
       setLoginOpen(false);
     }
-  }, [githubUser, isLoggedIn, sudahLogin, loginOpen]);
+  }, [githubUser, googleUser, loginOpen]);
+
+  const displayName = useMemo(() => {
+    const googleName =
+      googleUser &&
+      (googleUser.displayName || googleUser.email || googleUser.uid);
+    const githubName = githubUser && (githubUser.name || githubUser.login);
+
+    if (displayNameSource === "google") {
+      return googleName || githubName || null;
+    }
+    if (displayNameSource === "github") {
+      return githubName || googleName || null;
+    }
+    return googleName || githubName || null;
+  }, [displayNameSource, githubUser, googleUser]);
 
   const handleGitHubToken = useCallback(async (token) => {
     if (!token) return;
@@ -174,7 +215,7 @@ export default function Page() {
     const code = params.get("code");
     const tokenLocal = safeReadLocalStorage(
       KEY_GITHUB_TOKEN,
-      "membaca token GitHub"
+      "membaca token GitHub",
     );
 
     if (tokenLocal) {
@@ -187,7 +228,11 @@ export default function Page() {
     exchangeCodeForToken(code)
       .then((token) => {
         if (!token) return;
-        safeWriteLocalStorage(KEY_GITHUB_TOKEN, token, "menyimpan token GitHub");
+        safeWriteLocalStorage(
+          KEY_GITHUB_TOKEN,
+          token,
+          "menyimpan token GitHub",
+        );
         try {
           const url = new URL(window.location.href);
           url.searchParams.delete("code");
@@ -206,7 +251,7 @@ export default function Page() {
     if (!githubUser) return;
     const token = safeReadLocalStorage(
       KEY_GITHUB_TOKEN,
-      "memuat token GitHub untuk refresh"
+      "memuat token GitHub untuk refresh",
     );
     if (!token) return;
     try {
@@ -235,7 +280,7 @@ export default function Page() {
   useEffect(() => {
     const rawCfg = safeReadLocalStorage(
       KEY_PENGATURAN,
-      "memuat pengaturan timer"
+      "memuat pengaturan timer",
     );
     const cfg = safeParseJSON(rawCfg, null, "memuat pengaturan timer");
     if (cfg && typeof cfg === "object") {
@@ -244,7 +289,7 @@ export default function Page() {
 
     const periodeTersimpan = safeReadLocalStorage(
       KEY_PERIODE,
-      "memuat periode aktif"
+      "memuat periode aktif",
     );
     if (["work", "short", "long"].includes(periodeTersimpan || "")) {
       setPeriodeAktif(periodeTersimpan);
@@ -254,11 +299,7 @@ export default function Page() {
   useEffect(() => {
     try {
       const json = JSON.stringify(pengaturanTimer);
-      safeWriteLocalStorage(
-        KEY_PENGATURAN,
-        json,
-        "menyimpan pengaturan timer"
-      );
+      safeWriteLocalStorage(KEY_PENGATURAN, json, "menyimpan pengaturan timer");
     } catch (error) {
       logError("gagal menyerialisasi pengaturan timer", error);
     }
@@ -268,7 +309,7 @@ export default function Page() {
     safeWriteLocalStorage(
       KEY_PERIODE,
       String(periodeAktif),
-      "menyimpan periode aktif"
+      "menyimpan periode aktif",
     );
   }, [periodeAktif]);
 
@@ -284,7 +325,7 @@ export default function Page() {
   useEffect(() => {
     const raw = safeReadLocalStorage(
       KEY_STATS_TOTAL,
-      "memuat statistik ringkas"
+      "memuat statistik ringkas",
     );
     const data = safeParseJSON(raw, null, "memuat statistik ringkas");
     if (!data || typeof data !== "object") return;
@@ -314,13 +355,9 @@ export default function Page() {
 
       const raw = safeReadLocalStorage(
         KEY_STATS_TOTAL,
-        "membaca statistik ringkas"
+        "membaca statistik ringkas",
       );
-      const parsedStats = safeParseJSON(
-        raw,
-        null,
-        "membaca statistik ringkas"
-      );
+      const parsedStats = safeParseJSON(raw, null, "membaca statistik ringkas");
       const sebelumnya =
         parsedStats && typeof parsedStats === "object"
           ? parsedStats
@@ -340,13 +377,13 @@ export default function Page() {
         safeWriteLocalStorage(
           KEY_STATS_TOTAL,
           JSON.stringify(agregat),
-          "menyimpan statistik ringkas"
+          "menyimpan statistik ringkas",
         );
       } catch (error) {
         logError("gagal menyerialisasi statistik ringkas", error);
       }
 
-      if (!sudahLogin || !idPengguna) {
+      if (!googleUser || !idPengguna) {
         return;
       }
 
@@ -364,7 +401,7 @@ export default function Page() {
             diperbaruiPada: new Date(),
             terakhirPeriode: String(periodeSelesai || ""),
           },
-          { merge: true }
+          { merge: true },
         );
         await setDoc(
           doc(db, "users", idPengguna, "statistik_harian", tanggal),
@@ -375,13 +412,13 @@ export default function Page() {
             tanggal,
             diperbaruiPada: new Date(),
           },
-          { merge: true }
+          { merge: true },
         );
       } catch (error) {
         logError("gagal menyimpan statistik ke Firestore", error);
       }
     },
-    [idPengguna, sudahLogin]
+    [idPengguna, googleUser],
   );
 
   /* ===================================================================
@@ -389,12 +426,10 @@ export default function Page() {
    * =================================================================== */
   const [wallpaperSrc, setWallpaperSrc] = useState(DEFAULT_WALLPAPER);
   const [wallpaperIdx, setWallpaperIdx] = useState(0);
+  const preloadRef = useRef(null);
 
   useEffect(() => {
-    const stored = safeReadLocalStorage(
-      KEY_WALLPAPER,
-      "memuat wallpaper"
-    );
+    const stored = safeReadLocalStorage(KEY_WALLPAPER, "memuat wallpaper");
     if (!stored) return;
     setWallpaperSrc(stored);
     const idx = WALLPAPERS.findIndex((nama) => stored.endsWith(nama));
@@ -403,16 +438,57 @@ export default function Page() {
     }
   }, []);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const next = (wallpaperIdx + 1) % WALLPAPERS.length;
+    const nextSrc = buildWallpaperSrc(WALLPAPERS[next]);
+    const img = new window.Image();
+    img.src = nextSrc;
+    preloadRef.current = img;
+    return () => {
+      if (preloadRef.current) {
+        preloadRef.current.onload = null;
+        preloadRef.current.onerror = null;
+        preloadRef.current = null;
+      }
+    };
+  }, [wallpaperIdx]);
+
   const gantiWallpaper = useCallback(() => {
-    setWallpaperIdx((current) => {
-      const next = (current + 1) % WALLPAPERS.length;
-      const nama = WALLPAPERS[next];
-      const src = buildWallpaperSrc(nama);
+    const next = (wallpaperIdx + 1) % WALLPAPERS.length;
+    const nama = WALLPAPERS[next];
+    const src = buildWallpaperSrc(nama);
+
+    if (typeof window === "undefined") {
       setWallpaperSrc(src);
+      setWallpaperIdx(next);
       safeWriteLocalStorage(KEY_WALLPAPER, src, "menyimpan wallpaper");
-      return next;
-    });
-  }, []);
+      return;
+    }
+
+    if (preloadRef.current) {
+      preloadRef.current.onload = null;
+      preloadRef.current.onerror = null;
+      preloadRef.current = null;
+    }
+
+    const img = new window.Image();
+    preloadRef.current = img;
+    img.onload = () => {
+      setWallpaperSrc(src);
+      setWallpaperIdx(next);
+      safeWriteLocalStorage(KEY_WALLPAPER, src, "menyimpan wallpaper");
+      preloadRef.current = null;
+    };
+    img.onerror = (error) => {
+      console.error("Gagal preload wallpaper:", src, error);
+      setWallpaperSrc(src);
+      setWallpaperIdx(next);
+      safeWriteLocalStorage(KEY_WALLPAPER, src, "menyimpan wallpaper");
+      preloadRef.current = null;
+    };
+    img.src = src;
+  }, [wallpaperIdx]);
 
   /* ===================================================================
    *  5) Modal Pengaturan
@@ -424,12 +500,12 @@ export default function Page() {
    * =================================================================== */
   const infoLogin = useMemo(
     () => ({
-      loggedIn: sudahLogin,
+      loggedIn: Boolean(googleUser),
       userId: idPengguna,
       githubUser,
       githubEvents,
     }),
-    [sudahLogin, idPengguna, githubUser, githubEvents]
+    [googleUser, idPengguna, githubUser, githubEvents],
   );
 
   /* ===================================================================
@@ -502,11 +578,11 @@ export default function Page() {
           />
         </button>
         {/* akun */}
-        {!(sudahLogin && githubUser) && (
+        {!(googleUser && githubUser) && (
           <button className="account-button" onClick={() => setLoginOpen(true)}>
             <Image
-              src="/images/info.png"
-              alt="ikon akun"
+              src="/images/login.png"
+              alt="ikon login"
               width={20}
               height={20}
               className="account-icon"
@@ -517,18 +593,12 @@ export default function Page() {
         <div className="Db__status">
           <span
             className={`Db__dot ${
-              sudahLogin || githubUser ? "is-on" : "is-off"
+              googleUser || githubUser ? "is-on" : "is-off"
             }`}
-            aria-label={sudahLogin || githubUser ? "login" : "offline"}
+            aria-label={googleUser || githubUser ? "login" : "offline"}
           />
           <span className="Db__status-teks">
-            {githubUser
-              ? `halo, ${githubUser.login}`
-              : sudahLogin
-              ? namaPengguna
-                ? `halo, ${namaPengguna}`
-                : "login"
-              : "offline"}
+            {displayName ? `halo, ${displayName}` : "offline"}
           </span>
         </div>
       </div>
@@ -600,6 +670,14 @@ export default function Page() {
             setPengaturanTimer((prev) => ({ ...prev, locMode: v }))
           }
           onTutup={() => setBukaPengaturan(false)}
+          googleUser={googleUser}
+          githubUser={githubUser}
+          displayNameSource={displayNameSource}
+          onDisplayNameSourceChange={(value) => {
+            if (value === "google" || value === "github") {
+              setDisplayNameSource(value);
+            }
+          }}
           onLogoutGitHub={() => {
             setGithubUser(null);
             setGithubEvents([]);
@@ -609,7 +687,7 @@ export default function Page() {
 
       {/* Modal login/register */}
       <Modal buka={loginOpen} tutup={() => setLoginOpen(false)} lebar="lg">
-        <LoginRegisterForm setIsLoggedIn={setIsLoggedIn} />
+        <LoginRegisterForm googleUser={googleUser} githubUser={githubUser} />
       </Modal>
 
       {/* GitHub Stats Modal */}

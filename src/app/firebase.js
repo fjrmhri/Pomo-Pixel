@@ -24,7 +24,7 @@ const createFirebaseApp = () => {
   if (missingKeys.length > 0) {
     console.warn(
       `[firebase] Variabel env belum lengkap: ${missingKeys.join(", ")}. ` +
-        "Pastikan .env lokal sudah diisi."
+        "Pastikan .env lokal sudah diisi.",
     );
   }
 

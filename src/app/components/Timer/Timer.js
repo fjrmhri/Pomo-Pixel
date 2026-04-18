@@ -46,14 +46,14 @@ export default function Timer({
         return Math.max(1, Number(longBreakLen || 15)) * 60;
       return 25 * 60;
     },
-    [workLen, shortBreakLen, longBreakLen]
+    [workLen, shortBreakLen, longBreakLen],
   );
 
   // ------------------- state dasar -------------------
   const [periode, setPeriode] = useState(currentPeriod || PERIODE.work);
   const [berjalan, setBerjalan] = useState(false);
   const [sisaDetik, setSisaDetik] = useState(() =>
-    getDurasiPeriodeDetik(currentPeriod || PERIODE.work)
+    getDurasiPeriodeDetik(currentPeriod || PERIODE.work),
   );
   const [jumlahWorkSelesai, setJumlahWorkSelesai] = useState(0); // hitung sesi fokus selesai (untuk long break)
   const [pesanError, setPesanError] = useState("");
@@ -67,9 +67,65 @@ export default function Timer({
   // untuk kalkulasi tick berbasis waktu nyata (anti drift)
   const refInterval = useRef(null);
   const refTargetTime = useRef(null);
+  const refHandleSesiSelesai = useRef(() => {});
 
   // audio notifikasi
   const refAudio = useRef(null);
+
+  // drag posisi timer
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const refDrag = useRef({
+    active: false,
+    pointerId: null,
+    startX: 0,
+    startY: 0,
+    originX: 0,
+    originY: 0,
+  });
+
+  const handleDragStart = useCallback(
+    (event) => {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      event.currentTarget.setPointerCapture(event.pointerId);
+      refDrag.current = {
+        active: true,
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        originX: dragOffset.x,
+        originY: dragOffset.y,
+      };
+    },
+    [dragOffset],
+  );
+
+  const handleDragMove = useCallback((event) => {
+    if (
+      !refDrag.current.active ||
+      event.pointerId !== refDrag.current.pointerId
+    )
+      return;
+    const deltaX = event.clientX - refDrag.current.startX;
+    const deltaY = event.clientY - refDrag.current.startY;
+    setDragOffset({
+      x: refDrag.current.originX + deltaX,
+      y: refDrag.current.originY + deltaY,
+    });
+  }, []);
+
+  const handleDragEnd = useCallback((event) => {
+    if (
+      !refDrag.current.active ||
+      event.pointerId !== refDrag.current.pointerId
+    )
+      return;
+    event.currentTarget.releasePointerCapture(event.pointerId);
+    refDrag.current.active = false;
+  }, []);
+
+  const handleDragCancel = useCallback(() => {
+    refDrag.current.active = false;
+  }, []);
 
   // Deteksi Wake Lock support
   useEffect(() => {
@@ -92,7 +148,7 @@ export default function Timer({
       setPesanInfo("");
     } else {
       setPesanInfo(
-        "Periode diubah saat timer berjalan. Durasi berjalan tetap dipertahankan."
+        "Periode diubah saat timer berjalan. Durasi berjalan tetap dipertahankan.",
       );
     }
   }, [currentPeriod, getDurasiPeriodeDetik]);
@@ -121,13 +177,13 @@ export default function Timer({
     try {
       if (refWakeLock.current) return; // already acquired
       refWakeLock.current = await navigator.wakeLock.request("screen");
-      console.log("[Timer] Wake lock acquired");
-
-      refWakeLock.current.addEventListener("release", () => {
-        console.log("[Timer] Wake lock released");
-      });
+      // Silent acquisition in production; avoid noisy console logs.
+      try {
+        refWakeLock.current.addEventListener("release", () => {});
+      } catch {}
     } catch (err) {
-      console.warn("[Timer] Wake lock request gagal:", err.message);
+      // keep a concise warning for diagnostics
+      console.warn("[Timer] Wake lock request gagal:", err?.message || err);
       // Fallback: tetap jalankan timer dengan koreksi timestamp saja
     }
   }, [wakeLockSupported]);
@@ -161,7 +217,7 @@ export default function Timer({
       const now2 = Date.now();
       const sisa = Math.max(
         0,
-        Math.ceil((refTargetTime.current - now2) / 1000)
+        Math.ceil((refTargetTime.current - now2) / 1000),
       );
       setSisaDetik(sisa);
       if (sisa <= 0) {
@@ -171,7 +227,7 @@ export default function Timer({
         setBerjalan(false);
         releaseWakeLock();
         // selesaikan sesi & transisi
-        handleSesiSelesai();
+        refHandleSesiSelesai.current();
       }
     }, 200);
 
@@ -185,7 +241,15 @@ export default function Timer({
     } catch (error) {
       console.error("Timer: callback onMulai gagal dijalankan:", error);
     }
-  }, [berjalan, getDurasiPeriodeDetik, periode, sisaDetik, onMulai, requestWakeLock, releaseWakeLock]);
+  }, [
+    berjalan,
+    getDurasiPeriodeDetik,
+    periode,
+    sisaDetik,
+    onMulai,
+    requestWakeLock,
+    releaseWakeLock,
+  ]);
 
   const jeda = useCallback(() => {
     if (!berjalan) return;
@@ -232,9 +296,9 @@ export default function Timer({
           p === "work"
             ? "fokus"
             : p === "short"
-            ? "istirahat singkat"
-            : "istirahat panjang"
-        }`
+              ? "istirahat singkat"
+              : "istirahat panjang"
+        }`,
       );
       setAutoMulai(autoStart);
       try {
@@ -242,11 +306,11 @@ export default function Timer({
       } catch (error) {
         console.error(
           "Timer: callback setCurrentPeriod gagal dijalankan:",
-          error
+          error,
         );
       }
     },
-    [getDurasiPeriodeDetik, setCurrentPeriod]
+    [getDurasiPeriodeDetik, setCurrentPeriod],
   );
 
   // ------------------- saat sesi selesai -------------------
@@ -257,7 +321,7 @@ export default function Timer({
         refAudio.current.currentTime = 0;
         refAudio.current.volume = Math.min(
           Math.max(Number(volume || 0) / 100, 0),
-          1
+          1,
         );
         void refAudio.current.play();
       }
@@ -313,6 +377,12 @@ export default function Timer({
     getDurasiPeriodeDetik,
   ]);
 
+  // keep a stable ref to the latest handleSesiSelesai so other callbacks
+  // (notably `mulai`) can call it without adding it to their deps.
+  useEffect(() => {
+    refHandleSesiSelesai.current = handleSesiSelesai;
+  }, [handleSesiSelesai]);
+
   // auto mulai periode baru bila di-set oleh gantiPeriode
   useEffect(() => {
     if (autoMulai) {
@@ -333,6 +403,18 @@ export default function Timer({
         berjalan ? jeda() : mulai();
       } else if (ev.key?.toLowerCase() === "r") {
         reset();
+      } else if (ev.key?.toLowerCase() === "x") {
+        // reset position to default (trigger via parent if provided)
+        try {
+          // emit custom event for external handlers
+          const evPos = new CustomEvent("lp-reset-position", {
+            detail: { target: "timer" },
+          });
+          window.dispatchEvent(evPos);
+        } catch (e) {
+          // fallback: call reset() to restore timer values
+          reset();
+        }
       }
     };
     window.addEventListener("keydown", onKey);
@@ -345,14 +427,14 @@ export default function Timer({
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
         // Tab kembali visible
-        console.log("[Timer] Tab visible, checking timer state");
+        // debug: tab visibility change handled
 
         if (berjalan && refTargetTime.current) {
           // Koreksi sisaDetik berdasarkan timestamp
           const now = Date.now();
           const remaining = Math.max(
             0,
-            Math.ceil((refTargetTime.current - now) / 1000)
+            Math.ceil((refTargetTime.current - now) / 1000),
           );
 
           setSisaDetik(remaining);
@@ -373,7 +455,7 @@ export default function Timer({
         }
       } else {
         // Tab menjadi hidden - wake lock mungkin ter-release otomatis
-        console.log("[Timer] Tab hidden");
+        // debug: tab hidden
       }
     };
 
@@ -381,20 +463,26 @@ export default function Timer({
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [berjalan, wakeLockSupported, handleSesiSelesai, requestWakeLock, releaseWakeLock]);
+  }, [
+    berjalan,
+    wakeLockSupported,
+    handleSesiSelesai,
+    requestWakeLock,
+    releaseWakeLock,
+  ]);
 
   // Handle pageshow (for mobile browsers with bfcache)
   useEffect(() => {
     const handlePageShow = (event) => {
       if (event.persisted) {
         // Page restored from bfcache (back-forward cache)
-        console.log("[Timer] Page restored from cache");
+        // debug: page restored from bfcache
 
         if (berjalan && refTargetTime.current) {
           const now = Date.now();
           const remaining = Math.max(
             0,
-            Math.ceil((refTargetTime.current - now) / 1000)
+            Math.ceil((refTargetTime.current - now) / 1000),
           );
           setSisaDetik(remaining);
 
@@ -428,7 +516,12 @@ export default function Timer({
   }, [getDurasiPeriodeDetik, periode, sisaDetik]);
 
   return (
-    <div className={`Tm__bungkus ${className}`}>
+    <div
+      className={`Tm__bungkus ${className}`}
+      style={{
+        transform: `translate(calc(-50% + ${dragOffset.x}px), calc(-50% + ${dragOffset.y}px))`,
+      }}
+    >
       {/* audio notifikasi */}
       <audio
         ref={refAudio}
@@ -442,18 +535,25 @@ export default function Timer({
           periode === "work"
             ? "is-work"
             : periode === "short"
-            ? "is-short"
-            : "is-long"
+              ? "is-short"
+              : "is-long"
         }`}
       >
         {/* header */}
-        <header className="Tm__header" title="tarik untuk memindah">
+        <header
+          className="Tm__header"
+          title="tarik untuk memindah"
+          onPointerDown={handleDragStart}
+          onPointerMove={handleDragMove}
+          onPointerUp={handleDragEnd}
+          onPointerCancel={handleDragCancel}
+        >
           <span className="Tm__badge">
             {periode === "work"
               ? "fokus"
               : periode === "short"
-              ? "istirahat"
-              : "istirahat panjang"}
+                ? "istirahat"
+                : "istirahat panjang"}
           </span>
           <span className={`Tm__indikator ${berjalan ? "on" : "off"}`}>
             {berjalan ? "berjalan" : "jeda"}
@@ -510,7 +610,7 @@ export default function Timer({
 
         {/* footer kecil: hint keyboard */}
         <footer className="Tm__footer">
-          <span>Space: mulai/jeda • R: reset</span>
+          <span>Space: mulai/jeda • R: reset • X: reset posisi</span>
         </footer>
       </section>
     </div>

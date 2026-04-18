@@ -59,6 +59,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
   // ---------- Refs & State utama ----------
   const refAudio = useRef(null);
   const refSfx = useRef(null); // efek klik singkat (bukan ambient loop)
+  const refHandleBerikut = useRef(() => {});
 
   const [daftarLagu] = useState(() => bangunDaftarLagu());
   const [genreTerpilih, setGenreTerpilih] = useState(SEMUA);
@@ -107,7 +108,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
     try {
       localStorage.setItem(
         "mp_setelan",
-        JSON.stringify({ volumeMusik, acakAktif, ulangAktif, genreTerpilih })
+        JSON.stringify({ volumeMusik, acakAktif, ulangAktif, genreTerpilih }),
       );
     } catch (e) {
       console.warn("Gagal menyimpan setelan ke localStorage:", e);
@@ -131,8 +132,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
       setWaktuSaatIni(0);
       // autoplay ketika user sebelumnya sudah menekan play
       if (sedangMain) {
-        el
-          .play()
+        el.play()
           .then(() => {
             setSedangMain(true);
           })
@@ -140,7 +140,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
             // autoplay mungkin diblokir — update status dan beri pesan
             setSedangMain(false);
             setPesanKesalahan(
-              "Tidak dapat mulai otomatis. Coba tekan tombol Play."
+              "Tidak dapat mulai otomatis. Coba tekan tombol Play.",
             );
           });
       }
@@ -157,14 +157,18 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
         el.play().catch(() => {});
         return;
       }
-      // pindah ke lagu berikutnya
-      handleBerikut();
+      // pindah ke lagu berikutnya (via ref to avoid TDZ)
+      try {
+        refHandleBerikut.current();
+      } catch {}
     };
 
     const onError = () => {
       setPesanKesalahan("Gagal memuat lagu, melewati ke lagu berikutnya.");
       // skip otomatis
-      handleBerikut(true);
+      try {
+        refHandleBerikut.current(true);
+      } catch {}
     };
 
     el.addEventListener("loadedmetadata", onLoadedMetadata);
@@ -201,11 +205,10 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
     } catch {}
   }, []);
 
-  const handleToggleMain = () => {
+  const handleToggleMain = useCallback(() => {
     const el = refAudio.current;
     if (!el) return;
 
-    // reset pesan error saat user berinteraksi
     setPesanKesalahan("");
 
     if (sedangMain) {
@@ -213,58 +216,72 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
       setSedangMain(false);
     } else {
       el.play()
-        .then(() => {
-          setSedangMain(true);
-        })
-        .catch(() => {
-          // autoplay diblokir; user perlu klik kembali
+        .then(() => setSedangMain(true))
+        .catch(() =>
           setPesanKesalahan(
-            "Tidak dapat mulai otomatis. Coba tekan tombol Play."
-          );
-        });
+            "Tidak dapat mulai otomatis. Coba tekan tombol Play.",
+          ),
+        );
     }
-  };
+  }, [sedangMain]);
 
-  const pilihIndeksBerikutAcak = () => {
-    if (daftarTersaring.length <= 1) return 0;
-    let next = indeksLagu;
-    // cari indeks berbeda dari sekarang
-    while (next === indeksLagu) {
-      next = Math.floor(Math.random() * daftarTersaring.length);
+  const pilihIndeksBerikutAcak = useCallback((currentIdx, listLength) => {
+    if (!listLength || listLength <= 1) return 0;
+    let next = currentIdx;
+    while (next === currentIdx) {
+      next = Math.floor(Math.random() * listLength);
     }
     return next;
-  };
+  }, []);
 
-  const handleBerikut = (dariError = false) => {
+  const handleBerikut = useCallback(
+    (dariError = false) => {
+      mainkanSfxSingkat();
+      setWaktuSaatIni(0);
+      setDurasiDetik(0);
+
+      setIndeksLagu((idx) => {
+        const nextIdx = acakAktif
+          ? pilihIndeksBerikutAcak(idx, daftarTersaring.length)
+          : (idx + 1) % daftarTersaring.length;
+        return nextIdx;
+      });
+
+      const el = refAudio.current;
+      if (el && sedangMain && !dariError) {
+        // leave to loadedmetadata event to handle play()
+      }
+    },
+    [
+      mainkanSfxSingkat,
+      acakAktif,
+      daftarTersaring.length,
+      sedangMain,
+      pilihIndeksBerikutAcak,
+    ],
+  );
+
+  // keep latest reference so audio events can call it without depending on
+  // the function during initialization (prevents TDZ during SSR/dev).
+  useEffect(() => {
+    refHandleBerikut.current = handleBerikut;
+  }, [handleBerikut]);
+
+  const handleSebelumnya = useCallback(() => {
     mainkanSfxSingkat();
     setWaktuSaatIni(0);
-    setDurasiDetik(0);
 
     setIndeksLagu((idx) => {
-      const nextIdx = acakAktif
-        ? pilihIndeksBerikutAcak()
-        : (idx + 1) % daftarTersaring.length;
-      return nextIdx;
-    });
-
-    // jika sedangMain, coba teruskan otomatis ke lagu berikutnya
-    const el = refAudio.current;
-    if (el && sedangMain && !dariError) {
-      // biarkan event loadedmetadata yang akan memanggil .play()
-      // untuk menghindari race condition.
-    }
-  };
-
-  const handleSebelumnya = () => {
-    mainkanSfxSingkat();
-    setWaktuSaatIni(0);
-
-    setIndeksLagu((idx) => {
-      if (acakAktif) return pilihIndeksBerikutAcak();
+      if (acakAktif) return pilihIndeksBerikutAcak(idx, daftarTersaring.length);
       const prev = idx - 1;
       return prev < 0 ? daftarTersaring.length - 1 : prev;
     });
-  };
+  }, [
+    mainkanSfxSingkat,
+    acakAktif,
+    daftarTersaring.length,
+    pilihIndeksBerikutAcak,
+  ]);
 
   const handleUbahGenre = (e) => {
     const nilai = e.target.value;
@@ -311,7 +328,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [handleBerikut, handleSebelumnya, sedangMain]);
+  }, [handleToggleMain, handleBerikut, handleSebelumnya, sedangMain]);
 
   // ---------- Audio recovery after sleep/freeze ----------
   useEffect(() => {
@@ -323,13 +340,11 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
 
         // Jika seharusnya playing tapi paused, coba resume (best-effort)
         if (el.paused) {
-          console.log(
-            "[MusicPlayer] Attempting to resume audio after visibility change"
-          );
+          // attempt resume after visibility change (best-effort)
           el.play().catch((err) => {
             console.warn(
               "[MusicPlayer] Auto-resume blocked by browser policy:",
-              err.message
+              err?.message || err,
             );
             setPesanKesalahan("Musik terhenti. Tekan play untuk melanjutkan.");
           });

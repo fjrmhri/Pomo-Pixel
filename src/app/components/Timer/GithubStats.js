@@ -106,7 +106,7 @@ export default function GithubStats({
             } catch (error) {
               console.error(
                 "GithubStats: gagal menginisiasi login GitHub:",
-                error
+                error,
               );
             }
           }}

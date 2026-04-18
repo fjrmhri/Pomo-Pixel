@@ -16,7 +16,7 @@
     "@vercel/speed-insights": "^1.2.0",
     "firebase": "^12.1.0",
     "lucide-react": "^0.540.0",
-    "next": "15.3.8",
+    "next": "^15.5.15",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-draggable": "^4.5.0",
@@ -26,6 +26,7 @@
     "@tailwindcss/postcss": "^4",
     "eslint": "^9.39.1",
     "eslint-config-next": "15.3.8",
+    "playwright": "^1.59.1",
     "tailwindcss": "^4"
   }
 }

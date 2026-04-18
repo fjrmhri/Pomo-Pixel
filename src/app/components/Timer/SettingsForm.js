@@ -1,58 +1,62 @@
-"use client";
-
-/**
- * SettingsForm (Pengaturan Pomodoro)
- * -------------------------------------------------------------------
- * - Mengatur durasi sesi, interval long break, dan volume notifikasi.
- * - Simpan ke Firestore (jika login) atau localStorage (jika belum).
- * - Cocok dengan komponen Timer & Dashboard yang sudah kita buat.
- * - UI bergaya pixel + font Monocraft, responsif.
- *
- * Props yang diharapkan dari parent:
- * - workLen, setWorkLen                (menit)
- * - shortBreakLen, setShortBreakLen    (menit)
- * - longBreakLen, setLongBreakLen      (menit)
- * - longBrInterval, setLongBrInterval  (berapa kali work sebelum long)
- * - volume, setVolume                  (0..100)
- * - timerPosition, setTimerPosition    ({x, y}) [opsional]
- * - statsPosition, setStatsPosition    ({x, y}) [opsional]
- *
- * - userId (opsional, jika tidak dipasang kita ambil dari auth.currentUser)
- *
- * Integrasi:
- * - Firebase: db, auth dari src/app/firebase.js
- * - File audio: /public/sounds/minecraft_level_up.mp3
- */
-
-import { useEffect, useRef, useState } from "react";
-import "../../styles/SettingsForm.css";
-import { db, auth } from "../../firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import React from "react";
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebase";
 import { logoutGitHub } from "../../github";
 
-const NAMA_KOLEKSI = "users";
-const NAMA_DOKUMEN_PREFERENSI = "preferensi"; // users/<uid>/preferensi
+function SettingsForm({ googleUser, githubUser }) {
+  const handleLogoutGoogle = async () => {
+    try {
+      await signOut(auth);
+    } catch (e) {
+      console.error("Error signing out:", e);
+    }
+  };
 
-export default function SettingsForm({
-  workLen,
-  setWorkLen,
-  shortBreakLen,
-  setShortBreakLen,
-  longBreakLen,
-  setLongBreakLen,
-  longBrInterval,
-  setLongBrInterval,
-  volume,
-  setVolume,
-  locMode,
-  setLocMode,
-  timerPosition,
-  setTimerPosition,
-  statsPosition,
-  setStatsPosition,
-  userId, // opsional
-  className = "",
+  const handleLogoutGitHub = () => {
+    try {
+      logoutGitHub();
+    } catch (e) {
+      console.error("Error logging out GitHub:", e);
+    }
+  };
+
+  return (
+    <div className="pixel-card p-4 max-w-md mx-auto">
+      <h3 className="Sf__section-title">Pengaturan</h3>
+      <div className="mt-3">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <div>Google</div>
+            <div>
+              {googleUser ? (
+                <button onClick={handleLogoutGoogle} className="Sf__btn Sf__btn--danger">
+                  Logout Google
+                </button>
+              ) : (
+                <div className="text-xs">Not connected</div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div>GitHub</div>
+            <div>
+              {githubUser ? (
+                <button onClick={handleLogoutGitHub} className="Sf__btn Sf__btn--danger">
+                  Logout GitHub
+                </button>
+              ) : (
+                <div className="text-xs">Not connected</div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default SettingsForm;
   onLogoutGitHub,
 }) {
   // ---------- state UI & pesan ----------
@@ -66,10 +70,13 @@ export default function SettingsForm({
   const [nilaiShort, setNilaiShort] = useState(shortBreakLen || 5);
   const [nilaiLong, setNilaiLong] = useState(longBreakLen || 15);
   const [nilaiIntervalLong, setNilaiIntervalLong] = useState(
-    longBrInterval || 4
+    longBrInterval || 4,
   );
   const [nilaiVolume, setNilaiVolume] = useState(volume ?? 80);
   const [nilaiLocMode, setNilaiLocMode] = useState(locMode || "time");
+  const [nilaiDisplayNameSource, setNilaiDisplayNameSource] = useState(
+    displayNameSource === "github" ? "github" : "google",
+  );
 
   // user login saat ini
   const [uidAktif, setUidAktif] = useState(userId || null);
@@ -78,6 +85,12 @@ export default function SettingsForm({
   const refSfx = useRef(null);
 
   // ---------- ambil UID login (kalau userId belum diberikan) ----------
+  useEffect(() => {
+    if (displayNameSource === "google" || displayNameSource === "github") {
+      setNilaiDisplayNameSource(displayNameSource);
+    }
+  }, [displayNameSource]);
+
   useEffect(() => {
     if (userId) {
       setUidAktif(userId);
@@ -98,7 +111,7 @@ export default function SettingsForm({
         if (uidAktif) {
           // dari Firestore: users/<uid>/preferensi
           const d = await getDoc(
-            doc(db, NAMA_KOLEKSI, uidAktif, NAMA_DOKUMEN_PREFERENSI, "app")
+            doc(db, NAMA_KOLEKSI, uidAktif, NAMA_DOKUMEN_PREFERENSI, "app"),
           );
           if (d.exists()) {
             const v = d.data() || {};
@@ -109,6 +122,9 @@ export default function SettingsForm({
             setNilaiIntervalLong(Number(v.longBrInterval ?? nilaiIntervalLong));
             setNilaiVolume(Number(v.volume ?? nilaiVolume));
             setNilaiLocMode(String(v.locMode ?? nilaiLocMode));
+            setNilaiDisplayNameSource(
+              v.displayNameSource === "github" ? "github" : "google",
+            );
           }
         } else {
           // dari localStorage
@@ -121,6 +137,9 @@ export default function SettingsForm({
             setNilaiIntervalLong(Number(v.longBrInterval ?? nilaiIntervalLong));
             setNilaiVolume(Number(v.volume ?? nilaiVolume));
             setNilaiLocMode(String(v.locMode ?? nilaiLocMode));
+            setNilaiDisplayNameSource(
+              v.displayNameSource === "github" ? "github" : "google",
+            );
           }
         }
       } catch (e) {
@@ -172,33 +191,28 @@ export default function SettingsForm({
 
     setSedangSimpan(true);
     try {
+      const preferensi = {
+        workLen: Number(nilaiWork),
+        shortBreakLen: Number(nilaiShort),
+        longBreakLen: Number(nilaiLong),
+        longBrInterval: Number(nilaiIntervalLong),
+        volume: Number(nilaiVolume),
+        locMode: String(nilaiLocMode),
+        displayNameSource: String(nilaiDisplayNameSource),
+      };
+
+      // Simpan ke localStorage juga wajib
+      localStorage.setItem("lp_preferensi_v1", JSON.stringify(preferensi));
+
       if (uidAktif) {
         // Simpan ke Firestore
         await setDoc(
           doc(db, NAMA_KOLEKSI, uidAktif, NAMA_DOKUMEN_PREFERENSI, "app"),
           {
-            workLen: Number(nilaiWork),
-            shortBreakLen: Number(nilaiShort),
-            longBreakLen: Number(nilaiLong),
-            longBrInterval: Number(nilaiIntervalLong),
-            volume: Number(nilaiVolume),
-            locMode: String(nilaiLocMode),
+            ...preferensi,
             z: Date.now(), // timestamp sederhana untuk troubleshooting
           },
-          { merge: true }
-        );
-      } else {
-        // Simpan ke localStorage
-        localStorage.setItem(
-          "lp_preferensi_v1",
-          JSON.stringify({
-            workLen: Number(nilaiWork),
-            shortBreakLen: Number(nilaiShort),
-            longBreakLen: Number(nilaiLong),
-            longBrInterval: Number(nilaiIntervalLong),
-            volume: Number(nilaiVolume),
-            locMode: String(nilaiLocMode),
-          })
+          { merge: true },
         );
       }
 
@@ -211,10 +225,11 @@ export default function SettingsForm({
       setLocMode?.(String(nilaiLocMode));
 
       setPesanSukses("Pengaturan berhasil disimpan.");
+      onDisplayNameSourceChange?.(String(nilaiDisplayNameSource));
     } catch (e) {
       console.error(e);
       setPesanError(
-        "Gagal menyimpan pengaturan. Periksa koneksi dan coba lagi."
+        "Gagal menyimpan pengaturan. Periksa koneksi dan coba lagi.",
       );
     } finally {
       setSedangSimpan(false);
@@ -261,10 +276,13 @@ export default function SettingsForm({
       refSfx.current.currentTime = 0;
       refSfx.current.volume = Math.min(
         Math.max(Number(nilaiVolume || 0) / 100, 0),
-        1
+        1,
       );
       refSfx.current.play().catch((error) => {
-        console.warn("SettingsForm: browser menolak memutar bunyi percobaan:", error);
+        console.warn(
+          "SettingsForm: browser menolak memutar bunyi percobaan:",
+          error,
+        );
       });
     } catch (e) {
       console.error(e);
@@ -350,6 +368,37 @@ export default function SettingsForm({
               <option value="weather">Cuaca</option>
             </select>
           </div>
+          <div className="Sf__group">
+            <label className="Sf__label">Nama yang ditampilkan</label>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.5rem",
+              }}
+            >
+              <label>
+                <input
+                  type="radio"
+                  name="displayNameSource"
+                  value="google"
+                  checked={nilaiDisplayNameSource === "google"}
+                  onChange={() => setNilaiDisplayNameSource("google")}
+                />{" "}
+                Gunakan nama Google
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="displayNameSource"
+                  value="github"
+                  checked={nilaiDisplayNameSource === "github"}
+                  onChange={() => setNilaiDisplayNameSource("github")}
+                />{" "}
+                Gunakan nama GitHub
+              </label>
+            </div>
+          </div>
         </div>
 
         {/* Footer Actions */}
@@ -368,20 +417,29 @@ export default function SettingsForm({
             className="Sf__btn Sf__btn--secondary"
             type="button"
             onClick={async () => {
-              try {
-                await signOut(auth);
-              } catch (error) {
-                console.error("SettingsForm: gagal logout Firebase:", error);
+              if (googleUser) {
+                try {
+                  await signOut(auth);
+                } catch (error) {
+                  console.error("SettingsForm: gagal logout Firebase:", error);
+                }
+                return;
               }
-              try {
-                logoutGitHub();
-                onLogoutGitHub?.();
-              } catch (error) {
-                console.error("SettingsForm: gagal logout GitHub:", error);
+              if (githubUser) {
+                try {
+                  logoutGitHub();
+                  onLogoutGitHub?.();
+                } catch (error) {
+                  console.error("SettingsForm: gagal logout GitHub:", error);
+                }
               }
             }}
           >
-            Log Out
+            {googleUser
+              ? "Log Out Google"
+              : githubUser
+                ? "Log Out GitHub"
+                : "Log Out"}
           </button>
         </div>
 

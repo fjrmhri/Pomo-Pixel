@@ -1,10 +1,21 @@
-const CLIENT_ID = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
-const REDIRECT_URI =
-  process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URI ||
-  (typeof window !== "undefined" ? window.location.origin : "");
+const CLIENT_ID = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || null;
+// Ensure REDIRECT_URI points to the callback endpoint
+const ENV_REDIRECT = process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URI || null;
+const REDIRECT_URI = ENV_REDIRECT
+  ? ENV_REDIRECT.endsWith("/api/github/callback")
+    ? ENV_REDIRECT
+    : `${ENV_REDIRECT.replace(/\/$/, "")}/api/github/callback`
+  : typeof window !== "undefined"
+    ? `${window.location.origin}/api/github/callback`
+    : null;
 
 if (!CLIENT_ID) {
-  throw new Error("NEXT_PUBLIC_GITHUB_CLIENT_ID tidak ditemukan");
+  // Do not throw during module import; feature will be disabled gracefully.
+  // Avoid crashing the app in environments without GitHub integration.
+  // Consumers should handle missing CLIENT_ID when invoking GitHub flows.
+  console.warn(
+    "[github] NEXT_PUBLIC_GITHUB_CLIENT_ID tidak ditemukan — fitur GitHub OAuth dinonaktifkan",
+  );
 }
 
 /**
@@ -14,20 +25,23 @@ const generateState = () => {
   const array = new Uint8Array(32);
   crypto.getRandomValues(array);
   return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(
-    ""
+    "",
   );
 };
 
-const buildAuthorizeUrl = (state) =>
-  `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
-    REDIRECT_URI
+const buildAuthorizeUrl = (state) => {
+  const redirect = REDIRECT_URI || "";
+  return `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
+    redirect,
   )}&scope=repo&state=${encodeURIComponent(state)}`;
+};
 
 /**
  * Arahkan pengguna ke halaman otorisasi GitHub.
  */
 export function redirectToGitHub() {
   try {
+    if (!CLIENT_ID) throw new Error("GitHub client id tidak tersedia");
     const state = generateState();
     if (typeof window !== "undefined") {
       sessionStorage.setItem("gh_oauth_state", state);
@@ -49,6 +63,9 @@ export function redirectToGitHub() {
  */
 export async function exchangeCodeForToken(code) {
   try {
+    if (!CLIENT_ID) {
+      throw new Error("GitHub client id tidak tersedia");
+    }
     // Verify CSRF state parameter
     if (typeof window !== "undefined") {
       const storedState = sessionStorage.getItem("gh_oauth_state");
@@ -57,7 +74,7 @@ export async function exchangeCodeForToken(code) {
 
       if (!storedState || storedState !== urlState) {
         throw new Error(
-          "Invalid state parameter - possible CSRF attack detected"
+          "Invalid state parameter - possible CSRF attack detected",
         );
       }
 
@@ -66,18 +83,21 @@ export async function exchangeCodeForToken(code) {
     }
 
     const res = await fetch(
-      `/api/github/callback?code=${encodeURIComponent(code)}`
+      `/api/github/callback?code=${encodeURIComponent(code)}`,
     );
     if (!res.ok) {
-      throw new Error("Gagal menukar kode dengan token");
+      const txt = await res.text().catch(() => "");
+      throw new Error(
+        `Gagal menukar kode dengan token (status=${res.status}): ${txt}`,
+      );
     }
     const data = await res.json();
-    if (!data.access_token) {
+    if (!data || !data.access_token) {
       throw new Error("Token tidak ditemukan pada respons");
     }
     return data.access_token;
   } catch (error) {
-    console.error("Error saat menukar kode token:", error);
+    console.error("Error saat menukar kode token:", error?.message || error);
     throw error;
   }
 }
@@ -157,4 +177,16 @@ export function logoutGitHub() {
   } catch (error) {
     console.error("Gagal logout dari GitHub:", error);
   }
+}
+
+/**
+ * Provide information about redirect URI configuration for UI checks.
+ * Returns { redirectUri, envRedirect, envProvided }
+ */
+export function getRedirectUriInfo() {
+  return {
+    redirectUri: REDIRECT_URI,
+    envRedirect: ENV_REDIRECT,
+    envProvided: Boolean(ENV_REDIRECT),
+  };
 }

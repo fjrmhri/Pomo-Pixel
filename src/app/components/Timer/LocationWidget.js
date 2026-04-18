@@ -21,7 +21,9 @@ export default function LocationWidget({ mode, className = "" }) {
   useEffect(() => {
     if (!navigator.geolocation) {
       setPermission("denied");
-      console.warn("LocationWidget: geolocation tidak tersedia pada browser ini.");
+      console.warn(
+        "LocationWidget: geolocation tidak tersedia pada browser ini.",
+      );
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -35,7 +37,7 @@ export default function LocationWidget({ mode, className = "" }) {
       (error) => {
         setPermission("denied");
         console.warn("LocationWidget: gagal mendapatkan izin lokasi:", error);
-      }
+      },
     );
   }, []);
 
@@ -52,7 +54,7 @@ export default function LocationWidget({ mode, className = "" }) {
     const controller = new AbortController();
     fetch(
       `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current_weather=true`,
-      { signal: controller.signal }
+      { signal: controller.signal },
     )
       .then((r) => r.json())
       .then((d) => setWeather(d.current_weather))
@@ -74,8 +76,8 @@ export default function LocationWidget({ mode, className = "" }) {
         {mode === "time"
           ? clock.toLocaleTimeString()
           : weather
-          ? `${weather.temperature}°C`
-          : "Loading..."}
+            ? `${weather.temperature}°C`
+            : "Loading..."}
       </div>
     </div>
   );

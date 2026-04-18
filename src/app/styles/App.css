@@ -3,7 +3,7 @@
 }
 
 body {
-  font-family: 'Monocraft', sans-serif;
+  font-family: "Monocraft", sans-serif;
   background: url("../images/waterfall.jpg") center center fixed;
   background-size: cover;
   overflow: hidden;
@@ -13,7 +13,7 @@ body {
 
 @font-face {
   font-family: "Monocraft";
-  src: url('../fonts/Monocraft.otf') format("opentype");
+  src: url("../fonts/Monocraft.otf") format("opentype");
   font-weight: normal;
   font-style: normal;
 }
