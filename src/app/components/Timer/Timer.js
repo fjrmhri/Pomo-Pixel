@@ -355,6 +355,7 @@ export default function Timer({
     volume,
     gantiPeriode,
     getDurasiPeriodeDetik,
+    userInteracted,
   ]);
 
   useEffect(() => {

@@ -80,12 +80,12 @@ function SettingsForm({
           );
           if (d.exists()) {
             const v = d.data() || {};
-            setNilaiWork(Number(v.workLen ?? nilaiWork));
-            setNilaiShort(Number(v.shortBreakLen ?? nilaiShort));
-            setNilaiLong(Number(v.longBreakLen ?? nilaiLong));
-            setNilaiIntervalLong(Number(v.longBrInterval ?? nilaiIntervalLong));
-            setNilaiVolume(Number(v.volume ?? nilaiVolume));
-            setNilaiLocMode(String(v.locMode ?? nilaiLocMode));
+            setNilaiWork(Number(v.workLen ?? 25));
+            setNilaiShort(Number(v.shortBreakLen ?? 5));
+            setNilaiLong(Number(v.longBreakLen ?? 15));
+            setNilaiIntervalLong(Number(v.longBrInterval ?? 4));
+            setNilaiVolume(Number(v.volume ?? 80));
+            setNilaiLocMode(String(v.locMode ?? "time"));
             setNilaiDisplayNameSource(
               v.displayNameSource === "github" ? "github" : "google",
             );
@@ -94,12 +94,12 @@ function SettingsForm({
           const raw = localStorage.getItem("lp_preferensi_v1");
           if (raw) {
             const v = JSON.parse(raw);
-            setNilaiWork(Number(v.workLen ?? nilaiWork));
-            setNilaiShort(Number(v.shortBreakLen ?? nilaiShort));
-            setNilaiLong(Number(v.longBreakLen ?? nilaiLong));
-            setNilaiIntervalLong(Number(v.longBrInterval ?? nilaiIntervalLong));
-            setNilaiVolume(Number(v.volume ?? nilaiVolume));
-            setNilaiLocMode(String(v.locMode ?? nilaiLocMode));
+            setNilaiWork(Number(v.workLen ?? 25));
+            setNilaiShort(Number(v.shortBreakLen ?? 5));
+            setNilaiLong(Number(v.longBreakLen ?? 15));
+            setNilaiIntervalLong(Number(v.longBrInterval ?? 4));
+            setNilaiVolume(Number(v.volume ?? 80));
+            setNilaiLocMode(String(v.locMode ?? "time"));
             setNilaiDisplayNameSource(
               v.displayNameSource === "github" ? "github" : "google",
             );
