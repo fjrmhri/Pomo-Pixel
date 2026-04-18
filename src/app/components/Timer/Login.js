@@ -5,7 +5,7 @@ import { signInWithPopup } from "firebase/auth";
 import { auth, db, googleProvider } from "../../firebase";
 import { redirectToGitHub, getRedirectUriInfo } from "../../github";
 
-function Login({ googleUser, githubUser }) {
+function Login({ googleUser, githubUser, showSuccessMessage = false }) {
   const [sedangMemuat, setSedangMemuat] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -62,6 +62,28 @@ function Login({ googleUser, githubUser }) {
     (googleUser &&
       (googleUser.displayName || googleUser.email || "Pengguna")) ||
     (githubUser && (githubUser.name || githubUser.login));
+
+  if (showSuccessMessage) {
+    return (
+      <div className="pixel-card pixel-card--borderless w-full h-full overflow-y-auto max-w-md mx-auto p-6">
+        <div className="Sf__section-title">Login</div>
+        <div
+          className="text-sm text-center"
+          style={{ color: "var(--overlay-foreground)" }}
+        >
+          Login successful
+        </div>
+        {namaTerhubung && (
+          <div
+            className="text-xs text-center mt-2"
+            style={{ color: "var(--overlay-foreground)" }}
+          >
+            Logged in as: {namaTerhubung}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   // If both providers are connected, no need to show login menu
   if (googleUser && githubUser) {

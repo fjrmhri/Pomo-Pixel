@@ -54,10 +54,7 @@ export default function Wallpaper({
     return src;
   }, [src]);
 
-  const bypassOptimization = useMemo(
-    () => /\.gif$/i.test(sumberFinal),
-    [sumberFinal],
-  );
+  const bypassOptimization = useMemo(() => /\.gif$/i.test(sumberFinal), [sumberFinal]);
 
   const [gagal, setGagal] = useState(false);
   const [siap, setSiap] = useState(false);
@@ -66,17 +63,6 @@ export default function Wallpaper({
   useEffect(() => {
     setGagal(false);
     setSiap(false);
-  }, [sumberFinal]);
-
-  // Preload gambar agar browser cache lebih cepat saat switch wallpaper
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const preloader = new window.Image();
-    preloader.src = sumberFinal;
-    return () => {
-      preloader.onload = null;
-      preloader.onerror = null;
-    };
   }, [sumberFinal]);
 
   const tanganiLoad = () => {
@@ -114,11 +100,11 @@ export default function Wallpaper({
           src={sumberFinal}
           alt={alt}
           fill
-          // Ukuran responsif supaya Next optimalkan pemuatan
           sizes="100vw"
           priority={prioritas}
+          quality={bypassOptimization ? undefined : 75}
           unoptimized={bypassOptimization}
-          // Kelas untuk object-fit cover + efek fade-in
+          placeholder="empty"
           className={[
             "Wallpaper__img",
             siap ? "Wallpaper__img--tampil" : "Wallpaper__img--loading",

@@ -1,12 +1,13 @@
 /* Wrapper utama: full-screen, berada di belakang konten */
 .Wallpaper {
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: 0; /* Konten lain bisa diberi z-index > 0 untuk berada di atas */
   pointer-events: none; /* Wallpaper tidak menghalangi interaksi UI di atasnya */
   overflow: hidden;
   background: #000; /* Backdrop warna gelap saat gambar belum tampil */
   filter: brightness(var(--kecerahan, 1));
+  contain: layout paint style;
 }
 
 /* Gambar latar belakang full-cover */
@@ -14,7 +15,7 @@
   object-fit: cover;
   transition: opacity 300ms ease;
   opacity: 0;
-  /* Pastikan elemen img memenuhi parent yang pos:relative + fill */
+  will-change: opacity;
 }
 
 /* Fade-in saat gambar siap ditampilkan */

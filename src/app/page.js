@@ -13,19 +13,17 @@
  */
 
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { User } from "lucide-react";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, increment, setDoc } from "firebase/firestore";
 import Dashboard from "./components/Timer/Dashboard";
 import Timer from "./components/Timer/Timer";
-import UserStatistics from "./components/Timer/UserStatistics";
 import Modal from "./components/Timer/Modal";
 import SettingsForm from "./components/Timer/SettingsForm";
 import LoginRegisterForm from "./components/Timer/LoginRegisterForm";
-import GithubStats from "./components/Timer/GithubStats";
 import LocationWidget from "./components/Timer/LocationWidget";
-import MusicPlayer from "./components/Music/MusicPlayer";
 import Wallpaper from "./components/Music/Wallpaper";
 import {
   exchangeCodeForToken,
@@ -117,6 +115,19 @@ const safeParseJSON = (value, fallback, context) => {
 
 const buildWallpaperSrc = (fileName) => `/images/${fileName}`;
 
+const MusicPlayer = dynamic(() => import("./components/Music/MusicPlayer"), {
+  ssr: false,
+});
+
+const UserStatistics = dynamic(
+  () => import("./components/Timer/UserStatistics"),
+  { ssr: false },
+);
+
+const GithubStats = dynamic(() => import("./components/Timer/GithubStats"), {
+  ssr: false,
+});
+
 export default function Page() {
   /* ===================================================================
    *  1) Status Login Firebase & GitHub
@@ -129,7 +140,6 @@ export default function Page() {
   const [githubUser, setGithubUser] = useState(null);
   const [githubEvents, setGithubEvents] = useState([]);
   const [displayNameSource, setDisplayNameSource] = useState("google");
-  const loginStateRef = useRef(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -168,16 +178,6 @@ export default function Page() {
     });
     return () => unsub();
   }, []);
-
-  useEffect(() => {
-    const logged = Boolean(googleUser || githubUser);
-    const wasLogged = loginStateRef.current;
-    loginStateRef.current = logged;
-
-    if (loginOpen && logged && !wasLogged) {
-      setLoginOpen(false);
-    }
-  }, [githubUser, googleUser, loginOpen]);
 
   const displayName = useMemo(() => {
     const googleName =
@@ -533,20 +533,22 @@ export default function Page() {
         <LocationWidget mode={pengaturanTimer.locMode} />
 
         {/* githubstats */}
-        <button
-          className="Db__ikonbtn"
-          onClick={() => setBukaGithubStats((prev) => !prev)}
-          aria-label="github stats"
-        >
-          <Image
-            src="/images/github.png"
-            alt="ikon github"
-            width={24}
-            height={24}
-            className="Db__ikonimg Db__ikonimg--github"
-            priority
-          />
-        </button>
+        {githubUser ? (
+          <button
+            className="Db__ikonbtn"
+            onClick={() => setBukaGithubStats((prev) => !prev)}
+            aria-label="github stats"
+          >
+            <Image
+              src="/images/github.png"
+              alt="ikon github"
+              width={24}
+              height={24}
+              className="Db__ikonimg Db__ikonimg--github"
+              priority
+            />
+          </button>
+        ) : null}
 
         {/* statistik */}
         <button
@@ -619,13 +621,15 @@ export default function Page() {
         tutup={() => setBukaStatistik(false)}
         lebar="lg"
       >
-        <UserStatistics
-          loggedIn={infoLogin.loggedIn}
-          userId={infoLogin.userId}
-          totalTime={statRingkas.totalTime}
-          timeStudied={statRingkas.timeStudied}
-          timeOnBreak={statRingkas.timeOnBreak}
-        />
+        {bukaStatistik ? (
+          <UserStatistics
+            loggedIn={infoLogin.loggedIn}
+            userId={infoLogin.userId}
+            totalTime={statRingkas.totalTime}
+            timeStudied={statRingkas.timeStudied}
+            timeOnBreak={statRingkas.timeOnBreak}
+          />
+        ) : null}
       </Modal>
 
       {/* Music Player */}
@@ -685,7 +689,11 @@ export default function Page() {
 
       {/* Modal login/register */}
       <Modal buka={loginOpen} tutup={() => setLoginOpen(false)} lebar="lg">
-        <LoginRegisterForm googleUser={googleUser} githubUser={githubUser} />
+        <LoginRegisterForm
+          googleUser={googleUser}
+          githubUser={githubUser}
+          onClose={() => setLoginOpen(false)}
+        />
       </Modal>
 
       {/* GitHub Stats Modal */}
@@ -694,10 +702,12 @@ export default function Page() {
         tutup={() => setBukaGithubStats(false)}
         lebar="lg"
       >
-        <GithubStats
-          githubUser={infoLogin.githubUser}
-          githubEvents={infoLogin.githubEvents}
-        />
+        {bukaGithubStats && githubUser ? (
+          <GithubStats
+            githubUser={infoLogin.githubUser}
+            githubEvents={infoLogin.githubEvents}
+          />
+        ) : null}
       </Modal>
     </main>
   );

@@ -60,6 +60,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
   const refAudio = useRef(null);
   const refSfx = useRef(null); // efek klik singkat (bukan ambient loop)
   const refHandleBerikut = useRef(() => {});
+  const refSfxTimeout = useRef(null);
 
   const [daftarLagu] = useState(() => bangunDaftarLagu());
   const [genreTerpilih, setGenreTerpilih] = useState(SEMUA);
@@ -83,6 +84,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
   const [acakAktif, setAcakAktif] = useState(false);
   const [ulangAktif, setUlangAktif] = useState(false);
   const [pesanKesalahan, setPesanKesalahan] = useState("");
+  const [audioSiap, setAudioSiap] = useState(false);
 
   // ---------- Persist beberapa setelan ke localStorage ----------
   useEffect(() => {
@@ -191,25 +193,34 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
   // ---------- Kontrol dasar ----------
   const mainkanSfxSingkat = useCallback((durasiMs = 280) => {
     const el = refSfx.current;
-    if (!el) return;
+    if (!el || !audioSiap) return;
     try {
+      if (refSfxTimeout.current) {
+        clearTimeout(refSfxTimeout.current);
+      }
       el.currentTime = 0;
       el.volume = 0.35; // jangan terlalu keras
       el.play().then(() => {
-        setTimeout(() => {
+        refSfxTimeout.current = setTimeout(() => {
           try {
             el.pause();
           } catch {}
+          refSfxTimeout.current = null;
         }, durasiMs);
       });
     } catch {}
-  }, []);
+  }, [audioSiap]);
 
   const handleToggleMain = useCallback(() => {
     const el = refAudio.current;
     if (!el) return;
 
     setPesanKesalahan("");
+    if (!audioSiap) {
+      setAudioSiap(true);
+      setSedangMain(true);
+      return;
+    }
 
     if (sedangMain) {
       el.pause();
@@ -317,6 +328,9 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
 
       if (ev.code === "Space") {
         ev.preventDefault();
+        if (!audioSiap) {
+          setAudioSiap(true);
+        }
         handleToggleMain();
       } else if (ev.code === "ArrowRight") {
         ev.preventDefault();
@@ -328,7 +342,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [handleToggleMain, handleBerikut, handleSebelumnya, sedangMain]);
+  }, [audioSiap, handleToggleMain, handleBerikut, handleSebelumnya]);
 
   // ---------- Audio recovery after sleep/freeze ----------
   useEffect(() => {
@@ -357,6 +371,30 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, [sedangMain]);
 
+  useEffect(() => {
+    if (audioSiap) return;
+    const aktifkanAudio = () => setAudioSiap(true);
+    const events = ["pointerdown", "keydown", "touchstart"];
+    events.forEach((eventName) =>
+      window.addEventListener(eventName, aktifkanAudio, { once: true, passive: true }),
+    );
+    return () => {
+      events.forEach((eventName) =>
+        window.removeEventListener(eventName, aktifkanAudio),
+      );
+    };
+  }, [audioSiap]);
+
+  useEffect(() => {
+    return () => {
+      if (refSfxTimeout.current) {
+        clearTimeout(refSfxTimeout.current);
+      }
+      refAudio.current?.pause();
+      refSfx.current?.pause();
+    };
+  }, []);
+
   // Progress (0..100)
   const progressPersen = useMemo(() => {
     if (!durasiDetik || durasiDetik <= 0) return 0;
@@ -375,13 +413,17 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
       {/* Elemen audio utama */}
       <audio
         ref={refAudio}
-        src={laguSaatIni?.url}
-        preload="metadata"
+        src={audioSiap ? laguSaatIni?.url : undefined}
+        preload="none"
         aria-label="Pemutar musik"
       />
 
       {/* SFX singkat (diambil dari /public/effects). BUKAN ambient loop. */}
-      <audio ref={refSfx} src="/effects/keyboard.mp3" preload="auto" />
+      <audio
+        ref={refSfx}
+        src={audioSiap ? "/effects/keyboard.mp3" : undefined}
+        preload="none"
+      />
 
       <div className="Mp">
         {/* Judul & info lagu */}

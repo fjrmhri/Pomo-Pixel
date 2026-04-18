@@ -301,11 +301,8 @@ export default function Timer({
           1,
         );
         if (userInteracted) {
-          // Play returns a Promise; handle rejection to avoid uncaught NotAllowedError
           refAudio.current.play().catch((err) => {
-            // NotAllowedError commonly occurs when play() is attempted before a user gesture.
-            // Log at debug level but don't throw so runtime overlay doesn't trigger.
-            console.debug("Audio play prevented or failed:", err?.name || err);
+            void err;
           });
         }
       }
@@ -394,11 +391,14 @@ export default function Timer({
   }, [berjalan, mulai, jeda, reset, resetPosisi, userInteracted]);
 
   useEffect(() => {
+    if (userInteracted) return;
     const events = ["mousedown", "touchstart"];
     const handler = () => {
-      if (!userInteracted) setUserInteracted(true);
+      setUserInteracted(true);
     };
-    events.forEach((evt) => document.addEventListener(evt, handler));
+    events.forEach((evt) =>
+      document.addEventListener(evt, handler, { once: true, passive: true }),
+    );
     return () => {
       events.forEach((evt) => document.removeEventListener(evt, handler));
     };
@@ -490,8 +490,8 @@ export default function Timer({
     >
       <audio
         ref={refAudio}
-        src="/sounds/minecraft_level_up.mp3"
-        preload="auto"
+        src={userInteracted ? "/sounds/minecraft_level_up.mp3" : undefined}
+        preload="none"
         aria-hidden
       />
 
