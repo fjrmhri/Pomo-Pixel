@@ -39,13 +39,19 @@ function Login({ googleUser, githubUser }) {
   const handleLoginGitHub = () => {
     try {
       const info = getRedirectUriInfo();
-      if (!info.envProvided) {
+      if (!info.clientIdProvided) {
         setErrorMessage(
-          "Environment NEXT_PUBLIC_GITHUB_REDIRECT_URI belum disetel; GitHub OAuth dinonaktifkan.",
+          "Environment NEXT_PUBLIC_GITHUB_CLIENT_ID belum disetel; GitHub OAuth dinonaktifkan.",
+        );
+        console.warn(
+          "[Login] NEXT_PUBLIC_GITHUB_CLIENT_ID tidak ditemukan saat login GitHub dipicu",
         );
         return;
       }
-      redirectToGitHub();
+      const started = redirectToGitHub();
+      if (!started) {
+        setErrorMessage("Gagal memulai otentikasi GitHub");
+      }
     } catch (e) {
       setErrorMessage("Gagal memulai otentikasi GitHub");
       console.error(e);
@@ -120,7 +126,6 @@ function Login({ googleUser, githubUser }) {
                     type="button"
                     onClick={handleLoginGitHub}
                     className="Sf__btn Sf__btn--secondary w-full mt-2"
-                    disabled={!info.envProvided}
                   >
                     <span
                       style={{
@@ -139,10 +144,16 @@ function Login({ googleUser, githubUser }) {
                       Login with GitHub
                     </span>
                   </button>
-                  {!info.envProvided && (
+                  {!info.clientIdProvided && (
                     <div className="text-xs text-center text-yellow-400 mt-2">
-                      NEXT_PUBLIC_GITHUB_REDIRECT_URI belum disetel; OAuth akan
-                      gagal.
+                      NEXT_PUBLIC_GITHUB_CLIENT_ID belum disetel; OAuth akan
+                      dinonaktifkan.
+                    </div>
+                  )}
+                  {info.usingFallbackRedirect && (
+                    <div className="text-xs text-center text-yellow-400 mt-2">
+                      NEXT_PUBLIC_GITHUB_REDIRECT_URI belum disetel; memakai
+                      fallback redirect otomatis.
                     </div>
                   )}
                 </>

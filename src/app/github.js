@@ -38,19 +38,27 @@ const buildAuthorizeUrl = (state) => {
  * Arahkan pengguna ke halaman otorisasi GitHub.
  */
 export function redirectToGitHub() {
+  if (!CLIENT_ID) {
+    console.warn(
+      "[github] NEXT_PUBLIC_GITHUB_CLIENT_ID tidak ditemukan — redirect GitHub dibatalkan",
+    );
+    return false;
+  }
+
+  if (typeof window === "undefined") {
+    console.warn("[github] Window tidak tersedia — redirect GitHub dibatalkan");
+    return false;
+  }
+
   try {
-    if (!CLIENT_ID) throw new Error("GitHub client id tidak tersedia");
     const state = generateState();
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem("gh_oauth_state", state);
-    }
+    sessionStorage.setItem("gh_oauth_state", state);
     const url = buildAuthorizeUrl(state);
-    if (typeof window === "undefined") {
-      throw new Error("Window tidak tersedia");
-    }
     window.location.href = url;
+    return true;
   } catch (error) {
     console.error("Gagal mengarahkan ke GitHub:", error);
+    return false;
   }
 }
 
@@ -186,5 +194,7 @@ export function getRedirectUriInfo() {
     redirectUri: REDIRECT_URI,
     envRedirect: ENV_REDIRECT,
     envProvided: Boolean(ENV_REDIRECT),
+    clientIdProvided: Boolean(CLIENT_ID),
+    usingFallbackRedirect: !ENV_REDIRECT && Boolean(REDIRECT_URI),
   };
 }

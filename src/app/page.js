@@ -14,6 +14,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { User } from "lucide-react";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, increment, setDoc } from "firebase/firestore";
 import Dashboard from "./components/Timer/Dashboard";
@@ -579,15 +580,12 @@ export default function Page() {
         </button>
         {/* akun */}
         {!(googleUser && githubUser) && (
-          <button className="account-button" onClick={() => setLoginOpen(true)}>
-            <Image
-              src="/images/login.png"
-              alt="ikon login"
-              width={20}
-              height={20}
-              className="account-icon"
-              priority
-            />
+          <button
+            className="account-button"
+            onClick={() => setLoginOpen(true)}
+            aria-label="login"
+          >
+            <User size={20} color="#ffffff" strokeWidth={2.25} />
           </button>
         )}
         <div className="Db__status">
