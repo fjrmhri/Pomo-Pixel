@@ -7,24 +7,28 @@ import "../../styles/SettingsForm.css";
  */
 function LoginRegisterForm({ googleUser, githubUser, onClose }) {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const prevLoggedInRef = useRef(false);
+  const prevBothConnectedRef = useRef(false);
 
   useEffect(() => {
-    const isLoggedIn = Boolean(googleUser || githubUser);
-    const wasLoggedIn = prevLoggedInRef.current;
+    const bothConnected = Boolean(googleUser && githubUser);
+    const wasBothConnected = prevBothConnectedRef.current;
 
-    if (isLoggedIn && !wasLoggedIn) {
+    if (bothConnected && !wasBothConnected) {
       setShowSuccessMessage(true);
       const timeoutId = setTimeout(() => {
         setShowSuccessMessage(false);
         onClose?.();
       }, 1200);
-      prevLoggedInRef.current = isLoggedIn;
+      prevBothConnectedRef.current = bothConnected;
       return () => clearTimeout(timeoutId);
     }
 
-    prevLoggedInRef.current = isLoggedIn;
-  }, [githubUser, googleUser, onClose]);
+    if (!bothConnected && showSuccessMessage) {
+      setShowSuccessMessage(false);
+    }
+
+    prevBothConnectedRef.current = bothConnected;
+  }, [githubUser, googleUser, onClose, showSuccessMessage]);
 
   // If both providers connected, nothing to show (per spec)
   if (googleUser && githubUser && !showSuccessMessage) return null;
