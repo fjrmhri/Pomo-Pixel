@@ -570,7 +570,7 @@ export default function Timer({
         </div>
 
         <footer className="Tm__footer">
-          <span>"Space: mulai/jeda • R: reset • X: reset posisi"</span>
+          <span>{'"Space: mulai/jeda • R: reset • X: reset posisi"'}</span>
         </footer>
       </section>
     </div>
