@@ -1,40 +1,29 @@
-/* =======================================================================
-   Music Player - Tema Pixel + Modern + Compact + Responsif (versi kecil)
-   Prefix class: Mp__
-   ======================================================================= */
+/* Music Player - Tema Pixel + Modern + Compact + Responsif */
 
-/* ===== Bungkus utama ===== */
 .Mp__bungkus {
   position: fixed;
   left: 50%;
   bottom: 10px;
   transform: translateX(-50%);
   z-index: 30;
-  width: min(90vw, 640px); /* lebih kecil sedikit */
+  width: min(90vw, 640px);
   pointer-events: none;
 }
 
-/* ===== Kartu utama ===== */
 .Mp {
   pointer-events: auto;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  /* Use same transparent style as Timer */
   background: rgba(10, 10, 10, 0.75);
   color: var(--overlay-foreground);
-  /* Use 2-layer menu border like other menus */
   border: 2px solid #fff;
-  box-shadow:
-    0 0 0 2px #000,
-    0 0 0 2px #fff; /* reduced to 2-layer */
-  border-radius: 6px; /* match menu rounding */
+  border-radius: 0;
   padding: 6px 10px;
   font-family: "Monocraft", monospace;
   max-width: 100%;
   box-sizing: border-box;
 }
 
-/* ===== Info lagu ===== */
 .Mp__info {
   display: flex;
   align-items: center;
@@ -44,7 +33,7 @@
 }
 
 .Mp__judul {
-  font-size: 13px; /* turun 1px */
+  font-size: 13px;
   font-weight: 700;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -54,30 +43,28 @@
 
 .Mp__genre {
   opacity: 0.8;
-  font-size: 10px; /* lebih kecil */
+  font-size: 10px;
 }
 
-/* ===== Progress bar + waktu ===== */
 .Mp__progress {
   display: grid;
   grid-template-columns: 36px 1fr 36px;
   gap: 5px;
   align-items: center;
   margin-bottom: 6px;
-  border: 0; /* remove extra border layering */
+  border: 0;
 }
 
 .Mp__waktu {
-  font-size: 9px; /* lebih kecil */
+  font-size: 9px;
   text-align: center;
   color: #cbd5e1;
 }
 
-/* ===== Slider umum ===== */
 .Mp__slider {
   appearance: none;
   width: 100%;
-  height: 5px; /* lebih kecil */
+  height: 5px;
   background: #111827;
   border: 2px solid #fff;
   box-shadow: inset 0 0 0 2px #000;
@@ -85,20 +72,17 @@
   cursor: pointer;
 }
 
-/* Slider volume perlu fleksibel agar memanjang */
 .Mp__slider--volume {
   flex: 1;
 }
 
 .Mp__slider::-webkit-slider-thumb {
   appearance: none;
-  width: 10px; /* lebih kecil */
+  width: 10px;
   height: 10px;
   background: #22d3ee;
   border: 2px solid #000;
-  box-shadow:
-    0 0 0 2px #fff,
-    0 0 0 3px #000;
+  box-shadow: 0 0 0 2px #fff;
   margin-top: -4px;
 }
 
@@ -107,12 +91,9 @@
   height: 10px;
   background: #22d3ee;
   border: 2px solid #000;
-  box-shadow:
-    0 0 0 2px #fff,
-    0 0 0 3px #000;
+  box-shadow: 0 0 0 2px #fff;
 }
 
-/* ===== Tombol utama ===== */
 .Mp__kontrol {
   display: flex;
   justify-content: center;
@@ -127,7 +108,7 @@
   color: #111827;
   background: #22d3ee;
   border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff; /* single outer white layer to match menu */
+  box-shadow: 0 0 0 2px #fff;
   padding: 4px 6px;
   border-radius: 0;
   cursor: pointer;
@@ -146,12 +127,11 @@
   background: #fbbf24;
 }
 
-/* ===== Opsi tambahan ===== */
 .Mp__opsi {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8px; /* lebih kecil */
+  gap: 8px;
   margin-top: 2px;
 }
 
@@ -171,28 +151,26 @@
 
 .Mp__wallpaper-btn {
   font-family: "Monocraft", monospace;
-  font-size: 10px; /* lebih kecil */
+  font-size: 10px;
   color: #111827;
   background: #a78bfa;
   border: 2px solid #000;
-  box-shadow:
-    0 0 0 2px #fff,
-    0 0 0 3px #000;
+  box-shadow: 0 0 0 2px #fff;
   padding: 3px 5px;
   cursor: pointer;
   white-space: nowrap;
-  width: 12ch; /* lebar tambahan agar teks 'background' muat */
+  width: 12ch;
   text-align: center;
 }
 
 .Mp__label {
-  font-size: 10px; /* lebih kecil */
+  font-size: 10px;
   color: #cbd5e1;
 }
 
 .Mp__select {
   font-family: "Monocraft", monospace;
-  font-size: 10px; /* lebih kecil */
+  font-size: 10px;
   background: #111827;
   color: #e5e7eb;
   border: 2px solid #fff;
@@ -206,7 +184,7 @@
   color: #111827;
   background: #a78bfa;
   border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff; /* simplified */
+  box-shadow: 0 0 0 2px #fff;
   padding: 3px 5px;
   cursor: pointer;
   transition: background 0.15s ease;
@@ -216,21 +194,19 @@
   background: #fb7185;
 }
 
-/* ===== Error toast ===== */
 .Mp__error {
   margin-top: 4px;
   background: #b91c1c;
   color: #fff;
   border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff; /* simplified */
+  box-shadow: 0 0 0 2px #fff;
   padding: 4px 6px;
   font-size: 9px;
 }
 
-/* ===== Responsif ===== */
 @media (max-width: 768px) {
   .Mp__bungkus {
-    width: min(94vw, 560px); /* lebih kecil */
+    width: min(94vw, 560px);
     bottom: 8px;
   }
 

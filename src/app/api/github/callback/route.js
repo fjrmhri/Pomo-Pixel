@@ -9,19 +9,9 @@ export async function GET(request) {
   try {
     // Compute redirect_uri: prefer env if provided, otherwise derive from request
     const envRedirect = process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URI || null;
-    let redirect_uri;
-    if (envRedirect) {
-      redirect_uri = envRedirect.endsWith("/api/github/callback")
-        ? envRedirect
-        : `${envRedirect.replace(/\/$/, "")}/api/github/callback`;
-    } else {
-      const proto =
-        request.headers.get("x-forwarded-proto") ||
-        request.headers.get("x-forwarded-protocol") ||
-        "http";
-      const host = request.headers.get("host");
-      redirect_uri = `${proto}://${host}/api/github/callback`;
-    }
+    const redirect_uri =
+      envRedirect ||
+      `${request.headers.get("x-forwarded-proto") || "http"}://${request.headers.get("host")}/api/github/callback`;
 
     const response = await fetch(
       "https://github.com/login/oauth/access_token",

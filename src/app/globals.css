@@ -147,16 +147,12 @@ textarea {
 
 .pixel-card {
   background: transparent;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  color: var(--overlay-foreground);
-  border: 2px solid #fff;
-  box-shadow:
-    0 0 0 2px #000,
-    0 0 0 4px #fff;
-  border-radius: 6px;
+  border: none;
+  box-shadow: none;
+  border-radius: none;
 }
 .pixel-card--borderless {
+  background: transparent;
   border: none;
   box-shadow: none;
 }
@@ -247,6 +243,12 @@ textarea {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.account-icon {
+  filter: brightness(0) invert(1);
+  width: 24px;
+  height: 24px;
 }
 
 /* Mobile (≤640px): stacked center */

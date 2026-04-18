@@ -1,61 +1,52 @@
-/* Wadah utama SettingsForm */
 .Sf {
   width: 100%;
   height: 100%;
   max-height: 100%;
-  overflow-y: auto; /* Pastikan isi tidak terpotong */
+  overflow-y: auto;
   font-family: var(--font-pixel);
   color: var(--overlay-foreground);
   margin: 0;
   padding: 16px;
   border-radius: 6px;
-  /* make settings background fully transparent (no color) */
-  background: transparent;
+  background: rgba(10, 10, 10, 0);
 }
 
-/* Judul section SettingsForm */
 .Sf__section-title {
-  font-size: 1.25rem; /* Ukuran font lebih kecil */
+  font-size: 1.25rem;
   font-weight: bold;
-  margin-bottom: 16px; /* Spasi lebih kecil */
+  margin-bottom: 16px;
   text-align: center;
 }
 
-/* Grid layout untuk input fields */
 .Sf__grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px; /* Gap lebih kecil */
-  margin-bottom: 16px; /* Margin lebih kecil */
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
-/* Group untuk setiap input */
 .Sf__group {
   display: flex;
   flex-direction: column;
-  gap: 6px; /* Gap lebih kecil */
+  gap: 6px;
 }
 
-/* Label input */
 .Sf__label {
-  font-size: 12px; /* Ukuran font lebih kecil */
+  font-size: 12px;
   font-weight: 500;
   color: var(--overlay-foreground);
 }
 
-/* Input number dan range */
 .Sf__number,
 .Sf__range,
 .Sf__select {
   width: 100%;
-  height: 32px; /* Ukuran lebih kecil */
-  padding: 6px; /* Padding lebih kecil */
+  height: 32px;
+  padding: 6px;
   border-radius: 0;
   background: var(--overlay-background);
   border: 2px solid #000;
-  box-shadow:
-    0 0 0 2px #fff,
-    0 0 0 4px #000;
+  box-shadow: 0 0 0 2px #fff;
   color: var(--overlay-foreground);
   font-size: 14px;
   font-family: var(--font-pixel);
@@ -75,7 +66,7 @@
 }
 
 .Sf__range {
-  height: 8px; /* Slider lebih kecil */
+  height: 8px;
   margin: 0;
 }
 
@@ -92,28 +83,24 @@
   border-radius: 0;
   border: none;
   box-shadow: none;
-  width: 14px; /* Ukuran thumb lebih kecil */
+  width: 14px;
   height: 14px;
 }
 
-/* Tombol dan aksi */
 .Sf__actions {
   display: flex;
   justify-content: center;
-  gap: 12px; /* Jarak tombol sedikit lebih lebar */
-  margin-top: 16px; /* Margin lebih kecil */
+  gap: 12px;
+  margin-top: 16px;
 }
 
-/* Tombol utama */
 .Sf__btn {
   font-family: var(--font-pixel, "Monocraft", monospace);
   font-size: 12px;
   color: #111827;
   background: #cbd5e1;
   border: 2px solid #000;
-  box-shadow:
-    0 0 0 2px #fff,
-    0 0 0 4px #000;
+  box-shadow: 0 0 0 2px #fff;
   border-radius: 0;
   padding: 5px 10px;
   cursor: pointer;
@@ -121,12 +108,20 @@
 }
 
 .Sf__btn:hover {
-  transform: translateY(-2px); /* Efek hover tombol */
-  background: var(--aksen-violet); /* Perubahan warna saat hover */
+  transform: translateY(-2px);
+  background: var(--aksen-violet);
 }
 
 .Sf__btn--primary {
   background: var(--aksen-violet);
+}
+
+.Sf__btn--secondary {
+  background: #fca5a5;
+}
+
+.Sf__btn--danger {
+  background: #fca5a5;
 }
 
 .Sf__btn:disabled {
@@ -134,7 +129,6 @@
   cursor: not-allowed;
 }
 
-/* Pesan error dan sukses */
 .Sf__error {
   font-size: 12px;
   color: #ff4d4d;
@@ -144,7 +138,7 @@
   border: none;
   box-shadow: none;
   text-align: center;
-  margin-top: 8px; /* Margin lebih kecil */
+  margin-top: 8px;
 }
 
 .Sf__success {
@@ -156,10 +150,9 @@
   border: none;
   box-shadow: none;
   text-align: center;
-  margin-top: 8px; /* Margin lebih kecil */
+  margin-top: 8px;
 }
 
-/* Responsif untuk layar kecil */
 @media (max-width: 768px) {
   .Sf__grid {
     grid-template-columns: 1fr;
@@ -171,6 +164,6 @@
   }
 
   .Sf__btn {
-    width: 100%; /* Tombol akan mengisi lebar penuh di layar kecil */
+    width: 100%;
   }
 }

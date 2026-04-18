@@ -1,13 +1,11 @@
 const CLIENT_ID = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || null;
 // Ensure REDIRECT_URI points to the callback endpoint
 const ENV_REDIRECT = process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URI || null;
-const REDIRECT_URI = ENV_REDIRECT
-  ? ENV_REDIRECT.endsWith("/api/github/callback")
-    ? ENV_REDIRECT
-    : `${ENV_REDIRECT.replace(/\/$/, "")}/api/github/callback`
-  : typeof window !== "undefined"
+const REDIRECT_URI =
+  ENV_REDIRECT ||
+  (typeof window !== "undefined"
     ? `${window.location.origin}/api/github/callback`
-    : null;
+    : null);
 
 if (!CLIENT_ID) {
   // Do not throw during module import; feature will be disabled gracefully.

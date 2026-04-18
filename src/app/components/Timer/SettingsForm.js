@@ -2,70 +2,40 @@ import React from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
 import { logoutGitHub } from "../../github";
+import { useEffect, useRef, useState } from "react";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
-function SettingsForm({ googleUser, githubUser }) {
-  const handleLogoutGoogle = async () => {
-    try {
-      await signOut(auth);
-    } catch (e) {
-      console.error("Error signing out:", e);
-    }
-  };
+const NAMA_KOLEKSI = "users";
+const NAMA_DOKUMEN_PREFERENSI = "preferensi";
 
-  const handleLogoutGitHub = () => {
-    try {
-      logoutGitHub();
-    } catch (e) {
-      console.error("Error logging out GitHub:", e);
-    }
-  };
-
-  return (
-    <div className="pixel-card p-4 max-w-md mx-auto">
-      <h3 className="Sf__section-title">Pengaturan</h3>
-      <div className="mt-3">
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <div>Google</div>
-            <div>
-              {googleUser ? (
-                <button onClick={handleLogoutGoogle} className="Sf__btn Sf__btn--danger">
-                  Logout Google
-                </button>
-              ) : (
-                <div className="text-xs">Not connected</div>
-              )}
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div>GitHub</div>
-            <div>
-              {githubUser ? (
-                <button onClick={handleLogoutGitHub} className="Sf__btn Sf__btn--danger">
-                  Logout GitHub
-                </button>
-              ) : (
-                <div className="text-xs">Not connected</div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default SettingsForm;
+function SettingsForm({
+  workLen,
+  setWorkLen,
+  shortBreakLen,
+  setShortBreakLen,
+  longBreakLen,
+  setLongBreakLen,
+  longBrInterval,
+  setLongBrInterval,
+  volume,
+  setVolume,
+  locMode,
+  setLocMode,
+  userId,
+  googleUser,
+  githubUser,
+  displayNameSource,
+  onDisplayNameSourceChange,
   onLogoutGitHub,
+  className = "",
 }) {
-  // ---------- state UI & pesan ----------
   const [sedangMuat, setSedangMuat] = useState(false);
   const [sedangSimpan, setSedangSimpan] = useState(false);
   const [pesanSukses, setPesanSukses] = useState("");
   const [pesanError, setPesanError] = useState("");
 
-  // data sementara untuk input (agar editing tidak langsung commit)
   const [nilaiWork, setNilaiWork] = useState(workLen || 25);
   const [nilaiShort, setNilaiShort] = useState(shortBreakLen || 5);
   const [nilaiLong, setNilaiLong] = useState(longBreakLen || 15);
@@ -78,13 +48,10 @@ export default SettingsForm;
     displayNameSource === "github" ? "github" : "google",
   );
 
-  // user login saat ini
   const [uidAktif, setUidAktif] = useState(userId || null);
 
-  // ref audio untuk preview bunyi
   const refSfx = useRef(null);
 
-  // ---------- ambil UID login (kalau userId belum diberikan) ----------
   useEffect(() => {
     if (displayNameSource === "google" || displayNameSource === "github") {
       setNilaiDisplayNameSource(displayNameSource);
@@ -102,20 +69,17 @@ export default SettingsForm;
     return () => unsub();
   }, [userId]);
 
-  // ---------- baca preferensi tersimpan (Firestore atau localStorage) ----------
   useEffect(() => {
     const muatPreferensi = async () => {
       setSedangMuat(true);
       setPesanError("");
       try {
         if (uidAktif) {
-          // dari Firestore: users/<uid>/preferensi
           const d = await getDoc(
             doc(db, NAMA_KOLEKSI, uidAktif, NAMA_DOKUMEN_PREFERENSI, "app"),
           );
           if (d.exists()) {
             const v = d.data() || {};
-            // gunakan fallback agar tidak undefined
             setNilaiWork(Number(v.workLen ?? nilaiWork));
             setNilaiShort(Number(v.shortBreakLen ?? nilaiShort));
             setNilaiLong(Number(v.longBreakLen ?? nilaiLong));
@@ -127,7 +91,6 @@ export default SettingsForm;
             );
           }
         } else {
-          // dari localStorage
           const raw = localStorage.getItem("lp_preferensi_v1");
           if (raw) {
             const v = JSON.parse(raw);
@@ -150,16 +113,13 @@ export default SettingsForm;
       }
     };
     muatPreferensi();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uidAktif]);
 
-  // ---------- validasi sederhana ----------
   const validasi = () => {
     const e = [];
     const isInt = (n) => Number.isInteger(Number(n));
     const inRange = (n, a, b) => Number(n) >= a && Number(n) <= b;
 
-    // semua durasi minimal 1 menit
     if (!isInt(nilaiWork) || !inRange(nilaiWork, 1, 600))
       e.push("Durasi fokus harus 1–600 menit.");
     if (!isInt(nilaiShort) || !inRange(nilaiShort, 1, 600))
@@ -167,11 +127,9 @@ export default SettingsForm;
     if (!isInt(nilaiLong) || !inRange(nilaiLong, 1, 600))
       e.push("Durasi istirahat panjang harus 1–600 menit.");
 
-    // interval long break masuk akal
     if (!isInt(nilaiIntervalLong) || !inRange(nilaiIntervalLong, 2, 12))
       e.push("Interval long break harus 2–12.");
 
-    // volume 0..100
     if (!isInt(nilaiVolume) || !inRange(nilaiVolume, 0, 100))
       e.push("Volume harus 0–100.");
 
@@ -183,7 +141,6 @@ export default SettingsForm;
     return true;
   };
 
-  // ---------- simpan preferensi ----------
   const simpanPreferensi = async (ev) => {
     ev?.preventDefault?.();
     setPesanSukses("");
@@ -201,22 +158,19 @@ export default SettingsForm;
         displayNameSource: String(nilaiDisplayNameSource),
       };
 
-      // Simpan ke localStorage juga wajib
       localStorage.setItem("lp_preferensi_v1", JSON.stringify(preferensi));
 
       if (uidAktif) {
-        // Simpan ke Firestore
         await setDoc(
           doc(db, NAMA_KOLEKSI, uidAktif, NAMA_DOKUMEN_PREFERENSI, "app"),
           {
             ...preferensi,
-            z: Date.now(), // timestamp sederhana untuk troubleshooting
+            z: Date.now(),
           },
           { merge: true },
         );
       }
 
-      // Commit ke state parent agar Timer langsung ter-update
       setWorkLen?.(Number(nilaiWork));
       setShortBreakLen?.(Number(nilaiShort));
       setLongBreakLen?.(Number(nilaiLong));
@@ -236,7 +190,6 @@ export default SettingsForm;
     }
   };
 
-  // ---------- reset ke nilai bawaan ----------
   const resetKeBawaan = () => {
     setNilaiWork(25);
     setNilaiShort(5);
@@ -244,32 +197,11 @@ export default SettingsForm;
     setNilaiIntervalLong(4);
     setNilaiVolume(80);
     setNilaiLocMode("time");
+    setNilaiDisplayNameSource("google");
     setPesanSukses("");
     setPesanError("");
   };
 
-  // ---------- reset posisi draggable ----------
-  const resetPosisiTimer = () => {
-    try {
-      setTimerPosition?.({ x: 0, y: 0 });
-      setPesanSukses("Posisi Timer direset.");
-    } catch (error) {
-      console.error("SettingsForm: gagal mereset posisi Timer:", error);
-      setPesanError("Gagal mereset posisi Timer (fungsi tidak tersedia).");
-    }
-  };
-
-  const resetPosisiStatistik = () => {
-    try {
-      setStatsPosition?.({ x: 0, y: 0 });
-      setPesanSukses("Posisi Statistik direset.");
-    } catch (error) {
-      console.error("SettingsForm: gagal mereset posisi Statistik:", error);
-      setPesanError("Gagal mereset posisi Statistik (fungsi tidak tersedia).");
-    }
-  };
-
-  // ---------- preview bunyi ----------
   const cobaBunyi = () => {
     try {
       if (!refSfx.current) return;
@@ -290,11 +222,9 @@ export default SettingsForm;
     }
   };
 
-  // ---------- isi form ----------
   return (
     <div className={`Sf pixel-card pixel-card--borderless ${className}`}>
       <form className="Sf__inner" onSubmit={simpanPreferensi}>
-        {/* Header */}
         <div className="Sf__section-title">Pengaturan Pomodoro</div>
 
         <div className="Sf__grid">
@@ -370,38 +300,17 @@ export default SettingsForm;
           </div>
           <div className="Sf__group">
             <label className="Sf__label">Nama yang ditampilkan</label>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.5rem",
-              }}
+            <select
+              className="Sf__select"
+              value={nilaiDisplayNameSource}
+              onChange={(e) => setNilaiDisplayNameSource(e.target.value)}
             >
-              <label>
-                <input
-                  type="radio"
-                  name="displayNameSource"
-                  value="google"
-                  checked={nilaiDisplayNameSource === "google"}
-                  onChange={() => setNilaiDisplayNameSource("google")}
-                />{" "}
-                Gunakan nama Google
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="displayNameSource"
-                  value="github"
-                  checked={nilaiDisplayNameSource === "github"}
-                  onChange={() => setNilaiDisplayNameSource("github")}
-                />{" "}
-                Gunakan nama GitHub
-              </label>
-            </div>
+              <option value="google">Google</option>
+              <option value="github">GitHub</option>
+            </select>
           </div>
         </div>
 
-        {/* Footer Actions */}
         <div className="Sf__actions">
           <button className="Sf__btn" type="button" onClick={resetKeBawaan}>
             Reset
@@ -449,3 +358,5 @@ export default SettingsForm;
     </div>
   );
 }
+
+export default SettingsForm;
