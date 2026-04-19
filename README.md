@@ -1,161 +1,98 @@
-<p align="center">
-  <img src="https://img.shields.io/github/stars/fjrmhri/Pomo-Pixel?style=for-the-badge&logo=github&color=8b5cf6" alt="Stars"/>
-  <img src="https://img.shields.io/github/license/fjrmhri/Pomo-Pixel?style=for-the-badge&color=10b981" alt="License"/>
-  <img src="https://img.shields.io/badge/Next.js-15.3.4-black?style=for-the-badge&logo=next.js" alt="Next.js"/>
-  <img src="https://img.shields.io/badge/Firebase-12.1.0-FFCA28?style=for-the-badge&logo=firebase" alt="Firebase"/>
-  <img src="https://img.shields.io/badge/TailwindCSS-4-38bdf8?style=for-the-badge&logo=tailwind-css" alt="TailwindCSS"/>
-</p>
-
 # Pomo-Pixel
 
-**Pomo-Pixel** adalah website produktivitas berbasis web yang menggabungkan **pomodoro timer**, **musik lofi**, dan **wallpaper pixel**. Tujuannya membantu fokus belajar atau bekerja dengan suasana santai.
+Pomo-Pixel adalah aplikasi fokus berbasis Next.js yang menggabungkan pomodoro timer, pemutar musik lofi, wallpaper pixel, login Google dan GitHub, serta statistik sesi fokus.
 
----
+## Description
 
-## Preview Aplikasi
+Pomo-Pixel dirancang untuk sesi belajar atau kerja yang sederhana dan stabil. Aplikasi ini menyediakan timer fokus, kontrol musik, rotasi wallpaper, statistik penggunaan, dan integrasi GitHub dalam satu antarmuka.
 
-<p align="center">
-  <img src="public/preview/preview.png" alt="Preview Pomo-Pixel" />
-</p>
+## Features
 
----
+- Pomodoro timer dengan mode fokus, istirahat singkat, dan istirahat panjang
+- Keyboard shortcut untuk kontrol timer
+- Pemutar musik lofi dengan genre, seek, volume, shuffle, dan repeat
+- Wallpaper pixel yang dapat diganti
+- Login Google dengan Firebase Authentication
+- Login GitHub dengan OAuth
+- Statistik fokus lokal dan Firestore
+- Riwayat aktivitas GitHub untuk akun yang terhubung
+- Widget jam real-time atau cuaca berdasarkan lokasi
 
-## Fitur Utama
+## Tech Stack
 
-### Pomodoro Timer
+- Next.js 15
+- React 19
+- Firebase Authentication
+- Firebase Firestore
+- GitHub OAuth and REST API
+- Tailwind CSS 4
+- CSS component styles
+- Vercel Analytics and Speed Insights
 
-- Periode fokus, istirahat singkat, dan istirahat panjang yang bisa dikustomisasi
-- Kontrol mulai/jeda/reset dengan transisi otomatis
-- Notifikasi suara dan indikator waktu real-time
-- Keyboard shortcut (Space = mulai/jeda, R = reset, 1/2/3 = ganti periode)
-
-### Pemutar Musik Lofi
-
-- 90+ track lofi dalam genre chill, jazzy, sleepy
-- Kontrol play/pause, prev/next, seek, volume, shuffle, repeat
-- Preferensi tersimpan di localStorage
-- Efek suara ringan saat ganti lagu
-
-### Wallpaper Pixel
-
-- Koleksi live wallpaper bergaya pixel yang bisa diganti sesuai mood
-
-### Autentikasi & Statistik GitHub
-
-- Login via email atau GitHub OAuth
-- Simpan statistik fokus/istirahat di Firebase Firestore
-- Tampilkan riwayat aktivitas GitHub (push & pull request)
-
-### Waktu & Cuaca
-
-- Tampilkan jam real-time atau cuaca sesuai lokasi
-- Fitur otomatis nonaktif jika izin lokasi ditolak
-
-### Dasbor Statistik
-
-- Statistik harian dan total menit fokus
-- Navigasi periode lewat tombol atau shortcut
-- Komponen terpisah untuk login, registrasi, dan pengaturan timer
-
----
-
-## Teknologi
-
-### Frontend
-
-- **Next.js 15** dengan App Router
-- **React 19**
-
-### Styling & Animasi
-
-- **Tailwind CSS 4** & plugin forms, typography, animate
-- CSS modular untuk komponen (Timer, MusicPlayer, dll.)
-
-### Backend & Autentikasi
-
-- **Firebase Authentication & Firestore**
-- **GitHub REST API** untuk OAuth dan riwayat aktivitas
-
-### Tools
-
-- Node.js 18+
-- Linting menggunakan `next lint`
-
----
-
-## Instalasi & Menjalankan
-
-### Prasyarat
-
-- **Node.js 18** atau lebih tinggi
-- **npm** atau package manager lain
-
-### Instalasi
+## Installation
 
 ```bash
-# Clone repository
 git clone https://github.com/fjrmhri/Pomo-Pixel.git
 cd Pomo-Pixel
-
-# Install dependencies
 npm install
 ```
 
-### Konfigurasi Environment
+## Environment Variables
 
-Buat file `.env.local` di root dengan isi berikut:
+Create `.env.local` in the project root.
 
 ```bash
-NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-auth-domain
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-storage-bucket
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
-NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
-NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your-measurement-id
-NEXT_PUBLIC_GITHUB_CLIENT_ID=your-github-client-id
-GITHUB_CLIENT_SECRET=your-github-client-secret
-NEXT_PUBLIC_GITHUB_REDIRECT_URI=http://localhost:3000/
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
+NEXT_PUBLIC_GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+NEXT_PUBLIC_GITHUB_REDIRECT_URI=http://localhost:3000/api/github/callback
 ```
 
-### Mode Pengembangan
+## Usage
+
+Start development:
 
 ```bash
 npm run dev
 ```
 
-Buka [http://localhost:3000](http://localhost:3000) untuk melihat aplikasi.
-
-### Build Produksi
+Production build:
 
 ```bash
 npm run build
 npm start
 ```
 
-### Linting
+## Deployment
 
-```bash
-npm run lint
+Deploy on Vercel with the same environment variables used locally. Ensure the GitHub OAuth callback URL matches the deployed domain and `/api/github/callback`.
+
+## Project Structure
+
+```text
+src/app/
+  api/github/callback/   GitHub OAuth callback route
+  components/            UI components
+  styles/                Component stylesheets
+  firebase.js            Firebase client setup
+  github.js              GitHub OAuth helpers
+  layout.js              Root layout
+  page.js                Main application page
+public/
+  images/                Wallpapers and icons
+  tracks/                Music files
+  sounds/                Notification sounds
+  effects/               UI sound effects
 ```
 
----
+## Notes
 
-## Kredit & Aset
-
-- Musik: [ItzAshOffcl/lofi-resources](https://github.com/ItzAshOffcl/lofi-resources)
-- Wallpaper & inspirasi kode: [DerickPascual/pomodoros](https://github.com/DerickPascual/pomodoros)
-
----
-
-## Kontribusi
-
-1. Fork repository
-2. Buat branch fitur (`git checkout -b fitur-baru`)
-3. Commit perubahan (`git commit -m 'Tambah fitur'`)
-4. Push ke branch (`git push origin fitur-baru`)
-5. Buka Pull Request
-
----
-
-**Nikmati vibes lofi, biarkan musik menemani aktivitasmu 🎶☕🌙**
+- GitHub login requires both `NEXT_PUBLIC_GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
+- Firebase configuration is required for Google login and remote statistics.
+- Music tracks and wallpaper assets are served from `public/`.

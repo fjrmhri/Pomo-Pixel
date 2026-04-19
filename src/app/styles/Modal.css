@@ -17,7 +17,7 @@
   max-height: 60vh; /* Tinggi maksimum agar tetap proporsional */
   height: auto;
   overflow: auto;
-  background: rgba(10, 10, 10, 0.75); /* Latar belakang lebih transparan */
+  background: var(--panel-background);
   color: #e5e7eb;
   border: var(--panel-border);
   box-shadow: var(--panel-shadow);
@@ -27,6 +27,8 @@
   outline: none;
   z-index: 1000; /* Menjaga modal tetap di atas */
   transition: transform 0.2s ease-out; /* Efek transisi */
+  backdrop-filter: blur(var(--panel-blur));
+  -webkit-backdrop-filter: blur(var(--panel-blur));
 }
 
 /* Ukuran varian - dibuat seragam */

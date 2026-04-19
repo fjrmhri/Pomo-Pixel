@@ -1,10 +1,8 @@
-import { signOut } from "firebase/auth";
-import { auth } from "../../firebase";
-import { logoutGitHub } from "../../github";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { db } from "../../firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { auth, db } from "../../firebase";
+import { logoutGitHub } from "../../github";
 import { useToast } from "../ui/useToast";
 
 const NAMA_KOLEKSI = "users";
@@ -106,7 +104,6 @@ function SettingsForm({
           description: "Nilai default tetap dipakai.",
           variant: "error",
         });
-      } finally {
       }
     };
     muatPreferensi();

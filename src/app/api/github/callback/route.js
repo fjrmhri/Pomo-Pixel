@@ -34,8 +34,7 @@ export async function GET(request) {
     let data = {};
     try {
       data = txt ? JSON.parse(txt) : {};
-    } catch (e) {
-      // non-json response
+    } catch {
       data = { raw: txt };
     }
 

@@ -54,7 +54,10 @@ export default function Wallpaper({
     return src;
   }, [src]);
 
-  const bypassOptimization = useMemo(() => /\.gif$/i.test(sumberFinal), [sumberFinal]);
+  const bypassOptimization = useMemo(
+    () => /\.gif$/i.test(sumberFinal),
+    [sumberFinal],
+  );
 
   const [gagal, setGagal] = useState(false);
   const [siap, setSiap] = useState(false);

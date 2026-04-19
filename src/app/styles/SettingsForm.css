@@ -120,10 +120,6 @@
   background: #fca5a5;
 }
 
-.Sf__btn--danger {
-  background: #fca5a5;
-}
-
 .Sf__btn:disabled {
   background: #ccc;
   cursor: not-allowed;

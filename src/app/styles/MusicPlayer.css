@@ -12,11 +12,11 @@
 
 .Mp {
   pointer-events: auto;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  background: rgba(10, 10, 10, 0.75);
+  backdrop-filter: blur(var(--panel-blur));
+  -webkit-backdrop-filter: blur(var(--panel-blur));
+  background: var(--panel-background);
   color: var(--overlay-foreground);
-  border: 2px solid #fff;
+  border: var(--panel-border);
   border-radius: 0;
   padding: 6px 10px;
   font-family: "Monocraft", monospace;
