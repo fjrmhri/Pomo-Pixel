@@ -51,6 +51,8 @@ const KEY_PERIODE = "lp_periode_v1";
 const KEY_WALLPAPER = "lp_wallpaper_src_v1";
 const KEY_STATS_TOTAL = "lp_stats_total_v1";
 const KEY_GITHUB_TOKEN = "gh_token";
+const KEY_HAS_VISITED = "lp_has_visited_v1";
+const KEY_SESSION_COUNT = "lp_session_count_v1";
 
 // ---------- nilai default ----------
 const DEFAULT_PENGATURAN = {
@@ -135,7 +137,7 @@ const GithubStats = dynamic(() => import("./components/Timer/GithubStats"), {
 export default function Page() {
   const { toast } = useToast();
   const hasShownFirstTimerToast = useRef(false);
-  const hasShownShareToast = useRef(false);
+  const [sessionCount, setSessionCount] = useState(0);
   /* ===================================================================
    *  1) Status Login Firebase & GitHub
    * =================================================================== */
@@ -173,6 +175,17 @@ export default function Page() {
     setShowEntryScreen(started !== "true");
     setEntryHydrated(true);
   }, []);
+
+  useEffect(() => {
+    const visited = safeReadLocalStorage(KEY_HAS_VISITED, "memuat status visit");
+    if (visited === "true") {
+      toast({ title: "Welcome back. Ready to focus?" });
+      return;
+    }
+
+    safeWriteLocalStorage(KEY_HAS_VISITED, "true", "menyimpan status visit");
+    toast({ title: "Welcome to Pomo Pixel." });
+  }, [toast]);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -352,6 +365,14 @@ export default function Page() {
     });
   }, []);
 
+  useEffect(() => {
+    const stored = safeReadLocalStorage(
+      KEY_SESSION_COUNT,
+      "memuat jumlah sesi selesai",
+    );
+    setSessionCount(Number(stored || 0));
+  }, []);
+
   const catatMenitSesi = useCallback(
     async ({
       fokusMenit = 0,
@@ -369,11 +390,27 @@ export default function Page() {
         timeOnBreak: (prev.timeOnBreak || 0) + istirahat,
       }));
 
-      if (periodeSelesai === "work" && !hasShownShareToast.current) {
-        hasShownShareToast.current = true;
-        toast({
-          title: "Nice work. Share your focus streak.",
-        });
+      if (periodeSelesai === "work") {
+        const nextSessionCount =
+          Number(
+            safeReadLocalStorage(
+              KEY_SESSION_COUNT,
+              "membaca jumlah sesi selesai",
+            ) || 0,
+          ) + 1;
+
+        setSessionCount(nextSessionCount);
+        safeWriteLocalStorage(
+          KEY_SESSION_COUNT,
+          String(nextSessionCount),
+          "menyimpan jumlah sesi selesai",
+        );
+
+        toast({ title: "Session complete. Great focus." });
+
+        if (nextSessionCount === 3) {
+          toast({ title: "You're building a strong focus habit." });
+        }
       }
 
       const raw = safeReadLocalStorage(
@@ -528,21 +565,7 @@ export default function Page() {
   }, [toast]);
 
   const handleShare = useCallback(async () => {
-    const shareText =
-      "Pomo Pixel is an aesthetic pomodoro timer with lofi music for focus and productivity.";
-
-    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
-      try {
-        await navigator.share({
-          title: "Pomo Pixel",
-          text: shareText,
-          url: SITE_URL,
-        });
-        return;
-      } catch (error) {
-        if (error?.name === "AbortError") return;
-      }
-    }
+    let copied = false;
 
     try {
       if (
@@ -551,16 +574,30 @@ export default function Page() {
         typeof navigator.clipboard.writeText === "function"
       ) {
         await navigator.clipboard.writeText(SITE_URL);
+        copied = true;
         toast({
-          title: "Link copied",
-          description: "Pomo Pixel URL copied to clipboard.",
+          title: "Link copied. Share your focus space.",
           variant: "success",
         });
-        return;
       }
-      throw new Error("Clipboard API tidak tersedia");
     } catch (error) {
-      logError("gagal membagikan tautan", error);
+      logError("gagal menyalin tautan", error);
+    }
+
+    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+      try {
+        await navigator.share({
+          title: "Pomo Pixel",
+          text: "Pomo Pixel",
+          url: SITE_URL,
+        });
+        return;
+      } catch (error) {
+        if (error?.name === "AbortError") return;
+      }
+    }
+
+    if (!copied) {
       toast({
         title: "Share failed",
         description: "Could not copy the site link.",
@@ -625,13 +662,6 @@ export default function Page() {
                 onClick={handleStartFocus}
               >
                 Start Focus Now
-              </button>
-              <button
-                type="button"
-                className="pixel-btn entry-screen__cta"
-                onClick={handleShare}
-              >
-                Share
               </button>
             </div>
           </div>
@@ -764,7 +794,7 @@ export default function Page() {
         />
       </div>
 
-      <Footer />
+      <Footer onShare={handleShare} sessionCount={sessionCount} />
 
       {/* Modal Pengaturan */}
       <Modal

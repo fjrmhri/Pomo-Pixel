@@ -1,6 +1,6 @@
 import "../../styles/Footer.css";
 
-function Footer() {
+function Footer({ onShare, sessionCount = 0 }) {
   try {
     const links = [
       { label: "hero", href: "#hero" },
@@ -17,6 +17,12 @@ function Footer() {
           and productivity.
         </p>
         <p className="Footer__p">Built with focus by Pomo Pixel</p>
+        <p className="Footer__p">Sessions completed: {sessionCount}</p>
+        <p className="Footer__p">
+          <button type="button" className="Footer__share" onClick={onShare}>
+            Share
+          </button>
+        </p>
         <p className="Footer__p">
           quick links:{" "}
           {links.map((link, i) => (

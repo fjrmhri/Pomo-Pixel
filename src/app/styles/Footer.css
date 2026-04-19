@@ -39,6 +39,19 @@
   color: rgb(199, 169, 0);
 }
 
+.Footer__share {
+  padding: 0;
+  font: inherit;
+  color: rgb(199, 169, 0);
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+}
+
+.Footer__share:hover {
+  color: rgb(255, 238, 0);
+}
+
 .Footer__a:hover {
   color: rgb(255, 238, 0);
 }
