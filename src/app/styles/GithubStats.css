@@ -93,9 +93,11 @@
 }
 
 .Stat__kartu {
-  background: rgba(17, 24, 39, 0.65);
-  border: 2px solid #ffffff;
-  box-shadow: 0 0 0 2px #000;
+  background: var(--panel-background);
+  backdrop-filter: blur(var(--panel-blur));
+  -webkit-backdrop-filter: blur(var(--panel-blur));
+  border: var(--panel-border);
+  box-shadow: var(--panel-shadow);
   padding: 10px 8px;
   text-align: center;
   border-radius: 0;
@@ -188,9 +190,11 @@
   display: grid;
   grid-template-columns: 1fr auto auto auto;
   gap: 4px;
-  background: rgba(17, 24, 39, 0.65);
-  border: 2px solid #ffffff;
-  box-shadow: 0 0 0 2px #000;
+  background: var(--panel-background);
+  backdrop-filter: blur(var(--panel-blur));
+  -webkit-backdrop-filter: blur(var(--panel-blur));
+  border: var(--panel-border);
+  box-shadow: var(--panel-shadow);
   padding: 4px;
   font-size: 10px;
   color: #e5e7eb;

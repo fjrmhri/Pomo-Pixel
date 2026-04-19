@@ -44,6 +44,10 @@
   --overlay-foreground-muted: #94a3b8;
   --glass: var(--overlay-background);
   --glass-strong: var(--overlay-background-strong);
+  --panel-background: rgba(10, 10, 10, 0.75);
+  --panel-border: 2px solid rgba(255, 255, 255, 0.96);
+  --panel-shadow: none;
+  --panel-blur: 6px;
 
   /* font */
   --font-pixel: "Monocraft", monospace;
@@ -138,8 +142,8 @@ textarea {
 
 .pixel-frame {
   background: var(--overlay-background);
-  border: 2px solid #fff;
-  box-shadow: 0 0 0 2px #000;
+  border: var(--panel-border);
+  box-shadow: var(--panel-shadow);
   color: var(--overlay-foreground);
 }
 
@@ -205,11 +209,11 @@ textarea {
 }
 
 .panel-surface {
-  background: rgba(10, 10, 10, 0.75);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 2px solid #fff;
-  box-shadow: 0 0 0 2px #000;
+  background: var(--panel-background);
+  backdrop-filter: blur(var(--panel-blur));
+  -webkit-backdrop-filter: blur(var(--panel-blur));
+  border: var(--panel-border);
+  box-shadow: var(--panel-shadow);
   border-radius: 0;
 }
 
@@ -245,7 +249,7 @@ textarea {
   z-index: 30;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .account-icon {
@@ -301,27 +305,61 @@ textarea {
   align-items: center;
   justify-content: center;
   padding: 24px;
+  isolation: isolate;
+  overflow: hidden;
   background:
     linear-gradient(
       180deg,
-      rgba(15, 23, 42, 0.84) 0%,
-      rgba(15, 23, 42, 0.78) 52%,
-      rgba(15, 23, 42, 0.82) 100%
+      rgba(15, 23, 42, 0.92) 0%,
+      rgba(15, 23, 42, 0.88) 52%,
+      rgba(15, 23, 42, 0.9) 100%
     );
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+}
+
+.entry-screen::before,
+.entry-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.entry-screen::before {
+  opacity: 0.045;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.9) 0.7px, transparent 0.9px),
+    radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.7) 0.6px, transparent 0.85px),
+    radial-gradient(circle at 35% 75%, rgba(255, 255, 255, 0.8) 0.7px, transparent 1px),
+    radial-gradient(circle at 65% 65%, rgba(255, 255, 255, 0.65) 0.6px, transparent 0.85px);
+  background-size: 18px 18px, 22px 22px, 24px 24px, 20px 20px;
+  mix-blend-mode: soft-light;
+}
+
+.entry-screen::after {
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.04) 0%, transparent 58%),
+    linear-gradient(
+      180deg,
+      rgba(2, 6, 23, 0.2) 0%,
+      rgba(2, 6, 23, 0) 28%,
+      rgba(2, 6, 23, 0.16) 100%
+    );
 }
 
 .entry-screen__panel {
+  position: relative;
+  z-index: 1;
   width: min(92vw, 520px);
   padding: 18px 20px;
   text-align: center;
   color: var(--overlay-foreground);
-  background: rgba(10, 10, 10, 0.75);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 2px solid #fff;
-  box-shadow: 0 0 0 2px #000;
+  background: var(--panel-background);
+  backdrop-filter: blur(var(--panel-blur));
+  -webkit-backdrop-filter: blur(var(--panel-blur));
+  border: var(--panel-border);
+  box-shadow: var(--panel-shadow);
 }
 
 .entry-screen__eyebrow {
@@ -391,8 +429,8 @@ textarea {
   background: rgba(10, 10, 10, 0.88);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 2px solid #fff;
-  box-shadow: 0 0 0 2px #000;
+  border: var(--panel-border);
+  box-shadow: var(--panel-shadow);
 }
 
 .toast-item.is-success {

@@ -550,10 +550,6 @@ export default function Page() {
         </section>
       ) : null}
 
-      <div className="ad-slot ad-slot--top" aria-hidden>
-        <span>Top banner slot</span>
-      </div>
-
       {/* Tabs Sesi kiri-atas */}
       <div className="area-kiri-atas">
         <Dashboard

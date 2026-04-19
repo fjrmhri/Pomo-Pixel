@@ -19,8 +19,8 @@
   overflow: auto;
   background: rgba(10, 10, 10, 0.75); /* Latar belakang lebih transparan */
   color: #e5e7eb;
-  border: 2px solid #ffffff;
-  box-shadow: 0 0 0 2px #000;
+  border: var(--panel-border);
+  box-shadow: var(--panel-shadow);
   border-radius: 0; /* square edges */
   padding: 8px 12px; /* Padding lebih ringkas */
   font-family: var(--font-pixel, "Monocraft", monospace);
