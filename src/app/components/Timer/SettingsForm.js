@@ -206,7 +206,7 @@ function SettingsForm({
 
         <div className="Sf__grid">
           <div className="Sf__group">
-            <label className="Sf__label">Durasi Fokus (Menit)</label>
+            <label className="Sf__label">Durasi Fokus</label>
             <input
               className="Sf__number"
               type="number"
@@ -217,9 +217,7 @@ function SettingsForm({
             />
           </div>
           <div className="Sf__group">
-            <label className="Sf__label">
-              Durasi Istirahat Singkat (Menit)
-            </label>
+            <label className="Sf__label">Durasi Istirahat Singkat</label>
             <input
               className="Sf__number"
               type="number"
@@ -230,9 +228,7 @@ function SettingsForm({
             />
           </div>
           <div className="Sf__group">
-            <label className="Sf__label">
-              Durasi Istirahat Panjang (Menit)
-            </label>
+            <label className="Sf__label">Durasi Istirahat Panjang</label>
             <input
               className="Sf__number"
               type="number"
@@ -243,7 +239,7 @@ function SettingsForm({
             />
           </div>
           <div className="Sf__group">
-            <label className="Sf__label">Interval Long Break</label>
+            <label className="Sf__label">Interval Istirahat Panjang</label>
             <input
               className="Sf__number"
               type="number"
@@ -276,7 +272,7 @@ function SettingsForm({
             </select>
           </div>
           <div className="Sf__group">
-            <label className="Sf__label">Nama yang ditampilkan</label>
+            <label className="Sf__label">Nama yang Ditampilkan</label>
             <select
               className="Sf__select"
               value={nilaiDisplayNameSource}
