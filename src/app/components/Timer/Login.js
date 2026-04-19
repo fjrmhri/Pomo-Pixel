@@ -90,7 +90,7 @@ function Login({ googleUser, githubUser }) {
           className="text-sm text-center"
           style={{ color: "var(--overlay-foreground)" }}
         >
-          {namaTerhubung ? `Logged in as: ${namaTerhubung}` : "Not logged in"}
+          {namaTerhubung ? `Logged in as: ${namaTerhubung}` : ""}
         </div>
 
         {/* Show only necessary buttons based on state */}
@@ -163,12 +163,6 @@ function Login({ googleUser, githubUser }) {
                 </>
               );
             })()}
-            <p
-              className="text-xs text-center"
-              style={{ color: "var(--overlay-foreground)" }}
-            >
-              GitHub login akan mengarahkan ke halaman otorisasi GitHub.
-            </p>
           </>
         )}
       </div>
