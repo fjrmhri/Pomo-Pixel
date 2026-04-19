@@ -384,6 +384,14 @@ textarea {
   padding: 6px 12px;
 }
 
+.entry-screen__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .ad-slot {
   position: fixed;
   z-index: 15;

@@ -1,0 +1,8 @@
+Short:
+Pomo Pixel is an aesthetic pomodoro timer with lofi music, focus stats, and a clean productivity-first interface for deep work and study sessions.
+
+Medium:
+Pomo Pixel is a minimalist aesthetic pomodoro timer designed for deep work, studying, and distraction-free focus. It combines a focus timer with music, calming pixel-style visuals, and lightweight productivity stats in one browser-based experience.
+
+Long:
+Pomo Pixel is a web-based aesthetic pomodoro timer built for people who want a calmer and more intentional focus routine. It combines pomodoro sessions, lofi music, focus tracking, and a minimalist productivity toolset inside a lightweight interface. The result is a focus timer with music that feels simple, visual, and easy to share for productivity communities, portfolios, Fiverr gigs, and social promotion.

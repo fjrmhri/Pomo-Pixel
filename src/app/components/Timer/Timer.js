@@ -406,7 +406,6 @@ export default function Timer({
           toast({ title: "Timer dijeda" });
         } else {
           mulai();
-          toast({ title: "Timer dimulai" });
         }
       } else if (ev.key?.toLowerCase() === "r") {
         reset();

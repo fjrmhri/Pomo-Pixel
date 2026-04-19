@@ -1,32 +1,34 @@
 import "../../styles/Footer.css";
 
-// Sederhana: menampilkan tautan referensi
 function Footer() {
   try {
-    const references = [
-      { label: "countdowns", href: "https://www.countdowns.live/" },
-      { label: "buildspace", href: "https://buildspace.so/home" },
+    const links = [
+      { label: "hero", href: "#hero" },
+      { label: "timer", href: "#timer" },
+      { label: "music", href: "#music" },
+      { label: "footer", href: "#footer" },
     ];
 
     return (
-      <div className="Footer">
+      <footer className="Footer" id="footer">
+        <span className="Footer__label">Aesthetic Pomodoro</span>
         <p className="Footer__p">
-          inspired by{" "}
-          {references.map((ref, i) => (
-            <span key={ref.href}>
-              <a
-                className="Footer__a"
-                rel="noreferrer"
-                target="_blank"
-                href={ref.href}
-              >
-                {ref.label}
+          Pomo Pixel is an aesthetic pomodoro timer with lofi music for focus
+          and productivity.
+        </p>
+        <p className="Footer__p">Built with focus by Pomo Pixel</p>
+        <p className="Footer__p">
+          quick links:{" "}
+          {links.map((link, i) => (
+            <span key={link.href}>
+              <a className="Footer__a" href={link.href}>
+                {link.label}
               </a>
-              {i === 0 ? ", " : ""}
+              {i < links.length - 1 ? ", " : ""}
             </span>
           ))}
         </p>
-      </div>
+      </footer>
     );
   } catch (err) {
     console.error("Footer gagal dirender:", err);

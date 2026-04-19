@@ -1,10 +1,18 @@
 # Pomo-Pixel
 
-Pomo-Pixel adalah aplikasi fokus berbasis Next.js yang menggabungkan pomodoro timer, pemutar musik lofi, wallpaper pixel, login Google dan GitHub, serta statistik sesi fokus.
+SEO title: Pomo Pixel – Aesthetic Pomodoro Timer with Lofi Music & Focus Stats
+
+Pomo-Pixel is an aesthetic pomodoro timer built with Next.js for deep work, study sessions, and distraction-free focus. It combines a lofi focus timer, minimalist productivity UI, wallpaper rotation, and focus stats in one lightweight web app.
+
+Live website: https://pomo-pixel.vercel.app
 
 ## Description
 
-Pomo-Pixel dirancang untuk sesi belajar atau kerja yang sederhana dan stabil. Aplikasi ini menyediakan timer fokus, kontrol musik, rotasi wallpaper, statistik penggunaan, dan integrasi GitHub dalam satu antarmuka.
+Pomo-Pixel dirancang untuk sesi belajar atau kerja yang sederhana dan stabil. Aplikasi ini menyediakan aesthetic pomodoro timer, focus timer with music, rotasi wallpaper, statistik penggunaan, dan integrasi GitHub dalam satu antarmuka.
+
+Pomo-Pixel is built for users who want a calmer focus ritual without losing momentum. It works as a lightweight productivity tool for study blocks, deep work sessions, and daily routines with lofi music in the background.
+
+The project targets keywords around aesthetic pomodoro, lofi focus timer, and minimalist productivity timer while keeping the product fast, simple, and usable on the web.
 
 ## Features
 

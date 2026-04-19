@@ -24,13 +24,17 @@ import Modal from "./components/Timer/Modal";
 import SettingsForm from "./components/Timer/SettingsForm";
 import LoginRegisterForm from "./components/Timer/LoginRegisterForm";
 import LocationWidget from "./components/Timer/LocationWidget";
+import Footer from "./components/Timer/Footer";
 import Wallpaper from "./components/Music/Wallpaper";
+import { useToast } from "./components/ui/useToast";
 import {
   exchangeCodeForToken,
   fetchGitHubUser,
   fetchUserEvents,
 } from "./github";
 import { auth, db } from "./firebase";
+
+const SITE_URL = "https://pomo-pixel.vercel.app";
 
 // ---------- util tanggal ----------
 const formatTanggal = (d = new Date()) => {
@@ -129,6 +133,9 @@ const GithubStats = dynamic(() => import("./components/Timer/GithubStats"), {
 });
 
 export default function Page() {
+  const { toast } = useToast();
+  const hasShownFirstTimerToast = useRef(false);
+  const hasShownShareToast = useRef(false);
   /* ===================================================================
    *  1) Status Login Firebase & GitHub
    * =================================================================== */
@@ -362,6 +369,13 @@ export default function Page() {
         timeOnBreak: (prev.timeOnBreak || 0) + istirahat,
       }));
 
+      if (periodeSelesai === "work" && !hasShownShareToast.current) {
+        hasShownShareToast.current = true;
+        toast({
+          title: "Nice work. Share your focus streak.",
+        });
+      }
+
       const raw = safeReadLocalStorage(
         KEY_STATS_TOTAL,
         "membaca statistik ringkas",
@@ -427,7 +441,7 @@ export default function Page() {
         logError("gagal menyimpan statistik ke Firestore", error);
       }
     },
-    [idPengguna, googleUser],
+    [idPengguna, googleUser, toast],
   );
 
   /* ===================================================================
@@ -502,7 +516,58 @@ export default function Page() {
   const handleStartFocus = useCallback(() => {
     safeWriteLocalStorage("pomo_started", "true", "menyimpan status awal");
     setShowEntryScreen(false);
-  }, []);
+    toast({ title: "Focus mode started" });
+  }, [toast]);
+
+  const handleTimerStart = useCallback(() => {
+    if (hasShownFirstTimerToast.current) return;
+    hasShownFirstTimerToast.current = true;
+    toast({
+      title: "Stay focused. You're doing great.",
+    });
+  }, [toast]);
+
+  const handleShare = useCallback(async () => {
+    const shareText =
+      "Pomo Pixel is an aesthetic pomodoro timer with lofi music for focus and productivity.";
+
+    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+      try {
+        await navigator.share({
+          title: "Pomo Pixel",
+          text: shareText,
+          url: SITE_URL,
+        });
+        return;
+      } catch (error) {
+        if (error?.name === "AbortError") return;
+      }
+    }
+
+    try {
+      if (
+        typeof navigator !== "undefined" &&
+        navigator.clipboard &&
+        typeof navigator.clipboard.writeText === "function"
+      ) {
+        await navigator.clipboard.writeText(SITE_URL);
+        toast({
+          title: "Link copied",
+          description: "Pomo Pixel URL copied to clipboard.",
+          variant: "success",
+        });
+        return;
+      }
+      throw new Error("Clipboard API tidak tersedia");
+    } catch (error) {
+      logError("gagal membagikan tautan", error);
+      toast({
+        title: "Share failed",
+        description: "Could not copy the site link.",
+        variant: "error",
+      });
+    }
+  }, [toast]);
 
   /* ===================================================================
    *  5) Modal Pengaturan
@@ -526,32 +591,55 @@ export default function Page() {
    *  7) Render
    * =================================================================== */
   return (
-    <main className="halaman-utama">
+    <main className="halaman-utama" id="top">
+      <section className="visually-hidden" aria-label="Pomo Pixel overview">
+        <h1>
+          Pomo Pixel is an aesthetic pomodoro timer with lofi music and focus
+          stats
+        </h1>
+        <p>
+          Use this minimalist productivity timer for deep work, study sessions,
+          and distraction-free planning with a built-in lofi focus timer.
+        </p>
+      </section>
+
       {/* Wallpaper */}
       <Wallpaper src={wallpaperSrc} alt="latar pixel" />
 
       {entryHydrated && showEntryScreen ? (
-        <section className="entry-screen" aria-label="Mulai fokus">
+        <section className="entry-screen" aria-label="Mulai fokus" id="hero">
           <div className="entry-screen__panel">
-            <p className="entry-screen__eyebrow">Pixel focus space</p>
-            <h1 className="entry-screen__title">Pixel Focus Space</h1>
+            <p className="entry-screen__eyebrow">Aesthetic pomodoro</p>
+            <h2 className="entry-screen__title">
+              Focus deeper with a calm, aesthetic pomodoro timer built for real
+              productivity.
+            </h2>
             <p className="entry-screen__subtitle">
-              Lofi focus timer ringan untuk sesi kerja, statistik, dan ritme
-              fokus yang rapi.
+              Lofi ambience, simple sessions, and clean focus tools help you
+              get into flow faster.
             </p>
-            <button
-              type="button"
-              className="pixel-btn entry-screen__cta"
-              onClick={handleStartFocus}
-            >
-              Start Focus Now
-            </button>
+            <div className="entry-screen__actions">
+              <button
+                type="button"
+                className="pixel-btn entry-screen__cta"
+                onClick={handleStartFocus}
+              >
+                Start Focus Now
+              </button>
+              <button
+                type="button"
+                className="pixel-btn entry-screen__cta"
+                onClick={handleShare}
+              >
+                Share
+              </button>
+            </div>
           </div>
         </section>
       ) : null}
 
       {/* Tabs Sesi kiri-atas */}
-      <div className="area-kiri-atas">
+      <div className="area-kiri-atas" id="sessions">
         <Dashboard
           periodeAktif={periodeAktif}
           setPeriodeAktif={setPeriodeAktif}
@@ -559,7 +647,7 @@ export default function Page() {
       </div>
 
       {/* Tombol kanan-atas: akun + pengaturan + statistik + status */}
-      <div className="area-kanan-atas">
+      <div className="area-kanan-atas" id="controls">
         {/* status login */}
 
         {/* lokasi: waktu atau cuaca */}
@@ -637,16 +725,19 @@ export default function Page() {
       </div>
 
       {/* Timer */}
-      <Timer
-        workLen={pengaturanTimer.workLen}
-        shortBreakLen={pengaturanTimer.shortBreakLen}
-        longBreakLen={pengaturanTimer.longBreakLen}
-        longBrInterval={pengaturanTimer.longBrInterval}
-        volume={pengaturanTimer.volume}
-        currentPeriod={periodeAktif}
-        setCurrentPeriod={setPeriodeAktif}
-        onCatatMenit={catatMenitSesi}
-      />
+      <section id="timer" aria-label="Pomodoro timer">
+        <Timer
+          workLen={pengaturanTimer.workLen}
+          shortBreakLen={pengaturanTimer.shortBreakLen}
+          longBreakLen={pengaturanTimer.longBreakLen}
+          longBrInterval={pengaturanTimer.longBrInterval}
+          volume={pengaturanTimer.volume}
+          currentPeriod={periodeAktif}
+          setCurrentPeriod={setPeriodeAktif}
+          onCatatMenit={catatMenitSesi}
+          onMulai={handleTimerStart}
+        />
+      </section>
 
       {/* Statistik */}
       <Modal
@@ -666,12 +757,14 @@ export default function Page() {
       </Modal>
 
       {/* Music Player */}
-      <div className="area-music-bawah">
+      <div className="area-music-bawah" id="music">
         <MusicPlayer
           namaWallpaper={WALLPAPERS[wallpaperIdx].replace(/\..+$/, "")}
           onGantiWallpaper={gantiWallpaper}
         />
       </div>
+
+      <Footer />
 
       {/* Modal Pengaturan */}
       <Modal

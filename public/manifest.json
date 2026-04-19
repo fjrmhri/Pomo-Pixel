@@ -1,0 +1,18 @@
+{
+  "name": "Pomo Pixel",
+  "short_name": "Pomo Pixel",
+  "description": "Minimalist aesthetic pomodoro timer with lofi music, focus statistics, and distraction-free UI.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
