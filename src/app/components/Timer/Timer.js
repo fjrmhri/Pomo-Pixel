@@ -12,6 +12,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "../../styles/Timer.css";
+import { useToast } from "../ui/useToast";
 
 const PERIODE = {
   work: "work",
@@ -37,6 +38,7 @@ export default function Timer({
 
   className = "",
 }) {
+  const { toast } = useToast();
   const getDurasiPeriodeDetik = useCallback(
     (p) => {
       if (p === PERIODE.work) return Math.max(1, Number(workLen || 25)) * 60;
@@ -55,8 +57,6 @@ export default function Timer({
     getDurasiPeriodeDetik(currentPeriod || PERIODE.work),
   );
   const [jumlahWorkSelesai, setJumlahWorkSelesai] = useState(0);
-  const [pesanError, setPesanError] = useState("");
-  const [pesanInfo, setPesanInfo] = useState("");
   const [autoMulai, setAutoMulai] = useState(false);
   const [userInteracted, setUserInteracted] = useState(false);
 
@@ -124,9 +124,15 @@ export default function Timer({
   }, []);
 
   const resetPosisi = useCallback(() => {
-    setDragOffset({ x: 0, y: 0 });
-    setPesanInfo("posisi direset");
-  }, []);
+    setDragOffset((current) => {
+      const pernahDipindah = current.x !== 0 || current.y !== 0;
+      if (pernahDipindah) {
+        toast({ title: "Posisi direset" });
+        return { x: 0, y: 0 };
+      }
+      return current;
+    });
+  }, [toast]);
 
   useEffect(() => {
     if (typeof window !== "undefined" && "wakeLock" in navigator) {
@@ -142,13 +148,13 @@ export default function Timer({
     setPeriode(currentPeriod);
     if (!refInterval.current) {
       setSisaDetik(getDurasiPeriodeDetik(currentPeriod));
-      setPesanInfo("");
     } else {
-      setPesanInfo(
-        "Periode diubah saat timer berjalan. Durasi berjalan tetap dipertahankan.",
-      );
+      toast({
+        title: "Periode diperbarui",
+        description: "Durasi sesi yang sedang berjalan tetap dipertahankan.",
+      });
     }
-  }, [currentPeriod, getDurasiPeriodeDetik]);
+  }, [currentPeriod, getDurasiPeriodeDetik, toast]);
 
   const refLastDur = useRef(getDurasiPeriodeDetik(periode));
   useEffect(() => {
@@ -184,14 +190,15 @@ export default function Timer({
   }, []);
 
   const mulai = useCallback(() => {
-    setPesanError("");
-    setPesanInfo("");
-
     if (berjalan) return;
 
     const dur = getDurasiPeriodeDetik(periode);
     if (dur <= 0) {
-      setPesanError("Durasi periode tidak valid. Periksa pengaturan.");
+      toast({
+        title: "Durasi tidak valid",
+        description: "Periksa pengaturan timer terlebih dahulu.",
+        variant: "error",
+      });
       return;
     }
     const now = Date.now();
@@ -221,6 +228,10 @@ export default function Timer({
       onMulai?.();
     } catch (error) {
       console.error("Timer: callback onMulai gagal dijalankan:", error);
+      toast({
+        title: "Timer gagal dimulai",
+        variant: "error",
+      });
     }
   }, [
     berjalan,
@@ -230,6 +241,7 @@ export default function Timer({
     onMulai,
     requestWakeLock,
     releaseWakeLock,
+    toast,
   ]);
 
   const jeda = useCallback(() => {
@@ -243,13 +255,16 @@ export default function Timer({
       setSisaDetik(sisa);
     }
     setBerjalan(false);
-    setPesanInfo("");
     try {
       onJeda?.();
     } catch (error) {
       console.error("Timer: callback onJeda gagal dijalankan:", error);
+      toast({
+        title: "Timer gagal dijeda",
+        variant: "error",
+      });
     }
-  }, [berjalan, onJeda, releaseWakeLock]);
+  }, [berjalan, onJeda, releaseWakeLock, toast]);
 
   const reset = useCallback(() => {
     if (refInterval.current) clearInterval(refInterval.current);
@@ -257,28 +272,22 @@ export default function Timer({
     refTargetTime.current = null;
     setBerjalan(false);
     setSisaDetik(getDurasiPeriodeDetik(periode));
-    setPesanInfo("direset");
     try {
       onReset?.();
     } catch (error) {
       console.error("Timer: callback onReset gagal dijalankan:", error);
+      toast({
+        title: "Reset gagal",
+        variant: "error",
+      });
     }
-  }, [getDurasiPeriodeDetik, onReset, periode]);
+  }, [getDurasiPeriodeDetik, onReset, periode, toast]);
 
   const gantiPeriode = useCallback(
     (p, autoStart = false) => {
       setPeriode(p);
       setSisaDetik(getDurasiPeriodeDetik(p));
       setBerjalan(false);
-      setPesanInfo(
-        `berikutnya: ${
-          p === "work"
-            ? "fokus"
-            : p === "short"
-              ? "istirahat singkat"
-              : "istirahat panjang"
-        }`,
-      );
       setAutoMulai(autoStart);
       try {
         setCurrentPeriod?.(p);
@@ -287,9 +296,13 @@ export default function Timer({
           "Timer: callback setCurrentPeriod gagal dijalankan:",
           error,
         );
+        toast({
+          title: "Periode gagal diubah",
+          variant: "error",
+        });
       }
     },
-    [getDurasiPeriodeDetik, setCurrentPeriod],
+    [getDurasiPeriodeDetik, setCurrentPeriod, toast],
   );
 
   const handleSesiSelesai = useCallback(() => {
@@ -308,6 +321,10 @@ export default function Timer({
       }
     } catch (e) {
       console.warn("Gagal memutar audio notifikasi:", e);
+      toast({
+        title: "Audio notifikasi gagal",
+        variant: "error",
+      });
     }
 
     const menitSesi = getDurasiPeriodeDetik(periode) / 60;
@@ -332,6 +349,10 @@ export default function Timer({
       }
     } catch (error) {
       console.error("Timer: callback onCatatMenit gagal dijalankan:", error);
+      toast({
+        title: "Statistik gagal disimpan",
+        variant: "error",
+      });
     }
 
     if (periode === PERIODE.work) {
@@ -353,6 +374,7 @@ export default function Timer({
     gantiPeriode,
     getDurasiPeriodeDetik,
     userInteracted,
+    toast,
   ]);
 
   useEffect(() => {
@@ -379,16 +401,23 @@ export default function Timer({
 
       if (ev.code === "Space") {
         ev.preventDefault();
-        berjalan ? jeda() : mulai();
+        if (berjalan) {
+          jeda();
+          toast({ title: "Timer dijeda" });
+        } else {
+          mulai();
+          toast({ title: "Timer dimulai" });
+        }
       } else if (ev.key?.toLowerCase() === "r") {
         reset();
+        toast({ title: "Timer direset" });
       } else if (ev.key?.toLowerCase() === "x") {
         resetPosisi();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [berjalan, mulai, jeda, reset, resetPosisi, userInteracted]);
+  }, [berjalan, mulai, jeda, reset, resetPosisi, userInteracted, toast]);
 
   useEffect(() => {
     if (userInteracted) return;
@@ -561,12 +590,6 @@ export default function Timer({
             </button>
           </div>
 
-          {pesanInfo && <div className="Tm__alert info">{pesanInfo}</div>}
-          {pesanError && (
-            <div className="Tm__alert error" role="alert">
-              {pesanError}
-            </div>
-          )}
         </div>
 
         <footer className="Tm__footer">

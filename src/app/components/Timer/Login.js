@@ -4,13 +4,13 @@ import { doc, setDoc } from "firebase/firestore";
 import { signInWithPopup } from "firebase/auth";
 import { auth, db, googleProvider } from "../../firebase";
 import { redirectToGitHub, getRedirectUriInfo } from "../../github";
+import { useToast } from "../ui/useToast";
 
-function Login({ googleUser, githubUser, showSuccessMessage = false }) {
+function Login({ googleUser, githubUser }) {
   const [sedangMemuat, setSedangMemuat] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const { toast } = useToast();
 
   const handleLoginGoogle = async () => {
-    setErrorMessage("");
     setSedangMemuat(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
@@ -29,8 +29,12 @@ function Login({ googleUser, githubUser, showSuccessMessage = false }) {
         );
       }
     } catch (error) {
-      setErrorMessage("Gagal login: " + (error?.message || error));
       console.error("Login: gagal login pengguna:", error);
+      toast({
+        title: "Login Google gagal",
+        description: error?.message || "Coba lagi beberapa saat.",
+        variant: "error",
+      });
     } finally {
       setSedangMemuat(false);
     }
@@ -40,21 +44,31 @@ function Login({ googleUser, githubUser, showSuccessMessage = false }) {
     try {
       const info = getRedirectUriInfo();
       if (!info.clientIdProvided) {
-        setErrorMessage(
-          "Environment NEXT_PUBLIC_GITHUB_CLIENT_ID belum disetel; GitHub OAuth dinonaktifkan.",
-        );
         console.warn(
           "[Login] NEXT_PUBLIC_GITHUB_CLIENT_ID tidak ditemukan saat login GitHub dipicu",
         );
+        toast({
+          title: "GitHub OAuth belum aktif",
+          description: "NEXT_PUBLIC_GITHUB_CLIENT_ID belum disetel.",
+          variant: "error",
+        });
         return;
       }
       const started = redirectToGitHub();
       if (!started) {
-        setErrorMessage("Gagal memulai otentikasi GitHub");
+        toast({
+          title: "Login GitHub gagal",
+          description: "Otentikasi GitHub tidak dapat dimulai.",
+          variant: "error",
+        });
       }
     } catch (e) {
-      setErrorMessage("Gagal memulai otentikasi GitHub");
       console.error(e);
+      toast({
+        title: "Login GitHub gagal",
+        description: "Terjadi masalah saat memulai login GitHub.",
+        variant: "error",
+      });
     }
   };
 
@@ -63,41 +77,9 @@ function Login({ googleUser, githubUser, showSuccessMessage = false }) {
       (googleUser.displayName || googleUser.email || "Pengguna")) ||
     (githubUser && (githubUser.name || githubUser.login));
 
-  if (showSuccessMessage) {
-    return (
-      <div className="pixel-card pixel-card--borderless w-full h-full overflow-y-auto max-w-md mx-auto p-6">
-        <div className="Sf__section-title">Login</div>
-        <div
-          className="text-sm text-center"
-          style={{ color: "var(--overlay-foreground)" }}
-        >
-          Login successful
-        </div>
-        {namaTerhubung && (
-          <div
-            className="text-xs text-center mt-2"
-            style={{ color: "var(--overlay-foreground)" }}
-          >
-            Logged in as: {namaTerhubung}
-          </div>
-        )}
-      </div>
-    );
-  }
-
   // If both providers are connected, no need to show login menu
   if (googleUser && githubUser) {
-    return (
-      <div className="pixel-card pixel-card--borderless w-full h-full overflow-y-auto max-w-md mx-auto p-6">
-        <div className="Sf__section-title">Akun</div>
-        <div
-          className="text-sm text-center"
-          style={{ color: "var(--overlay-foreground)" }}
-        >
-          Logged in as: {namaTerhubung}
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
@@ -190,11 +172,6 @@ function Login({ googleUser, githubUser, showSuccessMessage = false }) {
           </>
         )}
       </div>
-      {errorMessage && (
-        <div className="text-red-400 text-xs mt-3 text-center">
-          {errorMessage}
-        </div>
-      )}
     </div>
   );
 }

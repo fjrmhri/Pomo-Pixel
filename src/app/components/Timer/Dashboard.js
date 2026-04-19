@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import "../../styles/Dashboard.css";
+import { useToast } from "../ui/useToast";
 
 const OPSI = [
   { kunci: "work", label: "fokus", deskripsi: "Sesi fokus (kerja)" },
@@ -14,21 +15,31 @@ export default function Dashboard({
   setPeriodeAktif,
   className = "",
 }) {
-  const [pesanKesalahan, setPesanKesalahan] = useState("");
+  const { toast } = useToast();
 
-  const gantiPeriode = (kunci) => {
-    setPesanKesalahan("");
-    if (typeof setPeriodeAktif !== "function") {
-      setPesanKesalahan("Fungsi setPeriodeAktif belum dipasang dari parent.");
-      return;
-    }
-    try {
-      setPeriodeAktif(kunci);
-    } catch (e) {
-      console.error("Gagal mengubah periode:", e);
-      setPesanKesalahan("Terjadi masalah saat mengubah periode. Coba lagi.");
-    }
-  };
+  const gantiPeriode = useCallback(
+    (kunci) => {
+      if (typeof setPeriodeAktif !== "function") {
+        toast({
+          title: "Periode tidak bisa diubah",
+          description: "Fungsi pengubah periode belum tersedia.",
+          variant: "error",
+        });
+        return;
+      }
+      try {
+        setPeriodeAktif(kunci);
+      } catch (e) {
+        console.error("Gagal mengubah periode:", e);
+        toast({
+          title: "Periode gagal diubah",
+          description: "Coba lagi beberapa saat.",
+          variant: "error",
+        });
+      }
+    },
+    [setPeriodeAktif, toast],
+  );
 
   // keyboard shortcut
   useEffect(() => {
@@ -42,8 +53,7 @@ export default function Dashboard({
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [gantiPeriode]);
 
   return (
     <div className={`Db__bungkus ${className}`}>
@@ -70,13 +80,6 @@ export default function Dashboard({
             );
           })}
         </div>
-
-        {/* Pesan error kecil */}
-        {pesanKesalahan && (
-          <div className="Db__error" role="alert">
-            {pesanKesalahan}
-          </div>
-        )}
       </div>
     </div>
   );

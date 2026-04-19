@@ -7,7 +7,7 @@
   color: var(--overlay-foreground);
   margin: 0;
   padding: 16px;
-  border-radius: 6px;
+  border-radius: 0;
   background: rgba(10, 10, 10, 0);
 }
 
@@ -127,30 +127,6 @@
 .Sf__btn:disabled {
   background: #ccc;
   cursor: not-allowed;
-}
-
-.Sf__error {
-  font-size: 12px;
-  color: #ff4d4d;
-  background: rgba(248, 113, 113, 0.2);
-  padding: 6px;
-  border-radius: 0;
-  border: none;
-  box-shadow: none;
-  text-align: center;
-  margin-top: 8px;
-}
-
-.Sf__success {
-  font-size: 12px;
-  color: #86efac;
-  background: rgba(134, 239, 172, 0.12);
-  padding: 6px;
-  border-radius: 0;
-  border: none;
-  box-shadow: none;
-  text-align: center;
-  margin-top: 8px;
 }
 
 @media (max-width: 768px) {

@@ -6,6 +6,7 @@ const REDIRECT_URI =
   (typeof window !== "undefined"
     ? `${window.location.origin}/api/github/callback`
     : null);
+const USER_CACHE_TTL = 5 * 60 * 1000;
 
 if (!CLIENT_ID) {
   // Do not throw during module import; feature will be disabled gracefully.
@@ -32,6 +33,35 @@ const buildAuthorizeUrl = (state) => {
   return `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
     redirect,
   )}&scope=repo&state=${encodeURIComponent(state)}`;
+};
+
+const readCache = (key) => {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = sessionStorage.getItem(key);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed?.expiresAt || parsed.expiresAt < Date.now()) {
+      sessionStorage.removeItem(key);
+      return null;
+    }
+    return parsed.value ?? null;
+  } catch {
+    return null;
+  }
+};
+
+const writeCache = (key, value, ttl = USER_CACHE_TTL) => {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.setItem(
+      key,
+      JSON.stringify({
+        value,
+        expiresAt: Date.now() + ttl,
+      }),
+    );
+  } catch {}
 };
 
 /**
@@ -115,13 +145,19 @@ export async function exchangeCodeForToken(code) {
  */
 export async function fetchGitHubUser(token) {
   try {
+    const cacheKey = `gh_user_${token.slice(0, 8)}`;
+    const cached = readCache(cacheKey);
+    if (cached) return cached;
+
     const res = await fetch("https://api.github.com/user", {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) {
       throw new Error("Gagal mengambil data pengguna");
     }
-    return await res.json();
+    const data = await res.json();
+    writeCache(cacheKey, data);
+    return data;
   } catch (error) {
     console.error("Error saat mengambil data user GitHub:", error);
     throw error;
@@ -136,6 +172,10 @@ export async function fetchGitHubUser(token) {
  */
 export async function fetchUserEvents(token, login) {
   try {
+    const cacheKey = `gh_events_${login}`;
+    const cached = readCache(cacheKey);
+    if (cached) return cached;
+
     const res = await fetch(`https://api.github.com/users/${login}/events`, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -143,7 +183,7 @@ export async function fetchUserEvents(token, login) {
       throw new Error("Gagal mengambil event");
     }
     const events = await res.json();
-    return events
+    const mapped = events
       .filter((e) => e.type === "PushEvent" || e.type === "PullRequestEvent")
       .map((e) => {
         if (e.type === "PullRequestEvent") {
@@ -166,6 +206,8 @@ export async function fetchUserEvents(token, login) {
           time: e.created_at,
         };
       });
+    writeCache(cacheKey, mapped, 60 * 1000);
+    return mapped;
   } catch (error) {
     console.error("Error saat mengambil event pengguna:", error);
     throw error;
@@ -179,6 +221,12 @@ export function logoutGitHub() {
   try {
     if (typeof window !== "undefined") {
       localStorage.removeItem("gh_token");
+      const sessionKeys = Object.keys(sessionStorage);
+      sessionKeys.forEach((key) => {
+        if (key.startsWith("gh_user_") || key.startsWith("gh_events_")) {
+          sessionStorage.removeItem(key);
+        }
+      });
     }
   } catch (error) {
     console.error("Gagal logout dari GitHub:", error);

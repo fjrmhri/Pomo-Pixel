@@ -26,7 +26,6 @@
  */
 
 import { useEffect, useId, useRef } from "react";
-import Image from "next/image";
 import "../../styles/Modal.css";
 
 const kelasLebar = {

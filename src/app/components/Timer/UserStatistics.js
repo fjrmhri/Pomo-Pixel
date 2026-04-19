@@ -18,6 +18,7 @@ import "../../styles/UserStatistics.css";
 import { db, auth } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import { useToast } from "../ui/useToast";
 
 // Konstanta struktur koleksi Firestore
 const NAMA_KOLEKSI = "users";
@@ -42,11 +43,11 @@ export default function UserStatistics({
   timeOnBreak,
   className = "",
 }) {
+  const { toast } = useToast();
   // ---------------- State UI ----------------
   const [modeTampil, setModeTampil] = useState("total"); // "total" | "harian"
   const [uidAktif, setUidAktif] = useState(userId || null);
   const [sedangMuat, setSedangMuat] = useState(false);
-  const [pesanError, setPesanError] = useState("");
 
   // data bacaan (fallback-friendly)
   const [bacaTotal, setBacaTotal] = useState({
@@ -92,7 +93,6 @@ export default function UserStatistics({
   useEffect(() => {
     const muat = async () => {
       setSedangMuat(true);
-      setPesanError("");
 
       try {
         // ===== TOTAL =====
@@ -189,16 +189,18 @@ export default function UserStatistics({
         }
       } catch (e) {
         console.error(e);
-        setPesanError(
-          "Gagal memuat statistik pengguna. Menampilkan nilai tersedia.",
-        );
+        toast({
+          title: "Statistik gagal dimuat",
+          description: "Nilai terakhir yang tersedia tetap ditampilkan.",
+          variant: "error",
+        });
       } finally {
         setSedangMuat(false);
       }
     };
 
     muat();
-  }, [uidAktif]);
+  }, [toast, uidAktif]);
 
   // ---------------- Pilihan data yang ditampilkan ----------------
   const dataTampil = useMemo(() => {
@@ -286,13 +288,6 @@ export default function UserStatistics({
             <span className="Stat__unit">menit</span>
           </article>
         </div>
-
-        {/* Pesan error (jika ada) */}
-        {pesanError && (
-          <div className="Stat__alert error" role="alert">
-            {pesanError}
-          </div>
-        )}
       </section>
     </>
   );

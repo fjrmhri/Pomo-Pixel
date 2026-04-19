@@ -198,16 +198,6 @@
   background: #fb7185;
 }
 
-.Mp__error {
-  margin-top: 4px;
-  background: #b91c1c;
-  color: #fff;
-  border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff;
-  padding: 4px 6px;
-  font-size: 9px;
-}
-
 @media (max-width: 768px) {
   .Mp__bungkus {
     width: min(94vw, 560px);

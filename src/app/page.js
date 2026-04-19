@@ -140,6 +140,8 @@ export default function Page() {
   const [githubUser, setGithubUser] = useState(null);
   const [githubEvents, setGithubEvents] = useState([]);
   const [displayNameSource, setDisplayNameSource] = useState("google");
+  const [showEntryScreen, setShowEntryScreen] = useState(false);
+  const [entryHydrated, setEntryHydrated] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -157,6 +159,12 @@ export default function Page() {
     } catch (error) {
       logError("gagal membaca preferensi display name", error);
     }
+  }, []);
+
+  useEffect(() => {
+    const started = safeReadLocalStorage("pomo_started", "memuat status awal");
+    setShowEntryScreen(started !== "true");
+    setEntryHydrated(true);
   }, []);
 
   useEffect(() => {
@@ -491,6 +499,11 @@ export default function Page() {
     img.src = src;
   }, [wallpaperIdx]);
 
+  const handleStartFocus = useCallback(() => {
+    safeWriteLocalStorage("pomo_started", "true", "menyimpan status awal");
+    setShowEntryScreen(false);
+  }, []);
+
   /* ===================================================================
    *  5) Modal Pengaturan
    * =================================================================== */
@@ -516,6 +529,30 @@ export default function Page() {
     <main className="halaman-utama">
       {/* Wallpaper */}
       <Wallpaper src={wallpaperSrc} alt="latar pixel" />
+
+      {entryHydrated && showEntryScreen ? (
+        <section className="entry-screen" aria-label="Mulai fokus">
+          <div className="entry-screen__panel">
+            <p className="entry-screen__eyebrow">Pixel focus space</p>
+            <h1 className="entry-screen__title">Pixel Focus Space</h1>
+            <p className="entry-screen__subtitle">
+              Lofi focus timer ringan untuk sesi kerja, statistik, dan ritme
+              fokus yang rapi.
+            </p>
+            <button
+              type="button"
+              className="pixel-btn entry-screen__cta"
+              onClick={handleStartFocus}
+            >
+              Start Focus Now
+            </button>
+          </div>
+        </section>
+      ) : null}
+
+      <div className="ad-slot ad-slot--top" aria-hidden>
+        <span>Top banner slot</span>
+      </div>
 
       {/* Tabs Sesi kiri-atas */}
       <div className="area-kiri-atas">

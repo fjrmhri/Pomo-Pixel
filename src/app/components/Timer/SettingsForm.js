@@ -1,11 +1,11 @@
-import React from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
 import { logoutGitHub } from "../../github";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { useToast } from "../ui/useToast";
 
 const NAMA_KOLEKSI = "users";
 const NAMA_DOKUMEN_PREFERENSI = "preferensi";
@@ -31,10 +31,8 @@ function SettingsForm({
   onLogoutGitHub,
   className = "",
 }) {
-  const [sedangMuat, setSedangMuat] = useState(false);
+  const { toast } = useToast();
   const [sedangSimpan, setSedangSimpan] = useState(false);
-  const [pesanSukses, setPesanSukses] = useState("");
-  const [pesanError, setPesanError] = useState("");
 
   const [nilaiWork, setNilaiWork] = useState(workLen || 25);
   const [nilaiShort, setNilaiShort] = useState(shortBreakLen || 5);
@@ -49,8 +47,6 @@ function SettingsForm({
   );
 
   const [uidAktif, setUidAktif] = useState(userId || null);
-
-  const refSfx = useRef(null);
 
   useEffect(() => {
     if (displayNameSource === "google" || displayNameSource === "github") {
@@ -71,8 +67,6 @@ function SettingsForm({
 
   useEffect(() => {
     const muatPreferensi = async () => {
-      setSedangMuat(true);
-      setPesanError("");
       try {
         if (uidAktif) {
           const d = await getDoc(
@@ -107,13 +101,16 @@ function SettingsForm({
         }
       } catch (e) {
         console.error(e);
-        setPesanError("Gagal memuat preferensi. Nilai default dipakai.");
+        toast({
+          title: "Preferensi gagal dimuat",
+          description: "Nilai default tetap dipakai.",
+          variant: "error",
+        });
       } finally {
-        setSedangMuat(false);
       }
     };
     muatPreferensi();
-  }, [uidAktif]);
+  }, [toast, uidAktif]);
 
   const validasi = () => {
     const e = [];
@@ -134,16 +131,18 @@ function SettingsForm({
       e.push("Volume harus 0–100.");
 
     if (e.length > 0) {
-      setPesanError(e.join(" "));
+      toast({
+        title: "Validasi gagal",
+        description: e.join(" "),
+        variant: "error",
+      });
       return false;
     }
-    setPesanError("");
     return true;
   };
 
   const simpanPreferensi = async (ev) => {
     ev?.preventDefault?.();
-    setPesanSukses("");
     if (!validasi()) return;
 
     setSedangSimpan(true);
@@ -178,13 +177,15 @@ function SettingsForm({
       setVolume?.(Number(nilaiVolume));
       setLocMode?.(String(nilaiLocMode));
 
-      setPesanSukses("Pengaturan berhasil disimpan.");
       onDisplayNameSourceChange?.(String(nilaiDisplayNameSource));
+      toast({ title: "Pengaturan disimpan", variant: "success" });
     } catch (e) {
       console.error(e);
-      setPesanError(
-        "Gagal menyimpan pengaturan. Periksa koneksi dan coba lagi.",
-      );
+      toast({
+        title: "Pengaturan gagal disimpan",
+        description: "Periksa koneksi lalu coba lagi.",
+        variant: "error",
+      });
     } finally {
       setSedangSimpan(false);
     }
@@ -198,28 +199,7 @@ function SettingsForm({
     setNilaiVolume(80);
     setNilaiLocMode("time");
     setNilaiDisplayNameSource("google");
-    setPesanSukses("");
-    setPesanError("");
-  };
-
-  const cobaBunyi = () => {
-    try {
-      if (!refSfx.current) return;
-      refSfx.current.currentTime = 0;
-      refSfx.current.volume = Math.min(
-        Math.max(Number(nilaiVolume || 0) / 100, 0),
-        1,
-      );
-      refSfx.current.play().catch((error) => {
-        console.warn(
-          "SettingsForm: browser menolak memutar bunyi percobaan:",
-          error,
-        );
-      });
-    } catch (e) {
-      console.error(e);
-      setPesanError("Tidak dapat memutar bunyi percobaan.");
-    }
+    toast({ title: "Pengaturan direset" });
   };
 
   return (
@@ -329,8 +309,16 @@ function SettingsForm({
               if (googleUser) {
                 try {
                   await signOut(auth);
+                  toast({
+                    title: "Berhasil logout Google",
+                    variant: "success",
+                  });
                 } catch (error) {
                   console.error("SettingsForm: gagal logout Firebase:", error);
+                  toast({
+                    title: "Logout Google gagal",
+                    variant: "error",
+                  });
                 }
                 return;
               }
@@ -338,8 +326,16 @@ function SettingsForm({
                 try {
                   logoutGitHub();
                   onLogoutGitHub?.();
+                  toast({
+                    title: "Berhasil logout GitHub",
+                    variant: "success",
+                  });
                 } catch (error) {
                   console.error("SettingsForm: gagal logout GitHub:", error);
+                  toast({
+                    title: "Logout GitHub gagal",
+                    variant: "error",
+                  });
                 }
               }
             }}
@@ -351,9 +347,6 @@ function SettingsForm({
                 : "Log Out"}
           </button>
         </div>
-
-        {pesanError && <div className="Sf__error">{pesanError}</div>}
-        {pesanSukses && <div className="Sf__success">{pesanSukses}</div>}
       </form>
     </div>
   );

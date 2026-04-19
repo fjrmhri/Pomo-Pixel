@@ -1,37 +1,43 @@
 import Login from "./Login";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import "../../styles/SettingsForm.css";
+import { useToast } from "../ui/useToast";
 
 /**
  * Komponen untuk menampilkan form login gabungan (Google + GitHub)
  */
 function LoginRegisterForm({ googleUser, githubUser, onClose }) {
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const prevBothConnectedRef = useRef(false);
+  const prevGoogleLoggedRef = useRef(Boolean(googleUser));
+  const prevGithubLoggedRef = useRef(Boolean(githubUser));
   const closeTimeoutRef = useRef(null);
+  const { toast } = useToast();
 
   useEffect(() => {
-    const bothConnected = Boolean(googleUser && githubUser);
-    const wasBothConnected = prevBothConnectedRef.current;
+    const googleLoggedIn = Boolean(googleUser);
+    const githubLoggedIn = Boolean(githubUser);
+    const googleBaruLogin = googleLoggedIn && !prevGoogleLoggedRef.current;
+    const githubBaruLogin = githubLoggedIn && !prevGithubLoggedRef.current;
 
-    if (bothConnected && !wasBothConnected) {
-      setShowSuccessMessage(true);
+    if (googleBaruLogin) {
+      toast({ title: "Berhasil login Google", variant: "success" });
+    }
+
+    if (githubBaruLogin) {
+      toast({ title: "Berhasil login GitHub", variant: "success" });
+    }
+
+    if (googleBaruLogin || githubBaruLogin) {
       if (closeTimeoutRef.current) {
         clearTimeout(closeTimeoutRef.current);
       }
       closeTimeoutRef.current = setTimeout(() => {
-        setShowSuccessMessage(false);
         onClose?.();
       }, 1200);
-      prevBothConnectedRef.current = bothConnected;
     }
 
-    if (!bothConnected && showSuccessMessage) {
-      setShowSuccessMessage(false);
-    }
-
-    prevBothConnectedRef.current = bothConnected;
-  }, [githubUser, googleUser, onClose, showSuccessMessage]);
+    prevGoogleLoggedRef.current = googleLoggedIn;
+    prevGithubLoggedRef.current = githubLoggedIn;
+  }, [githubUser, googleUser, onClose, toast]);
 
   useEffect(() => {
     return () => {
@@ -41,16 +47,11 @@ function LoginRegisterForm({ googleUser, githubUser, onClose }) {
     };
   }, []);
 
-  // If both providers connected, nothing to show (per spec)
-  if (googleUser && githubUser && !showSuccessMessage) return null;
+  if (googleUser && githubUser) return null;
 
   return (
     <div className="flex flex-col items-center gap-4 w-full h-full overflow-y-auto">
-      <Login
-        googleUser={googleUser}
-        githubUser={githubUser}
-        showSuccessMessage={showSuccessMessage}
-      />
+      <Login googleUser={googleUser} githubUser={githubUser} />
     </div>
   );
 }

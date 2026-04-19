@@ -1,12 +1,4 @@
 /* Monocraft (jika belum global) ---------------------------------------- */
-@font-face {
-  font-family: "Monocraft";
-  src: url("/fonts/Monocraft.otf") format("opentype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* Backdrop -------------------------------------------------------------- */
 .Md__backdrop {
   position: fixed;
@@ -31,7 +23,7 @@
   box-shadow: 0 0 0 2px #000;
   border-radius: 0; /* square edges */
   padding: 8px 12px; /* Padding lebih ringkas */
-  font-family: "Monocraft", monospace;
+  font-family: var(--font-pixel, "Monocraft", monospace);
   outline: none;
   z-index: 1000; /* Menjaga modal tetap di atas */
   transition: transform 0.2s ease-out; /* Efek transisi */
@@ -77,14 +69,12 @@
 
 /* Tombol tutup (pixel) ------------------------------------------------- */
 .Md__btn-tutup {
-  font-family: "Monocraft", monospace;
+  font-family: var(--font-pixel, "Monocraft", monospace);
   font-size: 12px;
   color: #111827;
   background: #fca5a5; /* red-300 */
   border: 2px solid #000;
-  box-shadow:
-    0 0 0 2px #fff,
-    0 0 0 4px #000;
+  box-shadow: 0 0 0 2px #fff;
   border-radius: 0;
   padding: 6px 10px;
   cursor: pointer;

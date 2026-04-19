@@ -39,8 +39,8 @@
   font-size: 10px;
   color: #111827;
   background: #60a5fa;
-  border: none;
-  box-shadow: none;
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff;
   border-radius: 0;
   padding: 6px 8px;
   cursor: pointer;
@@ -93,9 +93,9 @@
 }
 
 .Stat__kartu {
-  background: transparent;
+  background: rgba(17, 24, 39, 0.65);
   border: 2px solid #ffffff;
-  box-shadow: none;
+  box-shadow: 0 0 0 2px #000;
   padding: 10px 8px;
   text-align: center;
   border-radius: 0;
@@ -127,17 +127,6 @@
 
 .Stat__kartu-total .Stat__angka {
   color: #86efac;
-}
-
-.Stat__alert {
-  margin-top: 10px;
-  background: #b91c1c;
-  color: #fff;
-  border: none;
-  box-shadow: none;
-  padding: 8px 10px;
-  font-size: 12px;
-  text-align: center;
 }
 
 @media (max-width: 768px) {

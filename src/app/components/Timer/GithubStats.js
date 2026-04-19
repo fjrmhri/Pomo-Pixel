@@ -12,7 +12,6 @@
 import Image from "next/image";
 import "../../styles/GithubStats.css";
 import "../../styles/SettingsForm.css";
-import { redirectToGitHub } from "../../github";
 import { useMemo, useState } from "react";
 
 export default function GithubStats({
@@ -97,22 +96,9 @@ export default function GithubStats({
           </div>
         </div>
       ) : (
-        <button
-          type="button"
-          className="Sf__btn Sf__btn--primary w-full"
-          onClick={() => {
-            try {
-              redirectToGitHub();
-            } catch (error) {
-              console.error(
-                "GithubStats: gagal menginisiasi login GitHub:",
-                error,
-              );
-            }
-          }}
-        >
-          Login with GitHub
-        </button>
+        <div className="Stat__history-empty">
+          GitHub belum terhubung.
+        </div>
       )}
     </section>
   );

@@ -1,38 +1,21 @@
-"use client"; // Menandai komponen ini sebagai client-side
-
 import "./globals.css";
-import { useEffect } from "react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Analytics } from "@vercel/analytics/react"; // gunakan 'react' jika bukan Next.js App Router
+import { Analytics } from "@vercel/analytics/react";
+import localFont from "next/font/local";
+import ToastProvider from "./components/ui/ToastProvider";
 
-// Hapus ekspor metadata, karena itu tidak diperbolehkan di dalam komponen client-side
+const monocraft = localFont({
+  src: "../../public/fonts/Monocraft.otf",
+  display: "swap",
+  variable: "--font-pixel",
+});
+
 export default function RootLayout({ children }) {
-  useEffect(() => {
-    // Mengatasi masalah font dengan memastikan font Monocraft dimuat dengan benar
-    const font = new FontFace("Monocraft", "url(/fonts/Monocraft.otf)");
-    font
-      .load()
-      .then(() => {
-        document.fonts.add(font);
-      })
-      .catch((err) => {
-        console.error("Font Monocraft gagal dimuat", err);
-      });
-  }, []);
-
   return (
-    <html lang="en">
-      <head>
-        <title>Pomo Pixel</title>
-      </head>
-      <body
-        className="font-mono antialiased"
-        style={{
-          fontFamily: "Monocraft, monospace",
-        }}
-      >
-        {children}
-        <SpeedInsights /> {/* <SpeedInsights /> */}
+    <html lang="id">
+      <body className={`${monocraft.variable} font-mono antialiased`}>
+        <ToastProvider>{children}</ToastProvider>
+        <SpeedInsights />
         <Analytics />
       </body>
     </html>

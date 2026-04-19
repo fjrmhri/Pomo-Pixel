@@ -118,18 +118,6 @@
   transform: translateY(-2px);
 }
 
-.Tm__alert {
-  text-align: center;
-  font-size: 10px;
-  margin-top: 3px;
-}
-.Tm__alert.info {
-  color: #2563eb;
-}
-.Tm__alert.error {
-  color: #b91c1c;
-}
-
 .Tm__footer {
   margin-top: 4px;
   text-align: center;
