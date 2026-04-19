@@ -437,7 +437,7 @@ textarea {
 
 .toast-viewport {
   position: fixed;
-  top: 50px;
+  top: 55px;
   right: 16px;
   z-index: 1200;
   display: flex;
