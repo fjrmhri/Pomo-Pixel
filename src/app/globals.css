@@ -301,9 +301,15 @@ textarea {
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: rgba(10, 10, 10, 0.75);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(15, 23, 42, 0.84) 0%,
+      rgba(15, 23, 42, 0.78) 52%,
+      rgba(15, 23, 42, 0.82) 100%
+    );
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .entry-screen__panel {
