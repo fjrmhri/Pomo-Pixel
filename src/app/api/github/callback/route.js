@@ -1,62 +1,116 @@
 import { NextResponse } from "next/server";
 
+const TOKEN_COOKIE = "gh_access_token";
+const STATE_COOKIE = "gh_oauth_state";
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
+
+const getOrigin = (request) => {
+  const proto = request.headers.get("x-forwarded-proto") || "http";
+  const host = request.headers.get("host");
+  return host ? `${proto}://${host}` : new URL(request.url).origin;
+};
+
+const getRedirectUri = (request) =>
+  process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URI ||
+  `${getOrigin(request)}/api/github/callback`;
+
+const withClearedState = (response) => {
+  response.cookies.set(STATE_COOKIE, "", {
+    maxAge: 0,
+    path: "/",
+    sameSite: "lax",
+  });
+  return response;
+};
+
+const errorResponse = (request, wantsJson, payload, status = 400) => {
+  if (wantsJson) {
+    return withClearedState(NextResponse.json(payload, { status }));
+  }
+
+  const url = new URL("/", getOrigin(request));
+  url.searchParams.set("github_error", "oauth");
+  return withClearedState(NextResponse.redirect(url));
+};
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
+  const state = searchParams.get("state");
+  const wantsJson = searchParams.get("format") === "json";
+
   if (!code) {
-    return NextResponse.json({ error: "Missing code" }, { status: 400 });
+    return errorResponse(request, wantsJson, { error: "Missing code" }, 400);
   }
-  try {
-    // Compute redirect_uri: prefer env if provided, otherwise derive from request
-    const envRedirect = process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URI || null;
-    const redirect_uri =
-      envRedirect ||
-      `${request.headers.get("x-forwarded-proto") || "http"}://${request.headers.get("host")}/api/github/callback`;
 
-    const response = await fetch(
-      "https://github.com/login/oauth/access_token",
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          client_id: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID,
-          client_secret: process.env.GITHUB_CLIENT_SECRET,
-          code,
-          redirect_uri,
-        }),
-      },
+  const storedState = request.cookies.get(STATE_COOKIE)?.value;
+  if (!storedState || !state || storedState !== state) {
+    return errorResponse(request, wantsJson, { error: "Invalid state" }, 400);
+  }
+
+  const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
+  const clientSecret = process.env.GITHUB_CLIENT_SECRET;
+
+  if (!clientId || !clientSecret) {
+    return errorResponse(
+      request,
+      wantsJson,
+      { error: "GitHub OAuth env is incomplete" },
+      500,
     );
+  }
 
-    const txt = await response.text().catch(() => "");
-    let data = {};
-    try {
-      data = txt ? JSON.parse(txt) : {};
-    } catch {
-      data = { raw: txt };
-    }
+  try {
+    const response = await fetch("https://github.com/login/oauth/access_token", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        client_id: clientId,
+        client_secret: clientSecret,
+        code,
+        redirect_uri: getRedirectUri(request),
+      }),
+      cache: "no-store",
+    });
 
-    if (!response.ok) {
-      // Provide helpful message for redirect_uri mismatch
-      return NextResponse.json(
-        { error: "Upstream error", status: response.status, detail: data },
-        { status: 502 },
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || data.error || !data.access_token) {
+      return errorResponse(
+        request,
+        wantsJson,
+        {
+          error: "GitHub token exchange failed",
+          status: response.status,
+          detail: data,
+        },
+        response.ok ? 400 : 502,
       );
     }
 
-    if (data.error) {
-      // Common GitHub error: redirect_uri_mismatch
-      return NextResponse.json(data, { status: 400 });
-    }
+    const result = wantsJson
+      ? NextResponse.json({ ok: true })
+      : NextResponse.redirect(new URL("/", getOrigin(request)));
 
-    return NextResponse.json(data);
+    result.cookies.set(TOKEN_COOKIE, data.access_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: COOKIE_MAX_AGE,
+      path: "/",
+    });
+
+    return withClearedState(result);
   } catch (err) {
     console.error("/api/github/callback error:", err?.message || err);
-    return NextResponse.json(
+    return errorResponse(
+      request,
+      wantsJson,
       { error: "Internal server error" },
-      { status: 500 },
+      500,
     );
   }
 }

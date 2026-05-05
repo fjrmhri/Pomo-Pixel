@@ -28,9 +28,9 @@ import Footer from "./components/Timer/Footer";
 import Wallpaper from "./components/Music/Wallpaper";
 import { useToast } from "./components/ui/useToast";
 import {
-  exchangeCodeForToken,
-  fetchGitHubUser,
-  fetchUserEvents,
+  clearLegacyGitHubToken,
+  completeGitHubLogin,
+  fetchGitHubSession,
 } from "./github";
 import { auth, db } from "./firebase";
 
@@ -50,9 +50,10 @@ const KEY_PENGATURAN = "lp_pengaturan_v1";
 const KEY_PERIODE = "lp_periode_v1";
 const KEY_WALLPAPER = "lp_wallpaper_src_v1";
 const KEY_STATS_TOTAL = "lp_stats_total_v1";
-const KEY_GITHUB_TOKEN = "gh_token";
+const KEY_STATS_DAILY_PREFIX = "lp_stats_daily_";
 const KEY_HAS_VISITED = "lp_has_visited_v1";
 const KEY_SESSION_COUNT = "lp_session_count_v1";
+const KEY_POMO_STARTED = "pomo_started";
 
 // ---------- nilai default ----------
 const DEFAULT_PENGATURAN = {
@@ -171,13 +172,22 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    const started = safeReadLocalStorage("pomo_started", "memuat status awal");
+    const started = safeReadLocalStorage(KEY_POMO_STARTED, "memuat status awal");
     setShowEntryScreen(started !== "true");
     setEntryHydrated(true);
   }, []);
 
   useEffect(() => {
-    const visited = safeReadLocalStorage(KEY_HAS_VISITED, "memuat status visit");
+    const started = safeReadLocalStorage(KEY_POMO_STARTED, "memuat status awal");
+    if (started !== "true") {
+      safeWriteLocalStorage(KEY_HAS_VISITED, "true", "menyimpan status visit");
+      return;
+    }
+
+    const visited = safeReadLocalStorage(
+      KEY_HAS_VISITED,
+      "memuat status visit",
+    );
     if (visited === "true") {
       toast({ title: "Welcome back. Ready to focus?" });
       return;
@@ -222,13 +232,17 @@ export default function Page() {
     return googleName || githubName || null;
   }, [displayNameSource, githubUser, googleUser]);
 
-  const handleGitHubToken = useCallback(async (token) => {
-    if (!token) return;
+  const muatSesiGitHub = useCallback(async (force = false) => {
     try {
-      const user = await fetchGitHubUser(token);
-      setGithubUser(user);
-      const events = await fetchUserEvents(token, user.login);
-      setGithubEvents(events);
+      clearLegacyGitHubToken();
+      const session = await fetchGitHubSession({ force });
+      if (!session.user) {
+        setGithubUser(null);
+        setGithubEvents([]);
+        return;
+      }
+      setGithubUser(session.user);
+      setGithubEvents(session.events);
     } catch (error) {
       logError("gagal memuat data GitHub", error);
       setGithubUser(null);
@@ -236,56 +250,47 @@ export default function Page() {
     }
   }, []);
 
-  // GitHub OAuth: cek kode dari redirect dan muat data jika token ada
+  // GitHub OAuth: selesaikan redirect dan muat sesi dari cookie httpOnly.
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const params = new URLSearchParams(window.location.search);
     const code = params.get("code");
-    const tokenLocal = safeReadLocalStorage(
-      KEY_GITHUB_TOKEN,
-      "membaca token GitHub",
-    );
+    const state = params.get("state");
 
-    if (tokenLocal) {
-      void handleGitHubToken(tokenLocal);
+    if (!code) {
+      void muatSesiGitHub();
       return;
     }
 
-    if (!code) return;
-
-    exchangeCodeForToken(code)
-      .then((token) => {
-        if (!token) return;
-        safeWriteLocalStorage(
-          KEY_GITHUB_TOKEN,
-          token,
-          "menyimpan token GitHub",
-        );
+    completeGitHubLogin(code, state)
+      .then(() => {
         try {
           const url = new URL(window.location.href);
           url.searchParams.delete("code");
+          url.searchParams.delete("state");
           window.history.replaceState({}, "", url.toString());
         } catch (error) {
           logError("gagal membersihkan parameter kode GitHub", error);
         }
-        void handleGitHubToken(token);
+        void muatSesiGitHub(true);
       })
       .catch((error) => {
-        logError("gagal menukar kode GitHub menjadi token", error);
+        logError("gagal menyelesaikan login GitHub", error);
       });
-  }, [handleGitHubToken]);
+  }, [muatSesiGitHub]);
 
   const refreshGithubEvents = useCallback(async () => {
     if (!githubUser) return;
-    const token = safeReadLocalStorage(
-      KEY_GITHUB_TOKEN,
-      "memuat token GitHub untuk refresh",
-    );
-    if (!token) return;
     try {
-      const events = await fetchUserEvents(token, githubUser.login);
-      setGithubEvents(events);
+      const session = await fetchGitHubSession({ force: true });
+      if (!session.user) {
+        setGithubUser(null);
+        setGithubEvents([]);
+        return;
+      }
+      setGithubUser(session.user);
+      setGithubEvents(session.events);
     } catch (error) {
       logError("gagal memperbarui aktivitas GitHub", error);
     }
@@ -432,12 +437,45 @@ export default function Page() {
         menitFokus: Number(sebelumnya.menitFokus || 0) + fokus,
         menitIstirahat: Number(sebelumnya.menitIstirahat || 0) + istirahat,
       };
+      const tanggal = formatTanggal();
 
       try {
         safeWriteLocalStorage(
           KEY_STATS_TOTAL,
           JSON.stringify(agregat),
           "menyimpan statistik ringkas",
+        );
+
+        const dailyKey = `${KEY_STATS_DAILY_PREFIX}${tanggal}`;
+        const rawDaily = safeReadLocalStorage(
+          dailyKey,
+          "membaca statistik harian lokal",
+        );
+        const parsedDaily = safeParseJSON(
+          rawDaily,
+          null,
+          "membaca statistik harian lokal",
+        );
+        const harianSebelumnya =
+          parsedDaily && typeof parsedDaily === "object"
+            ? parsedDaily
+            : {
+                totalMenit: 0,
+                menitFokus: 0,
+                menitIstirahat: 0,
+              };
+        const harian = {
+          tanggal,
+          totalMenit: Number(harianSebelumnya.totalMenit || 0) + total,
+          menitFokus: Number(harianSebelumnya.menitFokus || 0) + fokus,
+          menitIstirahat:
+            Number(harianSebelumnya.menitIstirahat || 0) + istirahat,
+        };
+
+        safeWriteLocalStorage(
+          dailyKey,
+          JSON.stringify(harian),
+          "menyimpan statistik harian lokal",
         );
       } catch (error) {
         logError("gagal menyerialisasi statistik ringkas", error);
@@ -448,7 +486,6 @@ export default function Page() {
       }
 
       try {
-        const tanggal = formatTanggal();
         // Struktur Firestore:
         // - users/{uid}/statistik/agregat (total semua waktu)
         // - users/{uid}/statistik_harian/{YYYY-MM-DD} (data per hari)
@@ -551,7 +588,7 @@ export default function Page() {
   }, [wallpaperIdx]);
 
   const handleStartFocus = useCallback(() => {
-    safeWriteLocalStorage("pomo_started", "true", "menyimpan status awal");
+    safeWriteLocalStorage(KEY_POMO_STARTED, "true", "menyimpan status awal");
     setShowEntryScreen(false);
     toast({ title: "Focus mode started" });
   }, [toast]);
@@ -584,7 +621,10 @@ export default function Page() {
       logError("gagal menyalin tautan", error);
     }
 
-    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+    if (
+      typeof navigator !== "undefined" &&
+      typeof navigator.share === "function"
+    ) {
       try {
         await navigator.share({
           title: "Pomo Pixel",
@@ -646,14 +686,13 @@ export default function Page() {
       {entryHydrated && showEntryScreen ? (
         <section className="entry-screen" aria-label="Mulai fokus" id="hero">
           <div className="entry-screen__panel">
-            <p className="entry-screen__eyebrow">Aesthetic pomodoro</p>
+            <p className="entry-screen__eyebrow">Pomo Pixel</p>
             <h2 className="entry-screen__title">
-              Focus deeper with a calm, aesthetic pomodoro timer built for real
-              productivity.
+              Focus more comfortably with pomodoro, lofi music, and a vibe you
+              can choose.
             </h2>
             <p className="entry-screen__subtitle">
-              Lofi ambience, simple sessions, and clean focus tools help you
-              get into flow faster.
+              Start your focus session with more calm and direction.
             </p>
             <div className="entry-screen__actions">
               <button

@@ -317,7 +317,7 @@ function SettingsForm({
               }
               if (githubUser) {
                 try {
-                  logoutGitHub();
+                  await logoutGitHub();
                   onLogoutGitHub?.();
                   toast({
                     title: "Berhasil logout GitHub",

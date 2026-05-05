@@ -63,6 +63,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
   const refSfx = useRef(null); // efek klik singkat (bukan ambient loop)
   const refHandleBerikut = useRef(() => {});
   const refSfxTimeout = useRef(null);
+  const refUrlAudioTerakhir = useRef("");
 
   const [daftarLagu] = useState(() => bangunDaftarLagu());
   const [genreTerpilih, setGenreTerpilih] = useState(SEMUA);
@@ -137,21 +138,6 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
     const onLoadedMetadata = () => {
       setDurasiDetik(el.duration || 0);
       setWaktuSaatIni(0);
-      // autoplay ketika user sebelumnya sudah menekan play
-      if (sedangMain) {
-        el.play()
-          .then(() => {
-            setSedangMain(true);
-          })
-          .catch(() => {
-            setSedangMain(false);
-            toast({
-              title: "Pemutaran otomatis diblokir",
-              description: "Tekan tombol play untuk melanjutkan.",
-              variant: "error",
-            });
-          });
-      }
     };
 
     const onTimeUpdate = () => {
@@ -194,11 +180,35 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
       el.removeEventListener("ended", onEnded);
       el.removeEventListener("error", onError);
     };
-  }, [sedangMain, toast, ulangAktif]); // dep: status pemutaran & repeat
+  }, [toast, ulangAktif]);
 
   useEffect(() => {
     return aturEventAudio();
   }, [aturEventAudio, laguSaatIni?.url]);
+
+  useEffect(() => {
+    const el = refAudio.current;
+    const url = laguSaatIni?.url || "";
+    if (!el || !audioSiap || !url || refUrlAudioTerakhir.current === url) return;
+
+    refUrlAudioTerakhir.current = url;
+    setWaktuSaatIni(0);
+    setDurasiDetik(0);
+    el.load();
+
+    if (!sedangMain) return;
+
+    el.play()
+      .then(() => setSedangMain(true))
+      .catch(() => {
+        setSedangMain(false);
+        toast({
+          title: "Pemutaran gagal",
+          description: "Tekan tombol play untuk melanjutkan.",
+          variant: "error",
+        });
+      });
+  }, [audioSiap, laguSaatIni?.url, sedangMain, toast]);
 
   // ---------- Kontrol dasar ----------
   const mainkanSfxSingkat = useCallback((durasiMs = 280) => {
@@ -331,18 +341,16 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
   // ---------- Keyboard shortcut ----------
   useEffect(() => {
     const onKey = (ev) => {
+      if (ev.defaultPrevented) return;
       // hindari jika user mengetik di input
       const tag = (ev.target?.tagName || "").toLowerCase();
-      if (tag === "input" || tag === "textarea" || ev.target?.isContentEditable)
+      if (
+        ["input", "textarea", "select", "button"].includes(tag) ||
+        ev.target?.isContentEditable
+      )
         return;
 
-      if (ev.code === "Space") {
-        ev.preventDefault();
-        if (!audioSiap) {
-          setAudioSiap(true);
-        }
-        handleToggleMain();
-      } else if (ev.code === "ArrowRight") {
+      if (ev.code === "ArrowRight") {
         ev.preventDefault();
         handleBerikut();
       } else if (ev.code === "ArrowLeft") {
@@ -352,7 +360,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [audioSiap, handleToggleMain, handleBerikut, handleSebelumnya]);
+  }, [handleBerikut, handleSebelumnya]);
 
   // ---------- Audio recovery after sleep/freeze ----------
   useEffect(() => {
@@ -486,7 +494,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
               sedangMain ? "is-active" : ""
             }`}
             onClick={handleToggleMain}
-            aria-label={sedangMain ? "Jeda (Space)" : "Putar (Space)"}
+            aria-label={sedangMain ? "Jeda musik" : "Putar musik"}
           >
             {sedangMain ? "❚❚" : "▶"}
           </button>

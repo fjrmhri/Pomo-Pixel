@@ -270,6 +270,7 @@ export default function Timer({
     if (refInterval.current) clearInterval(refInterval.current);
     refInterval.current = null;
     refTargetTime.current = null;
+    releaseWakeLock();
     setBerjalan(false);
     setSisaDetik(getDurasiPeriodeDetik(periode));
     try {
@@ -281,7 +282,7 @@ export default function Timer({
         variant: "error",
       });
     }
-  }, [getDurasiPeriodeDetik, onReset, periode, toast]);
+  }, [getDurasiPeriodeDetik, onReset, periode, releaseWakeLock, toast]);
 
   const gantiPeriode = useCallback(
     (p, autoStart = false) => {
@@ -394,9 +395,13 @@ export default function Timer({
     };
 
     const onKey = (ev) => {
+      if (ev.defaultPrevented) return;
       setInteracted();
       const tag = (ev.target?.tagName || "").toLowerCase();
-      if (tag === "input" || tag === "textarea" || ev.target?.isContentEditable)
+      if (
+        ["input", "textarea", "select", "button"].includes(tag) ||
+        ev.target?.isContentEditable
+      )
         return;
 
       if (ev.code === "Space") {

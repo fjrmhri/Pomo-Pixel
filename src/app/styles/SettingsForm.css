@@ -71,11 +71,11 @@
 }
 
 .Sf__range::-webkit-slider-runnable-track {
-  background: rgba(226, 232, 240, 0.35);
+  background: transparent;
 }
 
 .Sf__range::-moz-range-track {
-  background: rgba(226, 232, 240, 0.35);
+  background: transparent;
 }
 
 .Sf__range::-webkit-slider-thumb {

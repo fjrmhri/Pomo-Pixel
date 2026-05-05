@@ -6,19 +6,19 @@ import "../../styles/LocationWidget.css";
 /**
  * LocationWidget
  * ------------------------------------------------------------------
- * Meminta izin lokasi sekali saat mount. Jika diizinkan, widget menampilkan
- * jam real-time atau cuaca (mode ditentukan lewat pengaturan aplikasi).
+ * Menampilkan jam real-time atau cuaca (mode ditentukan lewat pengaturan aplikasi).
  * - Jam diperbarui tiap detik.
  * - Cuaca diambil dari API open-meteo.com berdasarkan koordinat pengguna.
  */
 export default function LocationWidget({ mode, className = "" }) {
-  const [permission, setPermission] = useState("pending"); // pending | granted | denied
+  const [permission, setPermission] = useState("idle"); // idle | pending | granted | denied
   const [coords, setCoords] = useState(null);
   const [clock, setClock] = useState(() => new Date());
   const [weather, setWeather] = useState(null);
 
-  // Minta geolocation saat pertama kali
+  // Minta geolocation hanya ketika mode cuaca aktif.
   useEffect(() => {
+    if (mode !== "weather") return;
     if (!navigator.geolocation) {
       setPermission("denied");
       console.warn(
@@ -26,6 +26,7 @@ export default function LocationWidget({ mode, className = "" }) {
       );
       return;
     }
+    setPermission("pending");
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setPermission("granted");
@@ -39,7 +40,7 @@ export default function LocationWidget({ mode, className = "" }) {
         console.warn("LocationWidget: gagal mendapatkan izin lokasi:", error);
       },
     );
-  }, []);
+  }, [mode]);
 
   // Update jam tiap detik ketika mode time
   useEffect(() => {
@@ -66,9 +67,8 @@ export default function LocationWidget({ mode, className = "" }) {
     return () => controller.abort();
   }, [permission, mode, coords]);
 
-  // Jika izin lokasi belum diberikan atau mode tidak valid, tidak tampilkan widget
-  if (permission !== "granted" || (mode !== "time" && mode !== "weather"))
-    return null;
+  if (mode !== "time" && mode !== "weather") return null;
+  if (mode === "weather" && permission !== "granted") return null;
 
   return (
     <div className={`Loc ${className}`}>
