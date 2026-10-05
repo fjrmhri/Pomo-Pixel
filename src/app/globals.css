@@ -26,31 +26,95 @@
 /*  Token & Theme (v4-friendly) */
 /* ============================ */
 
+/* Tema "cozy dusk": seluruh warna, spasi, ukuran teks, bentuk pixel, dan
+   lapisan diambil dari token ini. Jenis font tidak diatur di sini selain
+   --font-pixel yang sudah ada sebelumnya. */
 :root {
-  --background: #0a0a0a; /* default gelap */
-  --foreground: #ededed;
+  color-scheme: dark;
 
-  /* aksen pixel */
-  --aksen-cyan: #22d3ee;
-  --aksen-blue: #60a5fa;
-  --aksen-pink: #f472b6;
-  --aksen-amber: #fbbf24;
-  --aksen-violet: #a78bfa;
+  /* ---------- Palet ---------- */
+  --warna-latar: #0d0a16;
+  --warna-permukaan: rgba(29, 23, 48, 0.9); /* panel */
+  --warna-permukaan-solid: #1d1730;
+  --warna-permukaan-pekat: #130f20; /* input, inset */
+  --warna-garis: #efe2c6; /* border krem */
+  --warna-garis-gelap: #120d1c; /* outline tombol */
+  --warna-teks: #f4ead5;
+  --warna-teks-redup: #c3b8d3;
+  --warna-teks-gelap: #1b1428; /* teks di atas tombol terang */
+  --warna-utama: #f2b35b; /* amber: aksi utama */
+  --warna-netral: #d9d0e7; /* aksi sekunder */
+  --warna-pilih: #b9a6f3; /* terpilih / toggle aktif */
+  --warna-sukses: #a7d8ad; /* sage */
+  --warna-bahaya: #f2a7a7; /* dusty rose */
+  --warna-info: #93cfd2;
+  --warna-status-netral: #a99fbb;
+  --warna-sorot: rgba(242, 179, 91, 0.35);
 
-  /* glass overlay */
-  --overlay-background: rgba(15, 23, 42, 0.62);
-  --overlay-background-strong: rgba(15, 23, 42, 0.78);
-  --overlay-foreground: #e2e8f0;
-  --overlay-foreground-muted: #94a3b8;
+  /* ---------- Spasi (grid 4px) ---------- */
+  --jarak-1: 4px;
+  --jarak-2: 8px;
+  --jarak-3: 12px;
+  --jarak-4: 16px;
+  --jarak-5: 24px;
+  --jarak-tepi: 16px;
+
+  /* ---------- Ukuran teks ---------- */
+  --teks-xs: 10px;
+  --teks-sm: 12px;
+  --teks-md: 14px;
+  --teks-lg: 16px;
+  --teks-xl: 20px;
+
+  /* ---------- Bentuk pixel ---------- */
+  --tebal-garis: 2px;
+  --bayangan-panel: 4px 4px 0 0 rgba(10, 6, 18, 0.55);
+  --bayangan-tombol: 2px 2px 0 0 var(--warna-garis-gelap);
+  --bevel-tombol:
+    inset -2px -2px 0 0 rgba(27, 20, 40, 0.22),
+    inset 2px 2px 0 0 rgba(255, 255, 255, 0.4);
+  --tinggi-kontrol: 32px;
+  --tinggi-kontrol-kecil: 26px;
+
+  /* ---------- Lapisan ---------- */
+  --z-wallpaper: 0;
+  --z-footer: 18;
+  --z-dock: 30;
+  --z-bar: 40;
+  --z-timer: 50;
+  --z-entry: 80;
+  --z-modal: 999;
+  --z-toast: 1200;
+
+  /* ---------- Alias lama (dipetakan ke token di atas) ---------- */
+  --background: var(--warna-latar);
+  --foreground: var(--warna-teks);
+  --aksen-cyan: var(--warna-info);
+  --aksen-blue: var(--warna-pilih);
+  --aksen-pink: var(--warna-bahaya);
+  --aksen-amber: var(--warna-utama);
+  --aksen-violet: var(--warna-pilih);
+  --overlay-background: var(--warna-permukaan-pekat);
+  --overlay-background-strong: var(--warna-permukaan-pekat);
+  --overlay-foreground: var(--warna-teks);
+  --overlay-foreground-muted: var(--warna-teks-redup);
   --glass: var(--overlay-background);
   --glass-strong: var(--overlay-background-strong);
-  --panel-background: rgba(10, 10, 10, 0.75);
-  --panel-border: 2px solid rgba(255, 255, 255, 0.96);
-  --panel-shadow: none;
-  --panel-blur: 6px;
+  --panel-background: var(--warna-permukaan);
+  --panel-border: var(--tebal-garis) solid var(--warna-garis);
+  --panel-shadow: var(--bayangan-panel);
+  --panel-blur: 0px;
 
   /* font */
   --font-pixel: "Monocraft", monospace;
+}
+
+/* Target sentuh nyaman di perangkat sentuh. */
+@media (pointer: coarse) {
+  :root {
+    --tinggi-kontrol: 44px;
+    --tinggi-kontrol-kecil: 36px;
+  }
 }
 
 @theme inline {
@@ -58,16 +122,6 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-pixel);
   --font-mono: var(--font-pixel);
-}
-
-/* adaptasi light mode */
-@media (prefers-color-scheme: light) {
-  :root {
-    --background: #fafafa;
-    --foreground: #111827;
-    --glass: var(--overlay-background);
-    --glass-strong: var(--overlay-background-strong);
-  }
 }
 
 /* ============================ */
@@ -102,8 +156,8 @@ body {
 
 /* selection */
 ::selection {
-  background: rgba(34, 211, 238, 0.35);
-  color: #fff;
+  background: var(--warna-sorot);
+  color: var(--warna-teks);
 }
 
 /* fokus aksesibilitas */
@@ -116,7 +170,7 @@ textarea {
   outline: none;
 }
 :focus-visible {
-  outline: 2px dashed var(--aksen-amber);
+  outline: 2px dashed var(--warna-utama);
   outline-offset: 2px;
 }
 
@@ -126,14 +180,11 @@ textarea {
   height: 10px;
 }
 *::-webkit-scrollbar-track {
-  background: rgba(148, 163, 184, 0.25);
+  background: var(--warna-permukaan-pekat);
 }
 *::-webkit-scrollbar-thumb {
-  background: #111827;
-  border: 2px solid #fff;
-  box-shadow:
-    0 0 0 2px #000,
-    0 0 0 4px #fff;
+  background: var(--warna-netral);
+  border: var(--tebal-garis) solid var(--warna-garis-gelap);
 }
 
 /* ============================ */
