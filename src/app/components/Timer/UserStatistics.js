@@ -5,38 +5,40 @@
  * ------------------------------------------------------------------
  * Menampilkan ringkasan menit fokus, menit istirahat, dan total menit.
  * - Mode tampilan: "total" (default) atau "hari ini"
- * - Menggunakan posisi statis tanpa drag.
- * - Sumber data berlapis:
- *   1) Props dari parent (jika ada) → prioritas tertinggi
- *   2) Firestore (jika login dan dokumen tersedia)
- *   3) localStorage (jika ada data)
+ * - Sumber data tunggal (tidak dicampur):
+ *   1) Login  → Firestore (realtime via onSnapshot)
+ *   2) Tidak login / Firestore gagal → data lokal (props + localStorage)
  */
 
 import { useEffect, useMemo, useState } from "react";
 import "../../styles/UserStatistics.css";
 
 import { db, auth } from "../../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { useToast } from "../ui/useToast";
+import { formatTanggal, normalisasiStatistik } from "../../lib/statistik";
 
 // Konstanta struktur koleksi Firestore
 const NAMA_KOLEKSI = "users";
 const SUBCOLL_STAT = "statistik"; // users/<uid>/statistik
 const DOK_AGREGAT = "agregat"; // users/<uid>/statistik/agregat
 const SUBCOLL_HARIAN = "statistik_harian"; // users/<uid>/statistik_harian/<YYYY-MM-DD>
+const KEY_STATS_DAILY_PREFIX = "lp_stats_daily_";
 
-// Util tanggal "hari ini" (Asia/Jakarta akan mengikuti waktu browser user)
-const formatTanggal = (d = new Date()) => {
-  const pad = (n) => (n < 10 ? `0${n}` : `${n}`);
-  const y = d.getFullYear();
-  const m = pad(d.getMonth() + 1);
-  const dd = pad(d.getDate());
-  return `${y}-${m}-${dd}`;
+const STAT_KOSONG = normalisasiStatistik(null);
+
+const bacaHarianLokal = (tanggal) => {
+  try {
+    const raw = localStorage.getItem(`${KEY_STATS_DAILY_PREFIX}${tanggal}`);
+    return normalisasiStatistik(raw ? JSON.parse(raw) : null);
+  } catch (e) {
+    console.error("[UserStatistics] gagal membaca statistik harian lokal", e);
+    return STAT_KOSONG;
+  }
 };
 
 export default function UserStatistics({
-  loggedIn,
   userId,
   totalTime,
   timeStudied,
@@ -48,20 +50,12 @@ export default function UserStatistics({
   const [modeTampil, setModeTampil] = useState("total"); // "total" | "harian"
   const [uidAktif, setUidAktif] = useState(userId || null);
   const [sedangMuat, setSedangMuat] = useState(false);
+  const [tanggal] = useState(() => formatTanggal());
 
-  // data bacaan (fallback-friendly)
-  const [bacaTotal, setBacaTotal] = useState({
-    totalMenit: Number(totalTime ?? 0),
-    menitFokus: Number(timeStudied ?? 0),
-    menitIstirahat: Number(timeOnBreak ?? 0),
-  });
-
-  const [bacaHarian, setBacaHarian] = useState({
-    tanggal: formatTanggal(),
-    menitFokus: 0,
-    menitIstirahat: 0,
-    totalMenit: 0,
-  });
+  const [cloudTotal, setCloudTotal] = useState(null);
+  const [cloudHarian, setCloudHarian] = useState(null);
+  const [cloudGagal, setCloudGagal] = useState(false);
+  const [lokalHarian, setLokalHarian] = useState(STAT_KOSONG);
 
   // ---------------- Ambil UID login (jika perlu) ----------------
   useEffect(() => {
@@ -75,150 +69,95 @@ export default function UserStatistics({
     return () => unsub();
   }, [userId]);
 
-  // ---------------- Sinkron data dari props ke state display ----------------
+  // ---------------- Data akun: Firestore realtime ----------------
   useEffect(() => {
-    const vTotal = Number.isFinite(Number(totalTime)) ? Number(totalTime) : 0;
-    const vFokus = Number.isFinite(Number(timeStudied))
-      ? Number(timeStudied)
-      : 0;
-    const vIst = Number.isFinite(Number(timeOnBreak)) ? Number(timeOnBreak) : 0;
-    setBacaTotal({
-      totalMenit: vTotal,
-      menitFokus: vFokus,
-      menitIstirahat: vIst,
-    });
-  }, [totalTime, timeStudied, timeOnBreak]);
+    setCloudTotal(null);
+    setCloudHarian(null);
+    setCloudGagal(false);
+    if (!uidAktif) {
+      setSedangMuat(false);
+      return;
+    }
 
-  // ---------------- Muat data Firestore / localStorage (sekali saat mount & saat uid ganti) ----------------
-  useEffect(() => {
-    const muat = async () => {
-      setSedangMuat(true);
-
-      try {
-        // ===== TOTAL =====
-        if (uidAktif) {
-          // coba Firestore: users/<uid>/statistik/agregat
-          const refAgregat = doc(
-            db,
-            NAMA_KOLEKSI,
-            uidAktif,
-            SUBCOLL_STAT,
-            DOK_AGREGAT,
-          );
-          const s = await getDoc(refAgregat);
-          if (s.exists()) {
-            const d = s.data() || {};
-            setBacaTotal((prev) => ({
-              totalMenit:
-                Number.isFinite(prev.totalMenit) && prev.totalMenit > 0
-                  ? prev.totalMenit
-                  : Number(d.totalMenit ?? 0),
-              menitFokus:
-                Number.isFinite(prev.menitFokus) && prev.menitFokus > 0
-                  ? prev.menitFokus
-                  : Number(d.menitFokus ?? 0),
-              menitIstirahat:
-                Number.isFinite(prev.menitIstirahat) && prev.menitIstirahat > 0
-                  ? prev.menitIstirahat
-                  : Number(d.menitIstirahat ?? 0),
-            }));
-          }
-        } else {
-          // Fallback ke localStorage jika tidak ada di Firestore
-          const raw = localStorage.getItem("lp_stats_total_v1");
-          if (raw) {
-            const d = JSON.parse(raw);
-            setBacaTotal((prev) => ({
-              totalMenit: prev.totalMenit || Number(d.totalMenit ?? 0),
-              menitFokus: prev.menitFokus || Number(d.menitFokus ?? 0),
-              menitIstirahat:
-                prev.menitIstirahat || Number(d.menitIstirahat ?? 0),
-            }));
-          }
-        }
-
-        // ===== HARIAN =====
-        const hariIni = formatTanggal();
-        if (uidAktif) {
-          // Pastikan dokumen harian ada
-          const refHarian = doc(
-            db,
-            NAMA_KOLEKSI,
-            uidAktif,
-            SUBCOLL_HARIAN,
-            hariIni,
-          );
-
-          const h = await getDoc(refHarian);
-          if (h.exists()) {
-            const d = h.data() || {};
-            setBacaHarian({
-              tanggal: hariIni,
-              menitFokus: Number(d.menitFokus ?? 0),
-              menitIstirahat: Number(d.menitIstirahat ?? 0),
-              totalMenit: Number(
-                d.totalMenit ??
-                  (Number(d.menitFokus || 0) + Number(d.menitIstirahat || 0) ||
-                    0),
-              ),
-            });
-          } else {
-            // Jika dokumen harian tidak ada, tampilkan data default
-            setBacaHarian({
-              tanggal: hariIni,
-              menitFokus: 0,
-              menitIstirahat: 0,
-              totalMenit: 0,
-            });
-          }
-        } else {
-          const rawH = localStorage.getItem(`lp_stats_daily_${hariIni}`);
-          if (rawH) {
-            const d = JSON.parse(rawH);
-            setBacaHarian({
-              tanggal: hariIni,
-              menitFokus: Number(d.menitFokus ?? 0),
-              menitIstirahat: Number(d.menitIstirahat ?? 0),
-              totalMenit: Number(
-                d.totalMenit ??
-                  (Number(d.menitFokus ?? 0) + Number(d.menitIstirahat ?? 0) ||
-                    0),
-              ),
-            });
-          }
-        }
-      } catch (e) {
-        console.error(e);
-        toast({
-          title: "Statistik gagal dimuat",
-          description: "Nilai terakhir yang tersedia tetap ditampilkan.",
-          variant: "error",
-        });
-      } finally {
-        setSedangMuat(false);
-      }
+    setSedangMuat(true);
+    const tanganiGagal = (e) => {
+      console.error("[UserStatistics] gagal memuat statistik cloud", e);
+      setCloudGagal(true);
+      setSedangMuat(false);
     };
 
-    muat();
-  }, [toast, uidAktif]);
+    const unsubTotal = onSnapshot(
+      doc(db, NAMA_KOLEKSI, uidAktif, SUBCOLL_STAT, DOK_AGREGAT),
+      (snap) => {
+        setCloudTotal(normalisasiStatistik(snap.exists() ? snap.data() : null));
+        setSedangMuat(false);
+      },
+      tanganiGagal,
+    );
+    const unsubHarian = onSnapshot(
+      doc(db, NAMA_KOLEKSI, uidAktif, SUBCOLL_HARIAN, tanggal),
+      (snap) => {
+        setCloudHarian(normalisasiStatistik(snap.exists() ? snap.data() : null));
+      },
+      tanganiGagal,
+    );
+
+    return () => {
+      unsubTotal();
+      unsubHarian();
+    };
+  }, [uidAktif, tanggal]);
+
+  useEffect(() => {
+    if (!cloudGagal) return;
+    toast({
+      title: "Statistik akun gagal dimuat",
+      description: "Menampilkan statistik lokal perangkat ini.",
+      variant: "error",
+    });
+  }, [cloudGagal, toast]);
+
+  // ---------------- Data lokal ----------------
+  const lokalTotal = useMemo(
+    () =>
+      normalisasiStatistik({
+        totalMenit: totalTime,
+        menitFokus: timeStudied,
+        menitIstirahat: timeOnBreak,
+      }),
+    [totalTime, timeStudied, timeOnBreak],
+  );
+
+  // Dibaca ulang setiap total lokal berubah (sesi baru selesai).
+  useEffect(() => {
+    setLokalHarian(bacaHarianLokal(tanggal));
+  }, [tanggal, totalTime]);
 
   // ---------------- Pilihan data yang ditampilkan ----------------
+  const pakaiCloud = Boolean(uidAktif) && !cloudGagal;
+
   const dataTampil = useMemo(() => {
-    if (modeTampil === "harian") {
-      return {
-        judulKecil: `hari ini (${bacaHarian.tanggal})`,
-        fokus: bacaHarian.menitFokus,
-        istirahat: bacaHarian.menitIstirahat,
-        total: bacaHarian.totalMenit,
-      };
-    }
+    const harian = modeTampil === "harian";
+    const sumber = pakaiCloud
+      ? (harian ? cloudHarian : cloudTotal) || STAT_KOSONG
+      : harian
+        ? lokalHarian
+        : lokalTotal;
     return {
-      judulKecil: "total",
-      fokus: bacaTotal.menitFokus,
-      istirahat: bacaTotal.menitIstirahat,
-      total: bacaTotal.totalMenit,
+      judulKecil: harian ? `hari ini (${tanggal})` : "total",
+      fokus: sumber.menitFokus,
+      istirahat: sumber.menitIstirahat,
+      total: sumber.totalMenit,
     };
-  }, [modeTampil, bacaHarian, bacaTotal]);
+  }, [
+    modeTampil,
+    pakaiCloud,
+    cloudHarian,
+    cloudTotal,
+    lokalHarian,
+    lokalTotal,
+    tanggal,
+  ]);
 
   // ---------------- UI ----------------
   return (
@@ -255,15 +194,13 @@ export default function UserStatistics({
 
         {/* Status */}
         <div className="Stat__status">
-          <span
-            className={`Stat__dot ${loggedIn || uidAktif ? "on" : "off"}`}
-          />
+          <span className={`Stat__dot ${pakaiCloud ? "on" : "off"}`} />
           <span className="Stat__status-teks">
             {sedangMuat
               ? "memuat…"
-              : loggedIn || uidAktif
-                ? "tersambung data"
-                : "mode lokal"}
+              : pakaiCloud
+                ? "data akun (cloud)"
+                : "mode lokal (perangkat ini)"}
             <span className="Stat__sub"> • {dataTampil.judulKecil}</span>
           </span>
         </div>

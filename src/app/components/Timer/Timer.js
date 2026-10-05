@@ -13,12 +13,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "../../styles/Timer.css";
 import { useToast } from "../ui/useToast";
-
-const PERIODE = {
-  work: "work",
-  short: "short",
-  long: "long",
-};
+import {
+  PERIODE,
+  durasiPeriodeDetik,
+  formatMMSS,
+  hitungSisaDetik,
+  periodeBerikutnya,
+} from "../../lib/pomodoro";
 
 export default function Timer({
   workLen = 25,
@@ -40,14 +41,7 @@ export default function Timer({
 }) {
   const { toast } = useToast();
   const getDurasiPeriodeDetik = useCallback(
-    (p) => {
-      if (p === PERIODE.work) return Math.max(1, Number(workLen || 25)) * 60;
-      if (p === PERIODE.short)
-        return Math.max(1, Number(shortBreakLen || 5)) * 60;
-      if (p === PERIODE.long)
-        return Math.max(1, Number(longBreakLen || 15)) * 60;
-      return 25 * 60;
-    },
+    (p) => durasiPeriodeDetik(p, { workLen, shortBreakLen, longBreakLen }),
     [workLen, shortBreakLen, longBreakLen],
   );
 
@@ -64,6 +58,7 @@ export default function Timer({
   const refWakeLock = useRef(null);
 
   const refInterval = useRef(null);
+  // Non-null hanya selama timer berjalan; dipakai sebagai penanda sesi aktif.
   const refTargetTime = useRef(null);
   const refHandleSesiSelesai = useRef(() => {});
 
@@ -173,10 +168,13 @@ export default function Timer({
     if (!wakeLockSupported || typeof navigator === "undefined") return;
     try {
       if (refWakeLock.current) return;
-      refWakeLock.current = await navigator.wakeLock.request("screen");
-      try {
-        refWakeLock.current.addEventListener("release", () => {});
-      } catch {}
+      const sentinel = await navigator.wakeLock.request("screen");
+      refWakeLock.current = sentinel;
+      // Browser melepas wake lock saat tab disembunyikan; kosongkan ref agar
+      // dapat diminta ulang ketika tab kembali terlihat.
+      sentinel.addEventListener("release", () => {
+        if (refWakeLock.current === sentinel) refWakeLock.current = null;
+      });
     } catch (err) {
       console.warn("[Timer] Wake lock request gagal:", err?.message || err);
     }
@@ -189,8 +187,20 @@ export default function Timer({
     }
   }, []);
 
+  // Satu-satunya jalur penyelesaian sesi (interval, visibilitychange, pageshow).
+  // Guard refTargetTime mencegah satu sesi tercatat lebih dari sekali.
+  const selesaikanSesiBerjalan = useCallback(() => {
+    if (!refTargetTime.current) return;
+    refTargetTime.current = null;
+    if (refInterval.current) clearInterval(refInterval.current);
+    refInterval.current = null;
+    setBerjalan(false);
+    releaseWakeLock();
+    refHandleSesiSelesai.current();
+  }, [releaseWakeLock]);
+
   const mulai = useCallback(() => {
-    if (berjalan) return;
+    if (berjalan || refTargetTime.current) return;
 
     const dur = getDurasiPeriodeDetik(periode);
     if (dur <= 0) {
@@ -205,19 +215,10 @@ export default function Timer({
     refTargetTime.current = now + sisaDetik * 1000;
 
     refInterval.current = setInterval(() => {
-      const now2 = Date.now();
-      const sisa = Math.max(
-        0,
-        Math.ceil((refTargetTime.current - now2) / 1000),
-      );
+      if (!refTargetTime.current) return;
+      const sisa = hitungSisaDetik(refTargetTime.current);
       setSisaDetik(sisa);
-      if (sisa <= 0) {
-        clearInterval(refInterval.current);
-        refInterval.current = null;
-        setBerjalan(false);
-        releaseWakeLock();
-        refHandleSesiSelesai.current();
-      }
+      if (sisa <= 0) selesaikanSesiBerjalan();
     }, 200);
 
     setBerjalan(true);
@@ -240,7 +241,7 @@ export default function Timer({
     sisaDetik,
     onMulai,
     requestWakeLock,
-    releaseWakeLock,
+    selesaikanSesiBerjalan,
     toast,
   ]);
 
@@ -250,10 +251,9 @@ export default function Timer({
     refInterval.current = null;
     releaseWakeLock();
     if (refTargetTime.current) {
-      const now = Date.now();
-      const sisa = Math.max(0, Math.ceil((refTargetTime.current - now) / 1000));
-      setSisaDetik(sisa);
+      setSisaDetik(hitungSisaDetik(refTargetTime.current));
     }
+    refTargetTime.current = null;
     setBerjalan(false);
     try {
       onJeda?.();
@@ -357,15 +357,12 @@ export default function Timer({
     }
 
     if (periode === PERIODE.work) {
-      const nextIsLong =
-        (jumlahWorkSelesai + 1) % Math.max(2, Number(longBrInterval || 4)) ===
-        0;
-      const next = nextIsLong ? PERIODE.long : PERIODE.short;
       setJumlahWorkSelesai((n) => n + 1);
-      gantiPeriode(next, true);
-    } else {
-      gantiPeriode(PERIODE.work, true);
     }
+    gantiPeriode(
+      periodeBerikutnya(periode, jumlahWorkSelesai, longBrInterval),
+      true,
+    );
   }, [
     periode,
     jumlahWorkSelesai,
@@ -439,28 +436,14 @@ export default function Timer({
 
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        if (berjalan && refTargetTime.current) {
-          const now = Date.now();
-          const remaining = Math.max(
-            0,
-            Math.ceil((refTargetTime.current - now) / 1000),
-          );
-
-          setSisaDetik(remaining);
-
-          if (remaining <= 0) {
-            clearInterval(refInterval.current);
-            refInterval.current = null;
-            setBerjalan(false);
-            releaseWakeLock();
-            handleSesiSelesai();
-          } else {
-            if (wakeLockSupported && !refWakeLock.current) {
-              requestWakeLock();
-            }
-          }
-        }
+      if (document.visibilityState !== "visible") return;
+      if (!refTargetTime.current) return;
+      const remaining = hitungSisaDetik(refTargetTime.current);
+      setSisaDetik(remaining);
+      if (remaining <= 0) {
+        selesaikanSesiBerjalan();
+      } else if (wakeLockSupported && !refWakeLock.current) {
+        requestWakeLock();
       }
     };
 
@@ -468,39 +451,19 @@ export default function Timer({
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [
-    berjalan,
-    wakeLockSupported,
-    handleSesiSelesai,
-    requestWakeLock,
-    releaseWakeLock,
-  ]);
+  }, [wakeLockSupported, selesaikanSesiBerjalan, requestWakeLock]);
 
   useEffect(() => {
     const handlePageShow = (event) => {
-      if (event.persisted) {
-        if (berjalan && refTargetTime.current) {
-          const now = Date.now();
-          const remaining = Math.max(
-            0,
-            Math.ceil((refTargetTime.current - now) / 1000),
-          );
-          setSisaDetik(remaining);
-
-          if (remaining <= 0) {
-            clearInterval(refInterval.current);
-            refInterval.current = null;
-            setBerjalan(false);
-            releaseWakeLock();
-            handleSesiSelesai();
-          }
-        }
-      }
+      if (!event.persisted || !refTargetTime.current) return;
+      const remaining = hitungSisaDetik(refTargetTime.current);
+      setSisaDetik(remaining);
+      if (remaining <= 0) selesaikanSesiBerjalan();
     };
 
     window.addEventListener("pageshow", handlePageShow);
     return () => window.removeEventListener("pageshow", handlePageShow);
-  }, [berjalan, handleSesiSelesai, releaseWakeLock]);
+  }, [selesaikanSesiBerjalan]);
 
   useEffect(() => {
     return () => {
@@ -602,15 +565,4 @@ export default function Timer({
       </section>
     </div>
   );
-}
-
-function pad2(n) {
-  const x = Math.floor(Math.abs(Number(n)));
-  return x < 10 ? `0${x}` : `${x}`;
-}
-
-function formatMMSS(totalDetik) {
-  const m = Math.floor(totalDetik / 60);
-  const s = totalDetik % 60;
-  return { mm: pad2(m), ss: pad2(s) };
 }

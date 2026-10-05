@@ -1,0 +1,94 @@
+rules_version = '2';
+
+// Aturan keamanan Firestore Pomo-Pixel.
+// Semua data hanya dapat dibaca/ditulis oleh pemiliknya (uid Firebase Auth).
+// Path yang tidak dicocokkan di bawah otomatis ditolak (deny-by-default).
+// Deploy: npx firebase-tools deploy --only firestore:rules --project <project-id>
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function pemilik(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // Create: semua key dokumen baru. Update: hanya key yang diubah,
+    // sehingga field lama (legacy) yang tidak disentuh tetap diizinkan.
+    function keyBerubah() {
+      return resource == null
+        ? request.resource.data.keys()
+        : request.resource.data.diff(resource.data).affectedKeys();
+    }
+
+    function teksValid(nilai, maks) {
+      return nilai is string && nilai.size() <= maks;
+    }
+
+    function bulatDalamRentang(nilai, min, maks) {
+      return nilai is int && nilai >= min && nilai <= maks;
+    }
+
+    function menitValid(data, field) {
+      return data[field] is number && data[field] >= 0;
+    }
+
+    function statistikValid(data) {
+      return menitValid(data, 'totalMenit')
+        && menitValid(data, 'menitFokus')
+        && menitValid(data, 'menitIstirahat')
+        && data.diperbaruiPada is timestamp;
+    }
+
+    // users/{uid}: profil singkat yang ditulis saat login Google.
+    match /users/{uid} {
+      allow read: if pemilik(uid);
+      allow create, update: if pemilik(uid)
+        && keyBerubah().hasOnly(['name', 'email', 'updatedAt'])
+        && teksValid(request.resource.data.name, 200)
+        && teksValid(request.resource.data.email, 320)
+        && request.resource.data.updatedAt is timestamp;
+    }
+
+    // users/{uid}/preferensi/app: pengaturan timer.
+    match /users/{uid}/preferensi/app {
+      allow read: if pemilik(uid);
+      allow create, update: if pemilik(uid)
+        && keyBerubah().hasOnly([
+          'workLen', 'shortBreakLen', 'longBreakLen', 'longBrInterval',
+          'volume', 'locMode', 'displayNameSource', 'z'
+        ])
+        && bulatDalamRentang(request.resource.data.workLen, 1, 600)
+        && bulatDalamRentang(request.resource.data.shortBreakLen, 1, 600)
+        && bulatDalamRentang(request.resource.data.longBreakLen, 1, 600)
+        && bulatDalamRentang(request.resource.data.longBrInterval, 2, 12)
+        && bulatDalamRentang(request.resource.data.volume, 0, 100)
+        && request.resource.data.locMode in ['time', 'weather']
+        && request.resource.data.displayNameSource in ['google', 'github']
+        && request.resource.data.z is number;
+    }
+
+    // users/{uid}/statistik/agregat: total menit sepanjang waktu.
+    match /users/{uid}/statistik/agregat {
+      allow read: if pemilik(uid);
+      allow create, update: if pemilik(uid)
+        && keyBerubah().hasOnly([
+          'totalMenit', 'menitFokus', 'menitIstirahat',
+          'diperbaruiPada', 'terakhirPeriode'
+        ])
+        && statistikValid(request.resource.data)
+        && request.resource.data.terakhirPeriode in ['work', 'short', 'long', ''];
+    }
+
+    // users/{uid}/statistik_harian/{YYYY-MM-DD}: menit per hari.
+    match /users/{uid}/statistik_harian/{tanggal} {
+      allow read: if pemilik(uid);
+      allow create, update: if pemilik(uid)
+        && tanggal.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && keyBerubah().hasOnly([
+          'totalMenit', 'menitFokus', 'menitIstirahat',
+          'diperbaruiPada', 'tanggal'
+        ])
+        && statistikValid(request.resource.data)
+        && request.resource.data.tanggal == tanggal;
+    }
+  }
+}
