@@ -62,6 +62,8 @@ GITHUB_CLIENT_SECRET=
 NEXT_PUBLIC_GITHUB_REDIRECT_URI=http://localhost:3000/api/github/callback
 ```
 
+`NEXT_PUBLIC_GITHUB_REDIRECT_URI` is optional, but when set it must exactly match the "Authorization callback URL" of the GitHub OAuth App. If empty, `<origin>/api/github/callback` is used.
+
 ## Usage
 
 Start development:
@@ -77,6 +79,25 @@ npm run build
 npm start
 ```
 
+## Testing
+
+```bash
+npm run lint        # ESLint (next/core-web-vitals)
+npm test            # unit tests for src/app/lib (node:test, no extra deps)
+npm run test:rules  # Firestore security rules on the emulator (needs Java 21+)
+```
+
+CI (`.github/workflows/ci.yml`) runs lint, unit tests, and build with dummy Firebase values, plus the Firestore rules tests.
+
+## Firestore Security Rules
+
+Rules live in `firestore.rules`: each user can only read/write documents under `users/{uid}`, with key and type validation. Deploy them manually after changes:
+
+```bash
+npx firebase-tools login
+npx firebase-tools deploy --only firestore:rules --project <firebase-project-id>
+```
+
 ## Deployment
 
 Deploy on Vercel with the same environment variables used locally. Ensure the GitHub OAuth callback URL matches the deployed domain and `/api/github/callback`.
@@ -86,12 +107,16 @@ Deploy on Vercel with the same environment variables used locally. Ensure the Gi
 ```text
 src/app/
   api/github/callback/   GitHub OAuth callback route
+  api/github/session/    GitHub session (user + events) route
   components/            UI components
+  lib/                   Pure logic (timer, statistics, GitHub events) + tests
   styles/                Component stylesheets
   firebase.js            Firebase client setup
   github.js              GitHub OAuth helpers
   layout.js              Root layout
   page.js                Main application page
+tests/firestore-rules/   Firestore rules tests (separate package)
+firestore.rules          Firestore security rules
 public/
   images/                Wallpapers and icons
   tracks/                Music files
@@ -102,5 +127,5 @@ public/
 ## Notes
 
 - GitHub login requires both `NEXT_PUBLIC_GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
-- Firebase configuration is required for Google login and remote statistics.
+- Firebase configuration is required for Google login and remote statistics. When signed in, the statistics panel shows account (Firestore) data; otherwise it shows this device's local data.
 - Music tracks and wallpaper assets are served from `public/`.

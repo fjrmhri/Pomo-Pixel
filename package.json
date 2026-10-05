@@ -7,7 +7,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "node --test --disable-warning=MODULE_TYPELESS_PACKAGE_JSON \"src/**/*.test.js\"",
+    "test:rules": "npm --prefix tests/firestore-rules install --no-package-lock --no-audit --no-fund && npm --prefix tests/firestore-rules test"
   },
   "dependencies": {
     "@tailwindcss/forms": "^0.5.10",
@@ -25,7 +27,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "eslint": "^9.39.1",
-    "eslint-config-next": "15.3.8",
+    "eslint-config-next": "15.5.15",
     "playwright": "^1.59.1",
     "tailwindcss": "^4"
   }
