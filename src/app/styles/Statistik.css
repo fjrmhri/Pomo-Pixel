@@ -1,7 +1,7 @@
 /* Gaya bersama panel statistik (UserStatistics & GithubStats).
    Satu sumber agar tidak ada lagi definisi .Stat* ganda yang saling timpa. */
 .Stat {
-  padding: var(--jarak-2) var(--jarak-2) var(--jarak-4);
+  padding: 0 var(--jarak-2) var(--jarak-2);
   font-family: "Monocraft", monospace;
   color: var(--warna-teks);
   pointer-events: auto;
@@ -11,13 +11,6 @@
   max-height: 100%;
 }
 
-.Stat__section-title {
-  margin-bottom: var(--jarak-4);
-  font-size: var(--teks-xl);
-  font-weight: 400;
-  letter-spacing: 1px;
-  text-align: center;
-}
 
 .Stat__tab {
   display: flex;

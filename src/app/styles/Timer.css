@@ -1,18 +1,18 @@
 /* Timer Pomodoro. Panel, lencana, dan tombol memakai komponen ui-*;
    warna lencana & progress mengikuti periode aktif. */
 
+/* Zona tengah: sedikit di atas pusat layar karena dock musik di bawah. */
 .Tm__bungkus {
   position: fixed;
-  top: 40%;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
   display: grid;
   place-items: center;
-  z-index: 50;
+  z-index: var(--z-timer);
   pointer-events: none;
   width: 100%;
   max-width: 100%;
-  margin-top: 20px;
 }
 
 .Tm {
@@ -106,12 +106,6 @@
   text-align: center;
   font-size: var(--teks-xs);
   color: var(--warna-teks-redup);
-}
-
-@media (max-width: 1024px) {
-  .Tm__bungkus {
-    top: 45%;
-  }
 }
 
 @media (max-width: 480px) {

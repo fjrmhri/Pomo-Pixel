@@ -10,7 +10,7 @@ function Footer({ onShare, sessionCount = 0 }) {
     ];
 
     return (
-      <footer className="Footer" id="footer">
+      <footer className="ui-panel Footer" id="footer">
         <span className="ui-lencana Footer__label">Aesthetic Pomodoro</span>
         <p className="Footer__p">
           Pomo Pixel is an aesthetic pomodoro timer with lofi music for focus

@@ -12,7 +12,7 @@
 
 .Md__konten {
   width: min(70vw, 480px);
-  max-height: 60vh;
+  max-height: min(85dvh, 640px);
   height: auto;
   overflow: auto;
   padding: var(--jarak-3) var(--jarak-4);
@@ -25,16 +25,21 @@
 .Md__konten--md,
 .Md__konten--lg {
   width: min(70vw, 480px);
-  max-height: 60vh;
   height: auto;
 }
 
 .Md__header {
+  position: sticky;
+  top: calc(-1 * var(--jarak-3));
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--jarak-3);
-  margin-bottom: var(--jarak-2);
+  margin: calc(-1 * var(--jarak-3)) calc(-1 * var(--jarak-4)) var(--jarak-3);
+  padding: var(--jarak-3) var(--jarak-4);
+  background: var(--warna-permukaan-solid);
+  border-bottom: var(--tebal-garis) solid var(--warna-garis);
 }
 
 .Md__judul {
@@ -42,7 +47,7 @@
   align-items: center;
   gap: var(--jarak-2);
   flex: 1;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .Md__ikon {
@@ -51,10 +56,10 @@
 
 .Md__judul-text {
   margin: 0;
-  font-size: var(--teks-xl);
+  font-size: var(--teks-lg);
   font-weight: 400;
   letter-spacing: 1px;
-  text-align: center;
+  text-align: left;
 }
 
 .Md__btn-tutup {
@@ -73,7 +78,11 @@
 
 @media (max-width: 640px) {
   .Md__konten {
+    padding: var(--jarak-3);
+    width: calc(100vw - 2 * var(--jarak-tepi));
+  }
+  .Md__header {
+    margin: calc(-1 * var(--jarak-3)) calc(-1 * var(--jarak-3)) var(--jarak-3);
     padding: var(--jarak-2) var(--jarak-3);
-    width: min(90vw, 340px);
   }
 }

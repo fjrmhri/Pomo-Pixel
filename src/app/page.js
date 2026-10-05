@@ -805,6 +805,7 @@ export default function Page() {
         buka={bukaStatistik}
         tutup={() => setBukaStatistik(false)}
         lebar="lg"
+        judul="Statistik"
       >
         {bukaStatistik ? (
           <UserStatistics
@@ -831,6 +832,7 @@ export default function Page() {
         buka={bukaPengaturan}
         tutup={() => setBukaPengaturan(false)}
         lebar="lg"
+        judul="Pengaturan Pomodoro"
       >
         <SettingsForm
           workLen={pengaturanTimer.workLen}
@@ -874,7 +876,12 @@ export default function Page() {
       </Modal>
 
       {/* Modal login/register */}
-      <Modal buka={loginOpen} tutup={() => setLoginOpen(false)} lebar="lg">
+      <Modal
+        buka={loginOpen}
+        tutup={() => setLoginOpen(false)}
+        lebar="lg"
+        judul="Login"
+      >
         <LoginRegisterForm
           googleUser={googleUser}
           githubUser={githubUser}
@@ -887,6 +894,7 @@ export default function Page() {
         buka={bukaGithubStats}
         tutup={() => setBukaGithubStats(false)}
         lebar="lg"
+        judul="GitHub Stats"
       >
         {bukaGithubStats && githubUser ? (
           <GithubStats

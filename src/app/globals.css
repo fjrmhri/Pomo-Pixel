@@ -482,56 +482,53 @@ select.ui-input {
 /*  Layout bantuan              */
 /* ============================ */
 
-/* Desktop default (sudah ada) */
+/* Tiga zona tetap: bar atas, area tengah (timer), dock bawah (musik). */
 .area-kiri-atas {
   position: fixed;
-  top: 16px;
-  left: 16px;
-  z-index: 30;
+  top: var(--jarak-tepi);
+  left: var(--jarak-tepi);
+  z-index: var(--z-bar);
 }
 .area-kanan-atas {
   position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 30;
+  top: var(--jarak-tepi);
+  right: var(--jarak-tepi);
+  z-index: var(--z-bar);
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.account-icon {
-  filter: brightness(0) invert(1);
-  width: 24px;
-  height: 24px;
-}
-
-/* Mobile (≤640px): stacked center */
-@media (max-width: 640px) {
-  .area-kiri-atas {
-    top: 12px;
-    left: 50%;
-    transform: translateX(-50%); /* center horizontal */
-  }
-
-  .area-kanan-atas {
-    position: fixed;
-    top: 60px; /* letakkan tepat di bawah area-kiri-atas */
-    left: 50%;
-    transform: translateX(-50%); /* center horizontal */
-    flex-direction: row; /* sejajar horizontal */
-    flex-wrap: wrap; /* jika kepanjangan, otomatis turun baris */
-    justify-content: center;
-    gap: 8px;
-  }
+  gap: var(--jarak-2);
 }
 
 .area-music-bawah {
   position: fixed;
   left: 50%;
-  bottom: 18px;
+  bottom: var(--jarak-tepi);
   transform: translateX(-50%);
-  z-index: 22;
-  width: min(96vw, 880px);
+  z-index: var(--z-dock);
+  width: min(calc(100vw - 2 * var(--jarak-tepi)), 640px);
+}
+
+/* Mobile: bar atas jadi 2 baris di tengah (tab, lalu kontrol). */
+@media (max-width: 640px) {
+  :root {
+    --jarak-tepi: 12px;
+  }
+
+  .area-kiri-atas {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .area-kanan-atas {
+    top: calc(var(--jarak-tepi) + var(--tinggi-kontrol) + var(--jarak-2));
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: calc(100vw - 2 * var(--jarak-tepi));
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }
 
 .halaman-utama {
@@ -677,12 +674,12 @@ select.ui-input {
 
 .toast-viewport {
   position: fixed;
-  top: 55px;
-  right: 16px;
-  z-index: 1200;
+  top: calc(var(--jarak-tepi) + var(--tinggi-kontrol) + var(--jarak-2));
+  right: var(--jarak-tepi);
+  z-index: var(--z-toast);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--jarak-2);
   width: min(92vw, 320px);
   pointer-events: none;
 }
@@ -799,18 +796,20 @@ p {
 
 @media (max-width: 640px) {
   .entry-screen {
-    padding: 16px;
+    padding: var(--jarak-4);
   }
 
   .entry-screen__panel {
-    padding: 16px 14px;
+    padding: var(--jarak-4) var(--jarak-3);
   }
 
+  /* Di bawah bar atas 2 baris, tidak menutupi dock musik. */
   .toast-viewport {
-    top: auto;
-    bottom: 16px;
-    right: 12px;
-    left: 12px;
+    top: calc(
+      var(--jarak-tepi) + 2 * var(--tinggi-kontrol) + 2 * var(--jarak-2)
+    );
+    right: var(--jarak-tepi);
+    left: var(--jarak-tepi);
     width: auto;
   }
 }

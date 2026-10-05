@@ -43,8 +43,6 @@ export default function GithubStats({
 
   return (
     <section className={`Stat ${className || ""}`}>
-      <div className="Stat__section-title text-center">GitHub Stats</div>
-
       {githubUser ? (
         <div className="Stat__github">
           <div className="Stat__github-images">

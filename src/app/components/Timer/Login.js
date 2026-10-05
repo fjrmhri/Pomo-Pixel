@@ -83,8 +83,7 @@ function Login({ googleUser, githubUser }) {
   }
 
   return (
-    <div className="pixel-card pixel-card--borderless w-full h-full overflow-y-auto max-w-md mx-auto p-6">
-      <div className="Sf__section-title">Login</div>
+    <div className="pixel-card pixel-card--borderless w-full h-full overflow-y-auto max-w-md mx-auto px-2 pb-2">
       <div className="flex flex-col gap-4">
         <div
           className="text-sm text-center"

@@ -202,8 +202,6 @@ function SettingsForm({
   return (
     <div className={`Sf pixel-card pixel-card--borderless ${className}`}>
       <form className="Sf__inner" onSubmit={simpanPreferensi}>
-        <div className="Sf__section-title">Pengaturan Pomodoro</div>
-
         <div className="Sf__grid">
           <div className="Sf__group">
             <label className="Sf__label">Durasi Fokus</label>

@@ -1,32 +1,28 @@
-@media screen and (max-width: 868px) {
-  .Footer {
-    visibility: hidden;
-  }
-}
-
-@media screen and (max-height: 800px) {
-  .Footer {
-    visibility: hidden;
-  }
-}
-
+/* Footer berpanel di kiri dock musik; disembunyikan bila ruang tidak cukup. */
 .Footer {
+  position: fixed;
+  bottom: var(--jarak-tepi);
+  left: var(--jarak-tepi);
+  z-index: var(--z-footer);
+  width: min(320px, calc((100vw - 640px) / 2 - 3 * var(--jarak-tepi)));
+  padding: var(--jarak-3);
   color: var(--warna-teks-redup);
   font-size: var(--teks-xs);
-  bottom: 0;
-  left: 0;
-  max-width: min(420px, calc(100vw - 20px));
-  position: fixed;
+  line-height: 1.5;
   text-align: left;
-  z-index: var(--z-footer);
+}
+
+@media screen and (max-width: 1160px), screen and (max-height: 760px) {
+  .Footer {
+    display: none;
+  }
 }
 
 .Footer__p {
-  margin: var(--jarak-2) var(--jarak-3);
+  margin: var(--jarak-2) 0 0;
 }
 
 .Footer__label {
-  margin: var(--jarak-3) var(--jarak-3) 0;
   background: var(--warna-utama);
 }
 

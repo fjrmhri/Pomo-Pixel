@@ -163,12 +163,6 @@ export default function UserStatistics({
   return (
     <>
       <section className={`Stat ${className || ""}`}>
-        <div className="flex items-center gap-2 mb-4">
-          <div className="Stat__section-title flex-1 text-center">
-            Statistik
-          </div>
-        </div>
-
         {/* Tabs */}
         <div className="Stat__tab">
           <button

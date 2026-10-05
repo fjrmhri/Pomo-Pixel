@@ -41,3 +41,18 @@
 .Db__status-teks {
   color: var(--warna-teks);
 }
+
+@media (max-width: 640px) {
+  .Db__status {
+    min-width: var(--tinggi-kontrol);
+    justify-content: center;
+  }
+  .Db__status-teks {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}

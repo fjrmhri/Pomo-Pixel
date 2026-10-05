@@ -1,17 +1,11 @@
 /* Dock pemutar musik. Panel, tombol, slider, dan select memakai ui-*. */
 
+/* Posisi dock diatur oleh .area-music-bawah (globals.css). */
 .Mp__bungkus {
-  position: fixed;
-  left: 50%;
-  bottom: 10px;
-  transform: translateX(-50%);
-  z-index: 30;
-  width: min(90vw, 640px);
-  pointer-events: none;
+  width: 100%;
 }
 
 .Mp {
-  pointer-events: auto;
   display: grid;
   gap: var(--jarak-2);
   padding: var(--jarak-2) var(--jarak-3);
@@ -113,11 +107,6 @@
 }
 
 @media (max-width: 768px) {
-  .Mp__bungkus {
-    width: min(94vw, 560px);
-    bottom: 8px;
-  }
-
   .Mp__opsi {
     flex-direction: column;
     gap: var(--jarak-2);
@@ -130,11 +119,6 @@
 }
 
 @media (max-width: 480px) {
-  .Mp__bungkus {
-    bottom: 6px;
-    width: 92vw;
-  }
-
   .Mp__progress {
     grid-template-columns: 36px 1fr 36px;
   }
