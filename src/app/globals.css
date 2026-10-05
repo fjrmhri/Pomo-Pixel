@@ -113,7 +113,7 @@
 @media (pointer: coarse) {
   :root {
     --tinggi-kontrol: 44px;
-    --tinggi-kontrol-kecil: 36px;
+    --tinggi-kontrol-kecil: 44px;
   }
 }
 
@@ -378,7 +378,7 @@ select.ui-input {
 }
 @media (pointer: coarse) {
   .ui-slider {
-    height: 32px;
+    height: 44px;
   }
   .ui-slider::-webkit-slider-thumb {
     width: 18px;
@@ -656,6 +656,7 @@ select.ui-input {
   flex: none;
   min-width: 24px;
   min-height: 24px;
+  margin: calc(-1 * var(--jarak-1)) calc(-1 * var(--jarak-2)) 0 0;
   font-size: var(--teks-sm);
   color: var(--warna-teks);
   background: transparent;
@@ -694,6 +695,13 @@ p {
   100% {
     transform: scale(1);
     filter: brightness(1);
+  }
+}
+
+@media (pointer: coarse) {
+  .toast-item__close {
+    min-width: 44px;
+    min-height: 44px;
   }
 }
 
