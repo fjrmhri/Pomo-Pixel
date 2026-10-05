@@ -34,6 +34,8 @@ import {
 import { auth, db } from "./firebase";
 import { formatTanggal } from "./lib/statistik";
 
+const SITE_URL = "https://pomo-pixel.vercel.app";
+
 // ---------- kunci localStorage ----------
 const KEY_PENGATURAN = "lp_pengaturan_v1";
 const KEY_PERIODE = "lp_periode_v1";
@@ -580,6 +582,51 @@ export default function Page() {
     });
   }, [toast]);
 
+  const handleShare = useCallback(async () => {
+    let copied = false;
+
+    try {
+      if (
+        typeof navigator !== "undefined" &&
+        navigator.clipboard &&
+        typeof navigator.clipboard.writeText === "function"
+      ) {
+        await navigator.clipboard.writeText(SITE_URL);
+        copied = true;
+        toast({
+          title: "Link copied. Share your focus space.",
+          variant: "success",
+        });
+      }
+    } catch (error) {
+      logError("gagal menyalin tautan", error);
+    }
+
+    if (
+      typeof navigator !== "undefined" &&
+      typeof navigator.share === "function"
+    ) {
+      try {
+        await navigator.share({
+          title: "Pomo Pixel",
+          text: "Pomo Pixel",
+          url: SITE_URL,
+        });
+        return;
+      } catch (error) {
+        if (error?.name === "AbortError") return;
+      }
+    }
+
+    if (!copied) {
+      toast({
+        title: "Share failed",
+        description: "Could not copy the site link.",
+        variant: "error",
+      });
+    }
+  }, [toast]);
+
   /* ===================================================================
    *  5) Modal Pengaturan
    * =================================================================== */
@@ -706,6 +753,16 @@ export default function Page() {
             className="Db__ikonimg"
             priority
           />
+        </button>
+        {/* bagikan */}
+        <button
+          type="button"
+          className="ui-tombol ui-tombol--ikon Db__ikonbtn"
+          onClick={handleShare}
+          aria-label="Share"
+          title="Share"
+        >
+          <IkonPixel nama="bagikan" ukuran={18} />
         </button>
         {/* akun */}
         {!(googleUser && githubUser) && (

@@ -43,8 +43,8 @@
 }
 
 @media (max-width: 640px) {
+  /* Hanya titik status (bukan tombol), jadi tidak perlu selebar kontrol. */
   .Db__status {
-    min-width: var(--tinggi-kontrol);
     justify-content: center;
   }
   .Db__status-teks {
