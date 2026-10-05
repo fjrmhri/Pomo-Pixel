@@ -19,11 +19,11 @@ function LoginRegisterForm({ googleUser, githubUser, onClose }) {
     const githubBaruLogin = githubLoggedIn && !prevGithubLoggedRef.current;
 
     if (googleBaruLogin) {
-      toast({ title: "Berhasil login Google", variant: "success" });
+      toast({ title: "Logged in with Google", variant: "success" });
     }
 
     if (githubBaruLogin) {
-      toast({ title: "Berhasil login GitHub", variant: "success" });
+      toast({ title: "Logged in with GitHub", variant: "success" });
     }
 
     if (googleBaruLogin || githubBaruLogin) {

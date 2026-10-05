@@ -60,6 +60,12 @@
   font-family: var(--font-pixel, "Monocraft", monospace);
 }
 
+.Sf__catatan-dev {
+  font-size: var(--teks-xs);
+  text-align: center;
+  color: var(--warna-utama);
+}
+
 @media (max-width: 768px) {
   .Sf__grid {
     grid-template-columns: 1fr;

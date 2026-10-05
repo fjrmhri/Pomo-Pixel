@@ -77,7 +77,7 @@ export default function LocationWidget({ mode, className = "" }) {
       <div className="Loc__content">
         {mode === "time"
           ? clock
-            ? clock.toLocaleTimeString()
+            ? clock.toLocaleTimeString("en-US")
             : "--:--:--"
           : weather
             ? `${weather.temperature}°C`

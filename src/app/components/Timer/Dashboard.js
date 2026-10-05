@@ -5,9 +5,9 @@ import "../../styles/Dashboard.css";
 import { useToast } from "../ui/useToast";
 
 const OPSI = [
-  { kunci: "work", label: "fokus", deskripsi: "Sesi fokus (kerja)" },
-  { kunci: "short", label: "istirahat", deskripsi: "Istirahat singkat" },
-  { kunci: "long", label: "panjang", deskripsi: "Istirahat panjang" },
+  { kunci: "work", label: "focus", deskripsi: "Focus session (1)" },
+  { kunci: "short", label: "short break", deskripsi: "Short break (2)" },
+  { kunci: "long", label: "long break", deskripsi: "Long break (3)" },
 ];
 
 export default function Dashboard({
@@ -21,8 +21,8 @@ export default function Dashboard({
     (kunci) => {
       if (typeof setPeriodeAktif !== "function") {
         toast({
-          title: "Periode tidak bisa diubah",
-          description: "Fungsi pengubah periode belum tersedia.",
+          title: "Cannot change session",
+          description: "The session handler is not available yet.",
           variant: "error",
         });
         return;
@@ -32,8 +32,8 @@ export default function Dashboard({
       } catch (e) {
         console.error("Gagal mengubah periode:", e);
         toast({
-          title: "Periode gagal diubah",
-          description: "Coba lagi beberapa saat.",
+          title: "Could not change session",
+          description: "Please try again in a moment.",
           variant: "error",
         });
       }
@@ -62,7 +62,7 @@ export default function Dashboard({
         <div
           className="Db__tabs"
           role="tablist"
-          aria-label="Pilih sesi pomodoro"
+          aria-label="Choose pomodoro session"
         >
           {OPSI.map((o) => {
             const aktif = periodeAktif === o.kunci;

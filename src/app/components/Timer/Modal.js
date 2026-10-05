@@ -125,8 +125,8 @@ export default function Modal({
             type="button"
             className="ui-tombol ui-tombol--ikon ui-tombol--kecil Md__btn-tutup"
             onClick={amanTutup}
-            aria-label="tutup"
-            title="tutup"
+            aria-label="close"
+            title="close (Esc)"
           >
             ✕
           </button>

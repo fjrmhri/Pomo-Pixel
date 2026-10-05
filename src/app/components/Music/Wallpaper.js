@@ -84,18 +84,18 @@ export default function Wallpaper({
       className={`Wallpaper ${className}`}
       // Gunakan CSS variable untuk filter brightness agar mudah dikontrol
       style={{ ["--kecerahan"]: kecerahan }}
-      aria-label="Latar belakang halaman"
+      aria-label="Page background"
     >
       {gagal ? (
         // Tampilan fallback jika gambar gagal dimuat
         <div className="Wallpaper__fallback" role="alert">
           <p className="Wallpaper__fallback-teks">
-            Gagal memuat wallpaper:{" "}
+            Could not load wallpaper:{" "}
             <span className="Wallpaper__path">{sumberFinal}</span>
           </p>
           <p className="Wallpaper__fallback-hint">
-            Pastikan file ada di <code>/public/images</code> dan nama filenya
-            benar.
+            Make sure the file exists in <code>/public/images</code> and the
+            file name is correct.
           </p>
         </div>
       ) : (

@@ -19,6 +19,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "../../styles/MusicPlayer.css";
 import { useToast } from "../ui/useToast";
+import IkonPixel from "../ui/IkonPixel";
 
 // ---------- Utilitas format waktu (mm:ss) ----------
 const formatDetik = (totalDetik) => {
@@ -106,7 +107,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
     } catch (e) {
       console.warn("Gagal membaca setelan dari localStorage:", e);
       toast({
-        title: "Setelan player gagal dimuat",
+        title: "Could not load player settings",
         variant: "error",
       });
     }
@@ -159,8 +160,8 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
 
     const onError = () => {
       toast({
-        title: "Lagu gagal dimuat",
-        description: "Player akan mencoba lagu berikutnya.",
+        title: "Track failed to load",
+        description: "Skipping to the next track.",
         variant: "error",
       });
       // skip otomatis
@@ -203,8 +204,8 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
       .catch(() => {
         setSedangMain(false);
         toast({
-          title: "Pemutaran gagal",
-          description: "Tekan tombol play untuk melanjutkan.",
+          title: "Playback failed",
+          description: "Press play to continue.",
           variant: "error",
         });
       });
@@ -249,8 +250,8 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
         .then(() => setSedangMain(true))
         .catch(() =>
           toast({
-            title: "Pemutaran gagal",
-            description: "Tekan tombol play untuk mencoba lagi.",
+            title: "Playback failed",
+            description: "Press play to try again.",
             variant: "error",
           }),
         );
@@ -379,8 +380,8 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
               err?.message || err,
             );
             toast({
-              title: "Musik terhenti",
-              description: "Tekan play untuk melanjutkan.",
+              title: "Music stopped",
+              description: "Press play to continue.",
               variant: "error",
             });
           });
@@ -439,7 +440,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
         ref={refAudio}
         src={audioSiap ? laguSaatIni?.url : undefined}
         preload="none"
-        aria-label="Pemutar musik"
+        aria-label="Music player"
       />
 
       {/* SFX singkat (diambil dari /public/effects). BUKAN ambient loop. */}
@@ -454,12 +455,12 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
         <div className="Mp__info">
           <div
             className="Mp__judul"
-            title={laguSaatIni?.judul || "Tanpa judul"}
+            title={laguSaatIni?.judul || "Untitled"}
           >
-            {laguSaatIni?.judul || "Tanpa judul"}
+            {laguSaatIni?.judul || "Untitled"}
           </div>
           <div className="ui-label Mp__genre">
-            {genreTerpilih === SEMUA ? "semua genre" : genreTerpilih}
+            {genreTerpilih === SEMUA ? "all genres" : genreTerpilih}
           </div>
         </div>
 
@@ -475,7 +476,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
             step="0.1"
             value={progressPersen}
             onChange={handleSeek}
-            aria-label="Geser untuk mencari posisi lagu"
+            aria-label="Seek track position"
           />
           <span className="Mp__waktu">{formatDetik(durasiDetik)}</span>
         </div>
@@ -486,27 +487,27 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
             type="button"
             className="ui-tombol Mp__tombol"
             onClick={handleSebelumnya}
-            aria-label="Lagu sebelumnya (←)"
+            aria-label="Previous track (←)"
           >
-            ◀
+            <IkonPixel nama="sebelumnya" />
           </button>
 
           <button
             type="button"
             className="ui-tombol ui-tombol--utama Mp__tombol"
             onClick={handleToggleMain}
-            aria-label={sedangMain ? "Jeda musik" : "Putar musik"}
+            aria-label={sedangMain ? "Pause music" : "Play music"}
           >
-            {sedangMain ? "❚❚" : "▶"}
+            <IkonPixel nama={sedangMain ? "jeda" : "putar"} />
           </button>
 
           <button
             type="button"
             className="ui-tombol Mp__tombol"
             onClick={handleBerikut}
-            aria-label="Lagu berikutnya (→)"
+            aria-label="Next track (→)"
           >
-            ▶
+            <IkonPixel nama="berikutnya" />
           </button>
         </div>
 
@@ -517,7 +518,8 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
               className="ui-tombol ui-tombol--kecil Mp__wallpaper-btn"
               onClick={onGantiWallpaper}
               type="button"
-              aria-label="Ganti wallpaper"
+              aria-label="Change wallpaper"
+              title="Change wallpaper"
             >
               {namaWallpaper}
             </button>
@@ -534,7 +536,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
               step="1"
               value={volumeMusik}
               onChange={handleUbahVolume}
-              aria-label="Atur volume musik"
+              aria-label="Music volume"
             />
           </div>
 
@@ -547,9 +549,9 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
               className="ui-input ui-input--kecil Mp__select"
               value={genreTerpilih}
               onChange={handleUbahGenre}
-              aria-label="Pilih genre"
+              aria-label="Choose genre"
             >
-              <option value={SEMUA}>semua</option>
+              <option value={SEMUA}>all</option>
               {daftarGenre.map((g) => (
                 <option key={g.nama} value={g.nama}>
                   {g.nama}
@@ -561,20 +563,20 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
               className="ui-tombol ui-tombol--kecil Mp__chip"
               onClick={toggleAcak}
               aria-pressed={acakAktif}
-              aria-label="Acak lagu"
+              aria-label="Shuffle"
               type="button"
             >
-              acak
+              shuffle
             </button>
 
             <button
               className="ui-tombol ui-tombol--kecil Mp__chip"
               onClick={toggleUlang}
               aria-pressed={ulangAktif}
-              aria-label="Ulangi lagu"
+              aria-label="Repeat"
               type="button"
             >
-              ulang
+              repeat
             </button>
           </div>
         </div>

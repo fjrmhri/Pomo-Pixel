@@ -111,8 +111,8 @@ export default function UserStatistics({
   useEffect(() => {
     if (!cloudGagal) return;
     toast({
-      title: "Statistik akun gagal dimuat",
-      description: "Menampilkan statistik lokal perangkat ini.",
+      title: "Could not load account stats",
+      description: "Showing this device's local stats.",
       variant: "error",
     });
   }, [cloudGagal, toast]);
@@ -144,7 +144,7 @@ export default function UserStatistics({
         ? lokalHarian
         : lokalTotal;
     return {
-      judulKecil: harian ? `hari ini (${tanggal})` : "total",
+      judulKecil: harian ? `today (${tanggal})` : "all time",
       fokus: sumber.menitFokus,
       istirahat: sumber.menitIstirahat,
       total: sumber.totalMenit,
@@ -178,9 +178,9 @@ export default function UserStatistics({
             aria-pressed={modeTampil === "harian"}
             onClick={() => setModeTampil("harian")}
             type="button"
-            title="Statistik untuk hari kalender ini"
+            title="Stats for today's calendar date"
           >
-            hari ini
+            today
           </button>
         </div>
 
@@ -192,10 +192,10 @@ export default function UserStatistics({
           />
           <span className="Stat__status-teks">
             {sedangMuat
-              ? "memuat…"
+              ? "loading…"
               : pakaiCloud
-                ? "data akun (cloud)"
-                : "mode lokal (perangkat ini)"}
+                ? "account data (cloud)"
+                : "local mode (this device)"}
             <span className="Stat__sub"> • {dataTampil.judulKecil}</span>
           </span>
         </div>
@@ -203,24 +203,24 @@ export default function UserStatistics({
         {/* Grid angka */}
         <div className="Stat__grid" role="list">
           <article className="Stat__kartu" role="listitem">
-            <h4 className="Stat__kartu-judul">fokus</h4>
+            <h4 className="Stat__kartu-judul">focus</h4>
             <p className="Stat__angka">{Number(dataTampil.fokus || 0)}</p>
-            <span className="Stat__unit">menit</span>
+            <span className="Stat__unit">min</span>
           </article>
 
           <article
             className="Stat__kartu Stat__kartu--istirahat"
             role="listitem"
           >
-            <h4 className="Stat__kartu-judul">istirahat</h4>
+            <h4 className="Stat__kartu-judul">break</h4>
             <p className="Stat__angka">{Number(dataTampil.istirahat || 0)}</p>
-            <span className="Stat__unit">menit</span>
+            <span className="Stat__unit">min</span>
           </article>
 
           <article className="Stat__kartu Stat__kartu-total" role="listitem">
             <h4 className="Stat__kartu-judul">total</h4>
             <p className="Stat__angka">{Number(dataTampil.total || 0)}</p>
-            <span className="Stat__unit">menit</span>
+            <span className="Stat__unit">min</span>
           </article>
         </div>
       </section>

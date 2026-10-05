@@ -48,7 +48,7 @@ export default function GithubStats({
           <div className="Stat__github-images">
             {gambarGagal.stats && gambarGagal.langs ? (
               <div className="Stat__history-empty">
-                Kartu statistik GitHub sedang tidak tersedia.
+                GitHub stat cards are unavailable right now.
               </div>
             ) : null}
             {!gambarGagal.stats ? (
@@ -82,9 +82,9 @@ export default function GithubStats({
                 value={periode}
                 onChange={(e) => setPeriode(e.target.value)}
               >
-                <option value="today">Hari ini</option>
-                <option value="week">Minggu ini</option>
-                <option value="month">Bulan ini</option>
+                <option value="today">Today</option>
+                <option value="week">Last 7 days</option>
+                <option value="month">This month</option>
               </select>
             </div>
             {filteredEvents.length > 0 ? (
@@ -102,21 +102,21 @@ export default function GithubStats({
                         : ""}
                     </span>
                     <span className="time">
-                      {new Date(ev.time).toLocaleString()}
+                      {new Date(ev.time).toLocaleString("en-US")}
                     </span>
                   </li>
                 ))}
               </ul>
             ) : (
               <div className="Stat__history-empty">
-                Belum ada push atau pull request
+                No pushes or pull requests yet
               </div>
             )}
           </div>
         </div>
       ) : (
         <div className="Stat__history-empty">
-          GitHub belum terhubung.
+          GitHub is not connected.
         </div>
       )}
     </section>

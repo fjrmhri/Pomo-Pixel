@@ -100,8 +100,8 @@ function SettingsForm({
       } catch (e) {
         console.error(e);
         toast({
-          title: "Preferensi gagal dimuat",
-          description: "Nilai default tetap dipakai.",
+          title: "Could not load preferences",
+          description: "Default values are used.",
           variant: "error",
         });
       }
@@ -115,21 +115,21 @@ function SettingsForm({
     const inRange = (n, a, b) => Number(n) >= a && Number(n) <= b;
 
     if (!isInt(nilaiWork) || !inRange(nilaiWork, 1, 600))
-      e.push("Durasi fokus harus 1–600 menit.");
+      e.push("Focus duration must be 1–600 minutes.");
     if (!isInt(nilaiShort) || !inRange(nilaiShort, 1, 600))
-      e.push("Durasi istirahat singkat harus 1–600 menit.");
+      e.push("Short break must be 1–600 minutes.");
     if (!isInt(nilaiLong) || !inRange(nilaiLong, 1, 600))
-      e.push("Durasi istirahat panjang harus 1–600 menit.");
+      e.push("Long break must be 1–600 minutes.");
 
     if (!isInt(nilaiIntervalLong) || !inRange(nilaiIntervalLong, 2, 12))
-      e.push("Interval long break harus 2–12.");
+      e.push("Long break interval must be 2–12.");
 
     if (!isInt(nilaiVolume) || !inRange(nilaiVolume, 0, 100))
-      e.push("Volume harus 0–100.");
+      e.push("Volume must be 0–100.");
 
     if (e.length > 0) {
       toast({
-        title: "Validasi gagal",
+        title: "Please check your settings",
         description: e.join(" "),
         variant: "error",
       });
@@ -175,12 +175,12 @@ function SettingsForm({
       setLocMode?.(String(nilaiLocMode));
 
       onDisplayNameSourceChange?.(String(nilaiDisplayNameSource));
-      toast({ title: "Pengaturan disimpan", variant: "success" });
+      toast({ title: "Settings saved", variant: "success" });
     } catch (e) {
       console.error(e);
       toast({
-        title: "Pengaturan gagal disimpan",
-        description: "Periksa koneksi lalu coba lagi.",
+        title: "Could not save settings",
+        description: "Check your connection and try again.",
         variant: "error",
       });
     } finally {
@@ -196,15 +196,15 @@ function SettingsForm({
     setNilaiVolume(80);
     setNilaiLocMode("time");
     setNilaiDisplayNameSource("google");
-    toast({ title: "Pengaturan direset" });
+    toast({ title: "Settings reset to defaults" });
   };
 
   return (
-    <div className={`Sf pixel-card pixel-card--borderless ${className}`}>
+    <div className={`Sf ${className}`}>
       <form className="Sf__inner" onSubmit={simpanPreferensi}>
         <div className="Sf__grid">
           <div className="Sf__group">
-            <label className="Sf__label">Durasi Fokus</label>
+            <label className="Sf__label">Focus (min)</label>
             <input
               className="ui-input Sf__number"
               type="number"
@@ -215,7 +215,7 @@ function SettingsForm({
             />
           </div>
           <div className="Sf__group">
-            <label className="Sf__label">Durasi Istirahat Singkat</label>
+            <label className="Sf__label">Short break (min)</label>
             <input
               className="ui-input Sf__number"
               type="number"
@@ -226,7 +226,7 @@ function SettingsForm({
             />
           </div>
           <div className="Sf__group">
-            <label className="Sf__label">Durasi Istirahat Panjang</label>
+            <label className="Sf__label">Long break (min)</label>
             <input
               className="ui-input Sf__number"
               type="number"
@@ -237,7 +237,7 @@ function SettingsForm({
             />
           </div>
           <div className="Sf__group">
-            <label className="Sf__label">Interval Istirahat Panjang</label>
+            <label className="Sf__label">Long break every (sessions)</label>
             <input
               className="ui-input Sf__number"
               type="number"
@@ -248,7 +248,7 @@ function SettingsForm({
             />
           </div>
           <div className="Sf__group">
-            <label className="Sf__label">Volume Notifikasi</label>
+            <label className="Sf__label">Alarm volume</label>
             <input
               className="ui-slider Sf__range"
               style={{ "--isi": `${nilaiVolume}%` }}
@@ -260,18 +260,18 @@ function SettingsForm({
             />
           </div>
           <div className="Sf__group">
-            <label className="Sf__label">Info</label>
+            <label className="Sf__label">Top bar widget</label>
             <select
               className="ui-input Sf__select"
               value={nilaiLocMode}
               onChange={(e) => setNilaiLocMode(e.target.value)}
             >
-              <option value="time">Waktu Real-Time</option>
-              <option value="weather">Cuaca</option>
+              <option value="time">Clock</option>
+              <option value="weather">Weather</option>
             </select>
           </div>
           <div className="Sf__group">
-            <label className="Sf__label">Nama yang Ditampilkan</label>
+            <label className="Sf__label">Display name from</label>
             <select
               className="ui-input Sf__select"
               value={nilaiDisplayNameSource}
@@ -296,52 +296,50 @@ function SettingsForm({
             type="submit"
             disabled={sedangSimpan}
           >
-            {sedangSimpan ? "Menyimpan..." : "Simpan"}
+            {sedangSimpan ? "Saving..." : "Save"}
           </button>
-          <button
-            className="ui-tombol ui-tombol--bahaya Sf__btn"
-            type="button"
-            onClick={async () => {
-              if (googleUser) {
-                try {
-                  await signOut(auth);
-                  toast({
-                    title: "Berhasil logout Google",
-                    variant: "success",
-                  });
-                } catch (error) {
-                  console.error("SettingsForm: gagal logout Firebase:", error);
-                  toast({
-                    title: "Logout Google gagal",
-                    variant: "error",
-                  });
+          {googleUser || githubUser ? (
+            <button
+              className="ui-tombol ui-tombol--bahaya Sf__btn"
+              type="button"
+              onClick={async () => {
+                if (googleUser) {
+                  try {
+                    await signOut(auth);
+                    toast({
+                      title: "Logged out of Google",
+                      variant: "success",
+                    });
+                  } catch (error) {
+                    console.error("SettingsForm: gagal logout Firebase:", error);
+                    toast({
+                      title: "Google logout failed",
+                      variant: "error",
+                    });
+                  }
+                  return;
                 }
-                return;
-              }
-              if (githubUser) {
-                try {
-                  await logoutGitHub();
-                  onLogoutGitHub?.();
-                  toast({
-                    title: "Berhasil logout GitHub",
-                    variant: "success",
-                  });
-                } catch (error) {
-                  console.error("SettingsForm: gagal logout GitHub:", error);
-                  toast({
-                    title: "Logout GitHub gagal",
-                    variant: "error",
-                  });
+                if (githubUser) {
+                  try {
+                    await logoutGitHub();
+                    onLogoutGitHub?.();
+                    toast({
+                      title: "Logged out of GitHub",
+                      variant: "success",
+                    });
+                  } catch (error) {
+                    console.error("SettingsForm: gagal logout GitHub:", error);
+                    toast({
+                      title: "GitHub logout failed",
+                      variant: "error",
+                    });
+                  }
                 }
-              }
-            }}
-          >
-            {googleUser
-              ? "Log Out Google"
-              : githubUser
-                ? "Log Out GitHub"
-                : "Log Out"}
-          </button>
+              }}
+            >
+              {googleUser ? "Log out Google" : "Log out GitHub"}
+            </button>
+          ) : null}
         </div>
       </form>
     </div>

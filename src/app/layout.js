@@ -12,7 +12,7 @@ const monocraft = localFont({
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="id">
+    <html lang="en">
       <body className={`${monocraft.variable} font-mono antialiased`}>
         <ToastProvider>{children}</ToastProvider>
         <SpeedInsights />
