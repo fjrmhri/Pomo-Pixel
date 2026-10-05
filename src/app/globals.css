@@ -476,6 +476,7 @@ select.ui-input {
     max-width: calc(100vw - 2 * var(--jarak-tepi));
     flex-wrap: wrap;
     justify-content: center;
+    gap: var(--jarak-1);
   }
 }
 
