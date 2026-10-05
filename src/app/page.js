@@ -33,17 +33,9 @@ import {
   fetchGitHubSession,
 } from "./github";
 import { auth, db } from "./firebase";
+import { formatTanggal } from "./lib/statistik";
 
 const SITE_URL = "https://pomo-pixel.vercel.app";
-
-// ---------- util tanggal ----------
-const formatTanggal = (d = new Date()) => {
-  const pad = (n) => (n < 10 ? `0${n}` : `${n}`);
-  const y = d.getFullYear();
-  const m = pad(d.getMonth() + 1);
-  const dd = pad(d.getDate());
-  return `${y}-${m}-${dd}`;
-};
 
 // ---------- kunci localStorage ----------
 const KEY_PENGATURAN = "lp_pengaturan_v1";
@@ -816,7 +808,6 @@ export default function Page() {
       >
         {bukaStatistik ? (
           <UserStatistics
-            loggedIn={infoLogin.loggedIn}
             userId={infoLogin.userId}
             totalTime={statRingkas.totalTime}
             timeStudied={statRingkas.timeStudied}
