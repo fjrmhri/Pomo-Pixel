@@ -449,7 +449,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
         preload="none"
       />
 
-      <div className="Mp">
+      <div className="ui-panel Mp">
         {/* Judul & info lagu */}
         <div className="Mp__info">
           <div
@@ -458,7 +458,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
           >
             {laguSaatIni?.judul || "Tanpa judul"}
           </div>
-          <div className="Mp__genre">
+          <div className="ui-label Mp__genre">
             {genreTerpilih === SEMUA ? "semua genre" : genreTerpilih}
           </div>
         </div>
@@ -467,7 +467,8 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
         <div className="Mp__progress">
           <span className="Mp__waktu">{formatDetik(waktuSaatIni)}</span>
           <input
-            className="Mp__slider Mp__slider--progress"
+            className="ui-slider Mp__slider Mp__slider--progress"
+            style={{ "--isi": `${progressPersen}%` }}
             type="range"
             min="0"
             max="100"
@@ -482,7 +483,8 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
         {/* Kontrol utama */}
         <div className="Mp__kontrol">
           <button
-            className="Mp__tombol"
+            type="button"
+            className="ui-tombol Mp__tombol"
             onClick={handleSebelumnya}
             aria-label="Lagu sebelumnya (←)"
           >
@@ -490,9 +492,8 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
           </button>
 
           <button
-            className={`Mp__tombol Mp__tombol--utama ${
-              sedangMain ? "is-active" : ""
-            }`}
+            type="button"
+            className="ui-tombol ui-tombol--utama Mp__tombol"
             onClick={handleToggleMain}
             aria-label={sedangMain ? "Jeda musik" : "Putar musik"}
           >
@@ -500,7 +501,8 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
           </button>
 
           <button
-            className="Mp__tombol"
+            type="button"
+            className="ui-tombol Mp__tombol"
             onClick={handleBerikut}
             aria-label="Lagu berikutnya (→)"
           >
@@ -512,19 +514,20 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
         <div className="Mp__opsi">
           <div className="Mp__opsi-left">
             <button
-              className="Mp__wallpaper-btn"
+              className="ui-tombol ui-tombol--kecil Mp__wallpaper-btn"
               onClick={onGantiWallpaper}
               type="button"
               aria-label="Ganti wallpaper"
             >
               {namaWallpaper}
             </button>
-            <label className="Mp__label" htmlFor="volume-musik">
+            <label className="ui-label Mp__label" htmlFor="volume-musik">
               volume {volumeMusik}%
             </label>
             <input
               id="volume-musik"
-              className="Mp__slider Mp__slider--volume"
+              className="ui-slider Mp__slider Mp__slider--volume"
+              style={{ "--isi": `${volumeMusik}%` }}
               type="range"
               min="0"
               max="100"
@@ -536,12 +539,12 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
           </div>
 
           <div className="Mp__opsi-bar">
-            <label className="Mp__label" htmlFor="pilih-genre">
+            <label className="ui-label Mp__label" htmlFor="pilih-genre">
               genre
             </label>
             <select
               id="pilih-genre"
-              className="Mp__select"
+              className="ui-input ui-input--kecil Mp__select"
               value={genreTerpilih}
               onChange={handleUbahGenre}
               aria-label="Pilih genre"
@@ -555,7 +558,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
             </select>
 
             <button
-              className={`Mp__chip ${acakAktif ? "is-on" : ""}`}
+              className="ui-tombol ui-tombol--kecil Mp__chip"
               onClick={toggleAcak}
               aria-pressed={acakAktif}
               aria-label="Acak lagu"
@@ -565,7 +568,7 @@ export default function MusicPlayer({ namaWallpaper = "", onGantiWallpaper }) {
             </button>
 
             <button
-              className={`Mp__chip ${ulangAktif ? "is-on" : ""}`}
+              className="ui-tombol ui-tombol--kecil Mp__chip"
               onClick={toggleUlang}
               aria-pressed={ulangAktif}
               aria-label="Ulangi lagu"

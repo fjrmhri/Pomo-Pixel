@@ -208,7 +208,7 @@ function SettingsForm({
           <div className="Sf__group">
             <label className="Sf__label">Durasi Fokus</label>
             <input
-              className="Sf__number"
+              className="ui-input Sf__number"
               type="number"
               value={nilaiWork}
               onChange={(e) => setNilaiWork(e.target.value)}
@@ -219,7 +219,7 @@ function SettingsForm({
           <div className="Sf__group">
             <label className="Sf__label">Durasi Istirahat Singkat</label>
             <input
-              className="Sf__number"
+              className="ui-input Sf__number"
               type="number"
               value={nilaiShort}
               onChange={(e) => setNilaiShort(e.target.value)}
@@ -230,7 +230,7 @@ function SettingsForm({
           <div className="Sf__group">
             <label className="Sf__label">Durasi Istirahat Panjang</label>
             <input
-              className="Sf__number"
+              className="ui-input Sf__number"
               type="number"
               value={nilaiLong}
               onChange={(e) => setNilaiLong(e.target.value)}
@@ -241,7 +241,7 @@ function SettingsForm({
           <div className="Sf__group">
             <label className="Sf__label">Interval Istirahat Panjang</label>
             <input
-              className="Sf__number"
+              className="ui-input Sf__number"
               type="number"
               value={nilaiIntervalLong}
               onChange={(e) => setNilaiIntervalLong(e.target.value)}
@@ -252,7 +252,8 @@ function SettingsForm({
           <div className="Sf__group">
             <label className="Sf__label">Volume Notifikasi</label>
             <input
-              className="Sf__range"
+              className="ui-slider Sf__range"
+              style={{ "--isi": `${nilaiVolume}%` }}
               type="range"
               min="0"
               max="100"
@@ -263,7 +264,7 @@ function SettingsForm({
           <div className="Sf__group">
             <label className="Sf__label">Info</label>
             <select
-              className="Sf__select"
+              className="ui-input Sf__select"
               value={nilaiLocMode}
               onChange={(e) => setNilaiLocMode(e.target.value)}
             >
@@ -274,7 +275,7 @@ function SettingsForm({
           <div className="Sf__group">
             <label className="Sf__label">Nama yang Ditampilkan</label>
             <select
-              className="Sf__select"
+              className="ui-input Sf__select"
               value={nilaiDisplayNameSource}
               onChange={(e) => setNilaiDisplayNameSource(e.target.value)}
             >
@@ -285,18 +286,22 @@ function SettingsForm({
         </div>
 
         <div className="Sf__actions">
-          <button className="Sf__btn" type="button" onClick={resetKeBawaan}>
+          <button
+            className="ui-tombol Sf__btn"
+            type="button"
+            onClick={resetKeBawaan}
+          >
             Reset
           </button>
           <button
-            className="Sf__btn Sf__btn--primary"
+            className="ui-tombol ui-tombol--utama Sf__btn"
             type="submit"
             disabled={sedangSimpan}
           >
             {sedangSimpan ? "Menyimpan..." : "Simpan"}
           </button>
           <button
-            className="Sf__btn Sf__btn--secondary"
+            className="ui-tombol ui-tombol--bahaya Sf__btn"
             type="button"
             onClick={async () => {
               if (googleUser) {

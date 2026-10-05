@@ -1,81 +1,22 @@
-.Db {
-  width: max-content;
-  max-width: min(92vw, 520px);
-  position: relative;
-}
-
-.Db__inner {
-  position: relative;
-  background: var(--panel-background);
-  backdrop-filter: blur(var(--panel-blur));
-  -webkit-backdrop-filter: blur(var(--panel-blur));
-  color: var(--foreground);
-  border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff;
-  border-radius: 0;
-  padding: 10px 12px;
-  min-width: 280px;
-  font-family: var(--font-pixel);
-}
+/* Bar atas: tab sesi (kiri) dan kontrol akun/status (kanan).
+   Tampilan tombol berasal dari ui-tombol di globals.css. */
 
 .Db__row-top {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: var(--jarak-2);
 }
 
 .Db__tabs {
   display: flex;
-  gap: 8px;
+  gap: var(--jarak-2);
 }
 
 .Db__tab {
   font-family: var(--font-pixel);
-  font-size: 12px;
-  color: #111827;
-  background: #cbd5e1; /* slate-300 */
-  border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff;
-  border-radius: 0;
-  padding: 8px 10px;
-  cursor: pointer;
   text-transform: lowercase;
-  letter-spacing: 0.5px;
-  transition:
-    transform 80ms ease,
-    filter 120ms ease;
-  user-select: none;
-}
-.Db__tab:hover {
-  transform: translateY(-1px);
-}
-.Db__tab.is-aktif,
-.Db__tab--aktif {
-  background: var(--aksen-violet);
-  filter: contrast(110%);
 }
 
-.Db__ikonbtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: var(--panel-border);
-  background: var(--panel-background);
-  backdrop-filter: blur(var(--panel-blur));
-  -webkit-backdrop-filter: blur(var(--panel-blur));
-  box-shadow: var(--panel-shadow);
-  cursor: pointer;
-  transition:
-    transform 80ms ease,
-    filter 120ms ease;
-}
-.Db__ikonbtn:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.12);
-}
 .Db__ikonimg {
   image-rendering: pixelated;
   width: 20px;
@@ -91,89 +32,12 @@
 .Db__status {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: #e5e7eb;
-  background: var(--panel-background);
-  backdrop-filter: blur(var(--panel-blur));
-  -webkit-backdrop-filter: blur(var(--panel-blur));
-  padding: 2px 6px;
-  border: var(--panel-border);
-  box-shadow: var(--panel-shadow);
+  gap: var(--jarak-2);
+  min-height: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-2);
+  font-size: var(--teks-sm);
 }
-.Db__dot {
-  width: 10px;
-  height: 10px;
-  border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff;
-  background: #9ca3af;
-}
-.Db__dot.is-on {
-  background: #22c55e;
-}
-.Db__dot.is-off {
-  background: #ef4444;
-}
+
 .Db__status-teks {
-  color: #e5e7eb;
-}
-
-.account-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: var(--panel-border);
-  background: var(--panel-background);
-  backdrop-filter: blur(var(--panel-blur));
-  -webkit-backdrop-filter: blur(var(--panel-blur));
-  box-shadow: var(--panel-shadow);
-  cursor: pointer;
-  transition:
-    transform 80ms ease,
-    filter 120ms ease;
-}
-.account-button:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.12);
-}
-
-.account-button img {
-  image-rendering: pixelated;
-  width: 20px;
-  height: 20px;
-  filter: invert(1) brightness(1.2); /* paksa putih */
-}
-
-.account-button::after {
-  content: "";
-  position: absolute;
-  top: -32px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.85);
-  color: #fff;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-}
-.account-button:hover::after {
-  opacity: 1;
-}
-
-@media (max-width: 640px) {
-  .Db__inner {
-    padding: 8px 10px 12px 10px;
-    min-width: 240px;
-  }
-  .Db__row-top {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
+  color: var(--warna-teks);
 }

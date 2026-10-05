@@ -1,136 +1,13 @@
-.Stat {
-  background: rgba(10, 10, 10, 0);
-  border: none;
-  box-shadow: none;
-  border-radius: 0;
-  padding: 16px;
-  font-family: "Monocraft", monospace;
-  pointer-events: auto;
-  overflow-y: auto;
-  width: 100%;
-  height: 100%;
-  max-height: 100%;
-}
-
-.Stat__section-title {
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin-bottom: 16px;
-  text-align: center;
-}
-
-.Stat__tab {
-  display: flex;
-  gap: 6px;
-  justify-content: center;
-  margin-bottom: 8px;
-}
-
-.Stat__tabbtn {
-  font-family: var(--font-pixel, "Monocraft", monospace);
-  font-size: 12px;
-  color: #111827;
-  background: #cbd5e1;
-  border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff;
-  border-radius: 0;
-  padding: 5px 10px;
-  cursor: pointer;
-  transition: transform 80ms ease;
-}
-
-.Stat__tabbtn:hover {
-  transform: translateY(-1px);
-}
-
-.Stat__tabbtn.is-aktif {
-  background: #fbbf24;
-}
-
-.Stat__status {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: #cbd5e1;
-  margin-bottom: 8px;
-}
-
-.Stat__dot {
-  width: 8px;
-  height: 8px;
-  border: none;
-  box-shadow: none;
-  background: #9ca3af;
-}
-.Stat__dot.on {
-  background: #22c55e;
-}
-.Stat__dot.off {
-  background: #ef4444;
-}
-
-.Stat__status-teks {
-  color: #cbd5e1;
-}
-
-.Stat__sub {
-  opacity: 0.85;
-}
-
-.Stat__grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
-.Stat__kartu {
-  background: var(--panel-background);
-  backdrop-filter: blur(var(--panel-blur));
-  -webkit-backdrop-filter: blur(var(--panel-blur));
-  border: var(--panel-border);
-  box-shadow: var(--panel-shadow);
-  padding: 10px 8px;
-  text-align: center;
-  border-radius: 0;
-}
-
-.Stat__kartu-judul {
-  margin: 0 0 6px 0;
-  font-size: 12px;
-  color: #e5e7eb;
-  letter-spacing: 0.5px;
-}
-
-.Stat__angka {
-  margin: 0;
-  font-size: clamp(20px, 5vw, 28px);
-  line-height: 1;
-  color: #fef08a;
-  text-shadow:
-    0 2px 0 #000,
-    0 0 10px rgba(255, 255, 255, 0.15);
-}
-
-.Stat__unit {
-  display: block;
-  margin-top: 6px;
-  font-size: 10px;
-  color: #cbd5e1;
-}
-
-.Stat__kartu-total .Stat__angka {
-  color: #86efac;
-}
-
+/* Bagian khusus GitHub; gaya dasar .Stat* ada di Statistik.css. */
 .Stat__github {
-  margin-top: 12px;
+  margin-top: var(--jarak-3);
 }
 .Stat__github-images {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--jarak-2);
   width: 100%;
-  gap: 0;
 }
 .Stat__github-image {
   display: block;
@@ -138,42 +15,35 @@
   border-radius: 0;
 }
 .Stat__github-image--stats {
-  width: 48%;
+  width: 58%;
 }
 .Stat__github-image--langs {
-  width: 37.5%;
+  width: 40%;
 }
 .Stat__history {
-  margin-top: 12px;
+  margin-top: var(--jarak-4);
   text-align: center;
 }
 .Stat__history-filter {
-  margin: 0 auto 8px;
-  border: 1px solid #ffffff00;
   display: inline-block;
-  padding: 4px;
+  margin: 0 auto var(--jarak-2);
 }
 .Stat__history-select {
   font-family: "Monocraft", monospace;
-  font-size: 10px;
-  background: #111827;
-  color: #e5e7eb;
-  border: 2px solid #fff;
-  box-shadow: inset 0 0 0 2px #000;
-  padding: 3px 5px;
+  width: auto;
 }
 .Stat__history-empty {
-  margin-top: 12px;
+  margin-top: var(--jarak-3);
   text-align: center;
-  color: #e5e7eb;
-  font-size: 12px;
+  color: var(--warna-teks-redup);
+  font-size: var(--teks-sm);
 }
 .Stat__github-list {
   list-style: none;
   padding: 0;
-  margin: 12px auto 0;
+  margin: var(--jarak-3) auto 0;
   display: grid;
-  gap: 4px;
+  gap: var(--jarak-1);
   width: 100%;
   max-width: 450px;
   text-align: left;
@@ -181,42 +51,26 @@
 .Stat__github-item {
   display: grid;
   grid-template-columns: 1fr auto auto auto;
-  gap: 4px;
-  background: var(--panel-background);
-  backdrop-filter: blur(var(--panel-blur));
-  -webkit-backdrop-filter: blur(var(--panel-blur));
-  border: var(--panel-border);
-  box-shadow: var(--panel-shadow);
-  padding: 4px;
-  font-size: 10px;
-  color: #e5e7eb;
-}
-.Stat__github-item .repo {
-  font-weight: bold;
+  gap: var(--jarak-2);
+  padding: var(--jarak-1) var(--jarak-2);
+  font-size: var(--teks-xs);
+  color: var(--warna-teks);
+  background: var(--warna-permukaan-pekat);
+  border: var(--tebal-garis) solid var(--warna-garis);
 }
 .Stat__github-item .commit {
   font-family: monospace;
+  color: var(--warna-teks-redup);
 }
 .Stat__github-item .changes {
-  color: #86efac;
+  color: var(--warna-sukses);
 }
 .Stat__github-item .time {
   text-align: right;
-}
-
-@media (max-width: 768px) {
-  .Stat {
-    padding: 10px;
-  }
-  .Stat__grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  color: var(--warna-teks-redup);
 }
 
 @media (max-width: 480px) {
-  .Stat__grid {
-    grid-template-columns: 1fr;
-  }
   .Stat__github-image {
     width: 49%;
     object-fit: cover;

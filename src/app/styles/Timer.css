@@ -1,4 +1,5 @@
-/* Timer (Pomodoro Timer) - Compact + Lowered Final + Responsive */
+/* Timer Pomodoro. Panel, lencana, dan tombol memakai komponen ui-*;
+   warna lencana & progress mengikuti periode aktif. */
 
 .Tm__bungkus {
   position: fixed;
@@ -15,25 +16,26 @@
 }
 
 .Tm {
+  --warna-periode: var(--warna-pilih);
   pointer-events: auto;
   width: min(86vw, 360px);
-  background: var(--panel-background);
-  backdrop-filter: blur(var(--panel-blur));
-  -webkit-backdrop-filter: blur(var(--panel-blur));
-  color: var(--overlay-foreground);
-  border: var(--panel-border);
-  border-radius: 0;
-  padding: 12px;
+  padding: var(--jarak-3);
   font-family: var(--font-pixel, "Monocraft", monospace);
   box-sizing: border-box;
+}
+.Tm.is-short {
+  --warna-periode: var(--warna-sukses);
+}
+.Tm.is-long {
+  --warna-periode: var(--warna-info);
 }
 
 .Tm__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
-  font-size: 10px;
+  margin-bottom: var(--jarak-2);
+  font-size: var(--teks-xs);
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: grab;
@@ -45,84 +47,65 @@
 }
 
 .Tm__badge {
-  background: #a5b4fc;
-  color: #111827;
-  padding: 2px 6px;
-  border-radius: 0;
-  border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff;
-  font-size: 9px;
+  background: var(--warna-periode);
 }
 
 .Tm__indikator {
-  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--jarak-2);
 }
 .Tm__indikator.on {
-  color: #10b981;
+  color: var(--warna-sukses);
 }
 .Tm__indikator.off {
-  color: #ef4444;
+  color: var(--warna-utama);
 }
 
 .Tm__progress {
-  height: 6px;
-  background: rgba(226, 232, 240, 0.35);
-  border: var(--panel-border);
-  box-shadow: none;
-  border-radius: 0;
+  height: 8px;
+  margin-bottom: var(--jarak-3);
+  background: var(--warna-permukaan-pekat);
+  border: var(--tebal-garis) solid var(--warna-garis);
+  box-sizing: content-box;
   overflow: hidden;
-  margin-bottom: 8px;
 }
 .Tm__progress-bar {
   height: 100%;
   width: 0%;
-  background: var(--aksen-violet, #8b5cf6);
-  transition: width 200ms linear;
+  background: var(--warna-periode);
+  transition: width 200ms steps(4);
 }
 
 .Tm__waktu {
-  font-size: clamp(28px, 7vw, 46px);
-  font-weight: 700;
-  color: var(--overlay-foreground);
-  letter-spacing: 1px;
   display: flex;
   justify-content: center;
   align-items: baseline;
-  gap: 4px;
-  margin-bottom: 10px;
+  gap: var(--jarak-1);
+  margin-bottom: var(--jarak-3);
+  font-size: clamp(32px, 7vw, 48px);
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: var(--warna-teks);
+  text-shadow: 2px 2px 0 var(--warna-garis-gelap);
 }
 
 .Tm__kontrol {
   display: flex;
   justify-content: center;
-  gap: 6px;
-  margin-bottom: 4px;
+  gap: var(--jarak-2);
 }
 
 .Tm__btn {
   font-family: var(--font-pixel, "Monocraft", monospace);
-  font-size: 12px;
-  color: #111827;
-  background: #cbd5e1;
-  border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff;
-  border-radius: 0;
-  padding: 5px 10px;
-  cursor: pointer;
-  transition: transform 80ms ease;
-}
-.Tm__btn.utama {
-  background: var(--aksen-amber, #fbbf24);
-}
-.Tm__btn:hover {
-  transform: translateY(-2px);
+  min-width: 72px;
 }
 
 .Tm__footer {
-  margin-top: 4px;
+  margin-top: var(--jarak-3);
   text-align: center;
-  font-size: 9px;
-  color: var(--overlay-foreground-muted);
+  font-size: var(--teks-xs);
+  color: var(--warna-teks-redup);
 }
 
 @media (max-width: 1024px) {
@@ -131,42 +114,8 @@
   }
 }
 
-@media (max-width: 768px) {
-  .Tm__bungkus {
-    top: 45%;
-  }
-
-  .Tm {
-    width: min(88vw, 320px);
-    padding: 10px;
-  }
-
-  .Tm__waktu {
-    font-size: clamp(26px, 7vw, 42px);
-  }
-
-  .Tm__btn {
-    font-size: 11px;
-    padding: 4px 8px;
-  }
-}
-
 @media (max-width: 480px) {
-  .Tm__bungkus {
-    top: 45%;
-  }
-
   .Tm {
-    width: min(92vw, 300px);
-    padding: 8px;
-  }
-
-  .Tm__waktu {
-    font-size: clamp(24px, 8vw, 38px);
-  }
-
-  .Tm__btn {
-    font-size: 10px;
-    padding: 4px 6px;
+    width: min(92vw, 320px);
   }
 }

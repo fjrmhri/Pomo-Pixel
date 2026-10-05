@@ -1,18 +1,14 @@
 .Loc {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  background: var(--panel-background);
-  backdrop-filter: blur(var(--panel-blur));
-  -webkit-backdrop-filter: blur(var(--panel-blur));
-  border: var(--panel-border);
-  box-shadow: var(--panel-shadow);
-  padding: 4px 6px;
+  justify-content: center;
+  min-height: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-2);
   font-family: var(--font-pixel);
-  color: #e5e7eb;
-  border-radius: 0;
+  font-variant-numeric: tabular-nums;
 }
 
 .Loc__content {
-  font-size: 12px;
+  font-size: var(--teks-sm);
+  color: var(--warna-teks);
 }

@@ -104,7 +104,7 @@ export default function Modal({
   return (
     <div className="Md__backdrop" onMouseDown={klikBackdrop}>
       <section
-        className={`Md__konten ${
+        className={`ui-panel Md__konten ${
           kelasLebar[lebar] || kelasLebar.md
         } ${className}`}
         role="dialog"
@@ -123,7 +123,7 @@ export default function Modal({
 
           <button
             type="button"
-            className="Md__btn-tutup"
+            className="ui-tombol ui-tombol--ikon ui-tombol--kecil Md__btn-tutup"
             onClick={amanTutup}
             aria-label="tutup"
             title="tutup"

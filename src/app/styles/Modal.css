@@ -1,58 +1,46 @@
-/* Monocraft (jika belum global) ---------------------------------------- */
-/* Backdrop -------------------------------------------------------------- */
+/* Modal: backdrop redup + panel ui-panel. */
 .Md__backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(2, 6, 23, 0.55); /* slate-950/55 */
-  backdrop-filter: blur(6px); /* Efek blur lebih halus */
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(13, 10, 22, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: grid;
   place-items: center;
-  z-index: 999; /* Pastikan modal tetap di atas */
+  z-index: var(--z-modal);
 }
 
-/* Konten modal (tema pixel) -------------------------------------------- */
 .Md__konten {
-  width: min(70vw, 480px); /* Lebar modal lebih ringkas */
-  max-height: 60vh; /* Tinggi maksimum agar tetap proporsional */
+  width: min(70vw, 480px);
+  max-height: 60vh;
   height: auto;
   overflow: auto;
-  background: var(--panel-background);
-  color: #e5e7eb;
-  border: var(--panel-border);
-  box-shadow: var(--panel-shadow);
-  border-radius: 0; /* square edges */
-  padding: 8px 12px; /* Padding lebih ringkas */
+  padding: var(--jarak-3) var(--jarak-4);
   font-family: var(--font-pixel, "Monocraft", monospace);
   outline: none;
-  z-index: 1000; /* Menjaga modal tetap di atas */
-  transition: transform 0.2s ease-out; /* Efek transisi */
-  backdrop-filter: blur(var(--panel-blur));
-  -webkit-backdrop-filter: blur(var(--panel-blur));
+  z-index: calc(var(--z-modal) + 1);
 }
 
-/* Ukuran varian - dibuat seragam */
 .Md__konten--sm,
 .Md__konten--md,
 .Md__konten--lg {
   width: min(70vw, 480px);
-  max-height: 60vh; /* Samakan tinggi untuk semua varian */
+  max-height: 60vh;
   height: auto;
 }
 
-/* Header --------------------------------------------------------------- */
 .Md__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
+  gap: var(--jarak-3);
+  margin-bottom: var(--jarak-2);
 }
 
 .Md__judul {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--jarak-2);
   flex: 1;
   justify-content: center;
 }
@@ -63,47 +51,29 @@
 
 .Md__judul-text {
   margin: 0;
-  font-size: 1.25rem;
-  font-weight: bold;
-  letter-spacing: 0;
+  font-size: var(--teks-xl);
+  font-weight: 400;
+  letter-spacing: 1px;
   text-align: center;
 }
 
-/* Tombol tutup (pixel) ------------------------------------------------- */
 .Md__btn-tutup {
   font-family: var(--font-pixel, "Monocraft", monospace);
-  font-size: 12px;
-  color: #111827;
-  background: #fca5a5; /* red-300 */
-  border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff;
-  border-radius: 0;
-  padding: 6px 10px;
-  cursor: pointer;
-  transition: transform 80ms ease;
-}
-.Md__btn-tutup:hover {
-  transform: translateY(-1px);
 }
 
-/* Deskripsi ------------------------------------------------------------ */
 .Md__desk {
-  margin: 0 0 10px 0;
-  color: #cbd5e1;
-  font-size: 12px;
+  margin: 0 0 var(--jarak-3) 0;
+  color: var(--warna-teks-redup);
+  font-size: var(--teks-sm);
 }
 
-/* Isi ------------------------------------------------------------------ */
 .Md__isi {
   display: block;
 }
 
-/* Responsif ------------------------------------------------------------ */
 @media (max-width: 640px) {
   .Md__konten {
-    padding: 8px;
-    width: min(90vw, 340px); /* Lebar modal lebih kecil untuk perangkat kecil */
-    max-height: 60vh; /* Pertahankan tinggi agar proporsional */
-    height: auto;
+    padding: var(--jarak-2) var(--jarak-3);
+    width: min(90vw, 340px);
   }
 }

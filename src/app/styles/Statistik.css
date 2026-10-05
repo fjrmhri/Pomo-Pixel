@@ -1,0 +1,94 @@
+/* Gaya bersama panel statistik (UserStatistics & GithubStats).
+   Satu sumber agar tidak ada lagi definisi .Stat* ganda yang saling timpa. */
+.Stat {
+  padding: var(--jarak-2) var(--jarak-2) var(--jarak-4);
+  font-family: "Monocraft", monospace;
+  color: var(--warna-teks);
+  pointer-events: auto;
+  overflow-y: auto;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+}
+
+.Stat__section-title {
+  margin-bottom: var(--jarak-4);
+  font-size: var(--teks-xl);
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.Stat__tab {
+  display: flex;
+  gap: var(--jarak-2);
+  justify-content: center;
+  margin-bottom: var(--jarak-3);
+}
+
+.Stat__tabbtn {
+  font-family: "Monocraft", monospace;
+}
+
+.Stat__status {
+  display: flex;
+  align-items: center;
+  gap: var(--jarak-2);
+  margin-bottom: var(--jarak-3);
+  font-size: var(--teks-sm);
+}
+
+.Stat__status-teks {
+  color: var(--warna-teks-redup);
+}
+
+.Stat__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--jarak-2);
+}
+
+.Stat__kartu {
+  padding: var(--jarak-3) var(--jarak-2);
+  text-align: center;
+  background: var(--warna-permukaan-pekat);
+  border: var(--tebal-garis) solid var(--warna-garis);
+}
+
+.Stat__kartu-judul {
+  margin: 0 0 var(--jarak-2) 0;
+  font-size: var(--teks-sm);
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  color: var(--warna-teks-redup);
+}
+
+.Stat__angka {
+  margin: 0;
+  font-size: clamp(22px, 5vw, 28px);
+  line-height: 1;
+  color: var(--warna-pilih);
+  text-shadow: 2px 2px 0 var(--warna-garis-gelap);
+  font-variant-numeric: tabular-nums;
+}
+
+.Stat__kartu--istirahat .Stat__angka {
+  color: var(--warna-sukses);
+}
+
+.Stat__kartu-total .Stat__angka {
+  color: var(--warna-utama);
+}
+
+.Stat__unit {
+  display: block;
+  margin-top: var(--jarak-2);
+  font-size: var(--teks-xs);
+  color: var(--warna-teks-redup);
+}
+
+@media (max-width: 480px) {
+  .Stat__grid {
+    grid-template-columns: 1fr;
+  }
+}

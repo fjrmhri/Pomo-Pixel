@@ -10,8 +10,8 @@
  */
 
 import Image from "next/image";
+import "../../styles/Statistik.css";
 import "../../styles/GithubStats.css";
-import "../../styles/SettingsForm.css";
 import { useMemo, useState } from "react";
 
 export default function GithubStats({
@@ -80,7 +80,7 @@ export default function GithubStats({
           <div className="Stat__history">
             <div className="Stat__history-filter">
               <select
-                className="Stat__history-select"
+                className="ui-input ui-input--kecil Stat__history-select"
                 value={periode}
                 onChange={(e) => setPeriode(e.target.value)}
               >

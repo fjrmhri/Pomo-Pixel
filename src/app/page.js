@@ -677,7 +677,7 @@ export default function Page() {
 
       {entryHydrated && showEntryScreen ? (
         <section className="entry-screen" aria-label="Mulai fokus" id="hero">
-          <div className="entry-screen__panel">
+          <div className="ui-panel entry-screen__panel">
             <p className="entry-screen__eyebrow">Pomo Pixel</p>
             <h2 className="entry-screen__title">
               Focus more comfortably with pomodoro, lofi music, and a vibe you
@@ -689,7 +689,7 @@ export default function Page() {
             <div className="entry-screen__actions">
               <button
                 type="button"
-                className="pixel-btn entry-screen__cta"
+                className="pixel-btn ui-tombol ui-tombol--utama entry-screen__cta"
                 onClick={handleStartFocus}
               >
                 Start Focus Now
@@ -717,7 +717,7 @@ export default function Page() {
         {/* githubstats */}
         {githubUser ? (
           <button
-            className="Db__ikonbtn"
+            className="ui-tombol ui-tombol--ikon Db__ikonbtn"
             onClick={() => setBukaGithubStats((prev) => !prev)}
             aria-label="github stats"
           >
@@ -734,7 +734,7 @@ export default function Page() {
 
         {/* statistik */}
         <button
-          className="Db__ikonbtn"
+          className="ui-tombol ui-tombol--ikon Db__ikonbtn"
           onClick={() => setBukaStatistik((prev) => !prev)}
           aria-label="statistik"
         >
@@ -749,7 +749,7 @@ export default function Page() {
         </button>
         {/* pengaturan */}
         <button
-          className="Db__ikonbtn"
+          className="ui-tombol ui-tombol--ikon Db__ikonbtn"
           onClick={() => setBukaPengaturan(true)}
           aria-label="pengaturan"
         >
@@ -765,17 +765,17 @@ export default function Page() {
         {/* akun */}
         {!(googleUser && githubUser) && (
           <button
-            className="account-button"
+            className="ui-tombol ui-tombol--ikon account-button"
             onClick={() => setLoginOpen(true)}
             aria-label="login"
           >
             <User size={20} color="#ffffff" strokeWidth={2.25} />
           </button>
         )}
-        <div className="Db__status">
+        <div className="ui-panel Db__status">
           <span
-            className={`Db__dot ${
-              googleUser || githubUser ? "is-on" : "is-off"
+            className={`ui-titik ${
+              googleUser || githubUser ? "ui-titik--jalan" : ""
             }`}
             aria-label={googleUser || githubUser ? "login" : "offline"}
           />

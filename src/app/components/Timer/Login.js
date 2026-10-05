@@ -98,7 +98,7 @@ function Login({ googleUser, githubUser }) {
           <button
             type="button"
             onClick={handleLoginGoogle}
-            className="Sf__btn Sf__btn--primary w-full mt-2"
+            className="ui-tombol ui-tombol--blok Sf__btn"
             disabled={sedangMemuat}
           >
             <span
@@ -129,7 +129,7 @@ function Login({ googleUser, githubUser }) {
                   <button
                     type="button"
                     onClick={handleLoginGitHub}
-                    className="Sf__btn Sf__btn--secondary w-full mt-2"
+                    className="ui-tombol ui-tombol--blok Sf__btn"
                   >
                     <span
                       style={{

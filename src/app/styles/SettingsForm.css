@@ -1,61 +1,46 @@
+/* Form pengaturan (juga dipakai panel Login). Input, slider, dan tombol
+   memakai ui-*. */
 .Sf {
   width: 100%;
   height: 100%;
   max-height: 100%;
   overflow-y: auto;
   font-family: var(--font-pixel);
-  color: var(--overlay-foreground);
+  color: var(--warna-teks);
   margin: 0;
-  padding: 16px;
-  border-radius: 0;
-  background: rgba(10, 10, 10, 0);
+  padding: var(--jarak-2) var(--jarak-2) var(--jarak-4);
 }
 
 .Sf__section-title {
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin-bottom: 16px;
+  margin-bottom: var(--jarak-4);
+  font-size: var(--teks-xl);
+  font-weight: 400;
+  letter-spacing: 1px;
   text-align: center;
 }
 
 .Sf__grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: var(--jarak-3) var(--jarak-4);
+  margin-bottom: var(--jarak-4);
 }
 
 .Sf__group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--jarak-1);
 }
 
 .Sf__label {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--overlay-foreground);
+  font-size: var(--teks-sm);
+  font-weight: 400;
+  color: var(--warna-teks-redup);
 }
 
 .Sf__number,
 .Sf__range,
 .Sf__select {
-  width: 100%;
-  height: 32px;
-  padding: 6px;
-  border-radius: 0;
-  background: var(--overlay-background);
-  border: var(--panel-border);
-  box-shadow: none;
-  color: var(--overlay-foreground);
-  font-size: 14px;
-  font-family: var(--font-pixel);
-  transition: none;
-}
-
-.Sf__select option {
-  background: #0f172a;
-  color: #e2e8f0;
   font-family: var(--font-pixel);
 }
 
@@ -65,64 +50,15 @@
   outline: none;
 }
 
-.Sf__range {
-  height: 8px;
-  margin: 0;
-}
-
-.Sf__range::-webkit-slider-runnable-track {
-  background: transparent;
-}
-
-.Sf__range::-moz-range-track {
-  background: transparent;
-}
-
-.Sf__range::-webkit-slider-thumb {
-  background-color: var(--aksen-amber);
-  border-radius: 0;
-  border: none;
-  box-shadow: none;
-  width: 14px;
-  height: 14px;
-}
-
 .Sf__actions {
   display: flex;
   justify-content: center;
-  gap: 12px;
-  margin-top: 16px;
+  gap: var(--jarak-3);
+  margin-top: var(--jarak-4);
 }
 
 .Sf__btn {
   font-family: var(--font-pixel, "Monocraft", monospace);
-  font-size: 12px;
-  color: #111827;
-  background: #cbd5e1;
-  border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff;
-  border-radius: 0;
-  padding: 5px 10px;
-  cursor: pointer;
-  transition: transform 80ms ease;
-}
-
-.Sf__btn:hover {
-  transform: translateY(-2px);
-  background: var(--aksen-violet);
-}
-
-.Sf__btn--primary {
-  background: var(--aksen-violet);
-}
-
-.Sf__btn--secondary {
-  background: #fca5a5;
-}
-
-.Sf__btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
 }
 
 @media (max-width: 768px) {
@@ -132,10 +68,6 @@
 
   .Sf__actions {
     flex-direction: column;
-    align-items: center;
-  }
-
-  .Sf__btn {
-    width: 100%;
+    align-items: stretch;
   }
 }

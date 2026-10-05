@@ -45,8 +45,8 @@
 .Wallpaper__fallback {
   position: absolute;
   inset: 0;
-  background: #1f2937; /* slate-800 */
-  color: #fca5a5; /* red-300 */
+  background: var(--warna-permukaan-solid);
+  color: var(--warna-bahaya);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -63,8 +63,7 @@
 }
 
 .Wallpaper__path {
-  color: #fff;
-  font-weight: 600;
+  color: var(--warna-teks);
   word-break: break-all;
 }
 

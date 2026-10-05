@@ -73,7 +73,7 @@ export default function LocationWidget({ mode, className = "" }) {
   if (mode === "weather" && permission !== "granted") return null;
 
   return (
-    <div className={`Loc ${className}`}>
+    <div className={`ui-panel Loc ${className}`}>
       <div className="Loc__content">
         {mode === "time"
           ? clock

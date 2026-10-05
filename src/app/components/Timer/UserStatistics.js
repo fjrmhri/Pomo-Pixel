@@ -11,7 +11,7 @@
  */
 
 import { useEffect, useMemo, useState } from "react";
-import "../../styles/UserStatistics.css";
+import "../../styles/Statistik.css";
 
 import { db, auth } from "../../firebase";
 import { doc, onSnapshot } from "firebase/firestore";
@@ -172,18 +172,16 @@ export default function UserStatistics({
         {/* Tabs */}
         <div className="Stat__tab">
           <button
-            className={`Stat__tabbtn ${
-              modeTampil === "total" ? "is-aktif" : ""
-            }`}
+            className="ui-tombol ui-tombol--kecil Stat__tabbtn"
+            aria-pressed={modeTampil === "total"}
             onClick={() => setModeTampil("total")}
             type="button"
           >
             total
           </button>
           <button
-            className={`Stat__tabbtn ${
-              modeTampil === "harian" ? "is-aktif" : ""
-            }`}
+            className="ui-tombol ui-tombol--kecil Stat__tabbtn"
+            aria-pressed={modeTampil === "harian"}
             onClick={() => setModeTampil("harian")}
             type="button"
             title="Statistik untuk hari kalender ini"
@@ -194,7 +192,10 @@ export default function UserStatistics({
 
         {/* Status */}
         <div className="Stat__status">
-          <span className={`Stat__dot ${pakaiCloud ? "on" : "off"}`} />
+          <span
+            className={`ui-titik ${pakaiCloud ? "ui-titik--jalan" : ""}`}
+            aria-hidden
+          />
           <span className="Stat__status-teks">
             {sedangMuat
               ? "memuat…"
@@ -213,7 +214,10 @@ export default function UserStatistics({
             <span className="Stat__unit">menit</span>
           </article>
 
-          <article className="Stat__kartu" role="listitem">
+          <article
+            className="Stat__kartu Stat__kartu--istirahat"
+            role="listitem"
+          >
             <h4 className="Stat__kartu-judul">istirahat</h4>
             <p className="Stat__angka">{Number(dataTampil.istirahat || 0)}</p>
             <span className="Stat__unit">menit</span>

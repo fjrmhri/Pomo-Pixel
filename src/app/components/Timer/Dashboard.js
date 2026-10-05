@@ -69,9 +69,10 @@ export default function Dashboard({
             return (
               <button
                 key={o.kunci}
+                type="button"
                 role="tab"
                 aria-selected={aktif}
-                className={`Db__tab ${aktif ? "is-aktif" : ""}`}
+                className="ui-tombol Db__tab"
                 onClick={() => gantiPeriode(o.kunci)}
                 title={o.deskripsi}
               >

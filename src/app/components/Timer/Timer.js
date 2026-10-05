@@ -492,7 +492,7 @@ export default function Timer({
       />
 
       <section
-        className={`Tm ${
+        className={`ui-panel Tm ${
           periode === "work"
             ? "is-work"
             : periode === "short"
@@ -508,7 +508,7 @@ export default function Timer({
           onPointerUp={handleDragEnd}
           onPointerCancel={handleDragCancel}
         >
-          <span className="Tm__badge">
+          <span className="ui-lencana Tm__badge">
             {periode === "work"
               ? "fokus"
               : periode === "short"
@@ -516,6 +516,12 @@ export default function Timer({
                 : "istirahat panjang"}
           </span>
           <span className={`Tm__indikator ${berjalan ? "on" : "off"}`}>
+            <span
+              className={`ui-titik ${
+                berjalan ? "ui-titik--jalan" : "ui-titik--jeda"
+              }`}
+              aria-hidden
+            />
             {berjalan ? "berjalan" : "jeda"}
           </span>
         </header>
@@ -537,7 +543,8 @@ export default function Timer({
           <div className="Tm__kontrol">
             {!berjalan ? (
               <button
-                className="Tm__btn utama"
+                type="button"
+                className="ui-tombol ui-tombol--utama Tm__btn"
                 onClick={mulai}
                 aria-label="mulai (Space)"
               >
@@ -545,14 +552,20 @@ export default function Timer({
               </button>
             ) : (
               <button
-                className="Tm__btn"
+                type="button"
+                className="ui-tombol Tm__btn"
                 onClick={jeda}
                 aria-label="jeda (Space)"
               >
                 jeda
               </button>
             )}
-            <button className="Tm__btn" onClick={reset} aria-label="reset (R)">
+            <button
+              type="button"
+              className="ui-tombol Tm__btn"
+              onClick={reset}
+              aria-label="reset (R)"
+            >
               reset
             </button>
           </div>
