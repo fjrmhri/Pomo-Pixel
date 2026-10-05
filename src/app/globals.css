@@ -283,6 +283,221 @@ textarea {
 }
 
 /* ============================ */
+/*  Komponen dasar (ui-*)       */
+/* ============================ */
+/* Tidak ada font-family di sini: jenis font tetap mengikuti komponen. */
+
+.ui-panel {
+  background: var(--warna-permukaan);
+  color: var(--warna-teks);
+  border: var(--tebal-garis) solid var(--warna-garis);
+  border-radius: 0;
+  box-shadow: var(--bayangan-panel);
+}
+
+/* Tombol: utama (amber), netral (default), pilih (lavender), bahaya (rose),
+   ikon (bergaya panel, untuk ikon terang). */
+.ui-tombol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--jarak-1);
+  min-height: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-3);
+  font-size: var(--teks-sm);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.5px;
+  color: var(--warna-teks-gelap);
+  background: var(--warna-netral);
+  border: var(--tebal-garis) solid var(--warna-garis-gelap);
+  border-radius: 0;
+  box-shadow: var(--bevel-tombol), var(--bayangan-tombol);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition:
+    transform 80ms steps(2),
+    box-shadow 80ms steps(2),
+    filter 80ms steps(2);
+}
+@media (hover: hover) {
+  .ui-tombol:hover {
+    transform: translate(-1px, -1px);
+    box-shadow:
+      var(--bevel-tombol),
+      3px 3px 0 0 var(--warna-garis-gelap);
+    filter: brightness(1.06);
+  }
+}
+.ui-tombol:active {
+  transform: translate(2px, 2px);
+  box-shadow: var(--bevel-tombol);
+}
+.ui-tombol:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+  box-shadow: var(--bevel-tombol);
+  filter: grayscale(0.4);
+}
+.ui-tombol--utama {
+  background: var(--warna-utama);
+}
+.ui-tombol--pilih,
+.ui-tombol[aria-pressed="true"],
+.ui-tombol[aria-selected="true"] {
+  background: var(--warna-pilih);
+}
+.ui-tombol--bahaya {
+  background: var(--warna-bahaya);
+}
+.ui-tombol--ikon {
+  min-width: var(--tinggi-kontrol);
+  padding: 0;
+  color: var(--warna-teks);
+  background: var(--warna-permukaan);
+  border-color: var(--warna-garis);
+  box-shadow: var(--bayangan-tombol);
+}
+.ui-tombol--kecil {
+  min-height: var(--tinggi-kontrol-kecil);
+  padding: 0 var(--jarak-2);
+  font-size: var(--teks-xs);
+}
+.ui-tombol--ikon.ui-tombol--kecil {
+  min-width: var(--tinggi-kontrol-kecil);
+  padding: 0;
+}
+.ui-tombol--blok {
+  width: 100%;
+}
+
+/* Form: input angka, select, dan slider. */
+.ui-input {
+  width: 100%;
+  min-height: var(--tinggi-kontrol);
+  padding: 0 var(--jarak-2);
+  font-size: var(--teks-sm);
+  color: var(--warna-teks);
+  background: var(--warna-permukaan-pekat);
+  border: var(--tebal-garis) solid var(--warna-garis);
+  border-radius: 0;
+  box-shadow: inset 2px 2px 0 0 rgba(0, 0, 0, 0.35);
+}
+select.ui-input {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: var(--jarak-5);
+  cursor: pointer;
+  /* panah pixel 8x5 */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' shape-rendering='crispEdges'%3E%3Cpath fill='%23efe2c6' d='M0 0h8v1H0zM1 1h6v1H1zM2 2h4v1H2zM3 3h2v1H3z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 8px 5px;
+}
+.ui-input option {
+  color: var(--warna-teks);
+  background: var(--warna-permukaan-solid);
+}
+
+/* Slider: isi trek diatur lewat --isi (persen) dari komponen. */
+.ui-slider {
+  --isi: 0%;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 16px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.ui-slider::-webkit-slider-runnable-track {
+  height: 8px;
+  background:
+    linear-gradient(var(--warna-pilih), var(--warna-pilih)) 0 0 / var(--isi)
+      100% no-repeat,
+    var(--warna-permukaan-pekat);
+  border: var(--tebal-garis) solid var(--warna-garis);
+}
+.ui-slider::-moz-range-track {
+  height: 4px;
+  background: var(--warna-permukaan-pekat);
+  border: var(--tebal-garis) solid var(--warna-garis);
+}
+.ui-slider::-moz-range-progress {
+  height: 4px;
+  background: var(--warna-pilih);
+}
+.ui-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 16px;
+  margin-top: -4px;
+  background: var(--warna-utama);
+  border: var(--tebal-garis) solid var(--warna-garis-gelap);
+  border-radius: 0;
+  box-shadow: var(--bevel-tombol);
+}
+.ui-slider::-moz-range-thumb {
+  width: 8px;
+  height: 12px;
+  background: var(--warna-utama);
+  border: var(--tebal-garis) solid var(--warna-garis-gelap);
+  border-radius: 0;
+}
+@media (pointer: coarse) {
+  .ui-slider {
+    height: 32px;
+  }
+  .ui-slider::-webkit-slider-thumb {
+    width: 18px;
+    height: 24px;
+    margin-top: -8px;
+  }
+}
+
+/* Label kecil & judul panel. */
+.ui-label {
+  font-size: var(--teks-xs);
+  letter-spacing: 0.5px;
+  color: var(--warna-teks-redup);
+}
+.ui-judul {
+  margin: 0;
+  font-size: var(--teks-lg);
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: var(--warna-teks);
+}
+
+/* Lencana (badge) dan titik status. */
+.ui-lencana {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--jarak-2);
+  font-size: var(--teks-xs);
+  letter-spacing: 1px;
+  color: var(--warna-teks-gelap);
+  background: var(--warna-pilih);
+  border: var(--tebal-garis) solid var(--warna-garis-gelap);
+}
+.ui-titik {
+  display: inline-block;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--warna-status-netral);
+  box-shadow: 0 0 0 2px var(--warna-garis-gelap);
+}
+.ui-titik--jalan {
+  background: var(--warna-sukses);
+}
+.ui-titik--jeda {
+  background: var(--warna-utama);
+}
+
+/* ============================ */
 /*  Layout bantuan              */
 /* ============================ */
 
