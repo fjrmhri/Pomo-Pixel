@@ -13,7 +13,8 @@ import "../../styles/LocationWidget.css";
 export default function LocationWidget({ mode, className = "" }) {
   const [permission, setPermission] = useState("idle"); // idle | pending | granted | denied
   const [coords, setCoords] = useState(null);
-  const [clock, setClock] = useState(() => new Date());
+  // null saat prerender agar teks server & klien sama (hindari hydration mismatch).
+  const [clock, setClock] = useState(null);
   const [weather, setWeather] = useState(null);
 
   // Minta geolocation hanya ketika mode cuaca aktif.
@@ -45,6 +46,7 @@ export default function LocationWidget({ mode, className = "" }) {
   // Update jam tiap detik ketika mode time
   useEffect(() => {
     if (mode !== "time") return;
+    setClock(new Date());
     const id = setInterval(() => setClock(new Date()), 1000);
     return () => clearInterval(id);
   }, [mode]);
@@ -74,7 +76,9 @@ export default function LocationWidget({ mode, className = "" }) {
     <div className={`Loc ${className}`}>
       <div className="Loc__content">
         {mode === "time"
-          ? clock.toLocaleTimeString()
+          ? clock
+            ? clock.toLocaleTimeString()
+            : "--:--:--"
           : weather
             ? `${weather.temperature}°C`
             : "Loading..."}
