@@ -20,6 +20,11 @@ export default function GithubStats({
   className = "",
 }) {
   const [periode, setPeriode] = useState("today");
+  // Gambar dari github-readme-stats (layanan pihak ketiga) dapat gagal / rate limit.
+  const [gambarGagal, setGambarGagal] = useState({});
+  const tandaiGagal = (kunci) =>
+    setGambarGagal((prev) => ({ ...prev, [kunci]: true }));
+  const login = encodeURIComponent(githubUser?.login || "");
 
   const filteredEvents = useMemo(() => {
     const now = new Date();
@@ -43,22 +48,33 @@ export default function GithubStats({
       {githubUser ? (
         <div className="Stat__github">
           <div className="Stat__github-images">
-            <Image
-              className="Stat__github-image Stat__github-image--stats"
-              src={`https://github-readme-stats.vercel.app/api?username=${githubUser.login}&show_icons=true&title_color=ffcc00&icon_color=00ffff&text_color=daf7dc&bg_color=1e1e2f&hide=issues&count_private=true&include_all_commits=true&hide_border=true`}
-              alt="GitHub Stats"
-              width={495}
-              height={195}
-              unoptimized
-            />
-            <Image
-              className="Stat__github-image Stat__github-image--langs"
-              src={`https://github-readme-stats.vercel.app/api/top-langs/?username=${githubUser.login}&layout=compact&text_color=daf7dc&bg_color=1e1e2f&hide=php&hide_border=true`}
-              alt="Top Languages"
-              width={337}
-              height={165}
-              unoptimized
-            />
+            {gambarGagal.stats && gambarGagal.langs ? (
+              <div className="Stat__history-empty">
+                Kartu statistik GitHub sedang tidak tersedia.
+              </div>
+            ) : null}
+            {!gambarGagal.stats ? (
+              <Image
+                className="Stat__github-image Stat__github-image--stats"
+                src={`https://github-readme-stats.vercel.app/api?username=${login}&show_icons=true&title_color=ffcc00&icon_color=00ffff&text_color=daf7dc&bg_color=1e1e2f&hide=issues&count_private=true&include_all_commits=true&hide_border=true`}
+                alt="GitHub Stats"
+                width={495}
+                height={195}
+                unoptimized
+                onError={() => tandaiGagal("stats")}
+              />
+            ) : null}
+            {!gambarGagal.langs ? (
+              <Image
+                className="Stat__github-image Stat__github-image--langs"
+                src={`https://github-readme-stats.vercel.app/api/top-langs/?username=${login}&layout=compact&text_color=daf7dc&bg_color=1e1e2f&hide=php&hide_border=true`}
+                alt="Top Languages"
+                width={337}
+                height={165}
+                unoptimized
+                onError={() => tandaiGagal("langs")}
+              />
+            ) : null}
           </div>
 
           <div className="Stat__history">
@@ -78,9 +94,14 @@ export default function GithubStats({
                 {filteredEvents.map((ev) => (
                   <li key={ev.id} className="Stat__github-item">
                     <span className="repo">{ev.repo}</span>
-                    <span className="commit">{ev.commit?.slice(0, 7)}</span>
+                    <span className="commit">
+                      {ev.tipe === "pr" ? "PR " : ""}
+                      {ev.commit?.slice(0, 7)}
+                    </span>
                     <span className="changes">
-                      +{ev.additions}/-{ev.deletions}
+                      {ev.additions != null && ev.deletions != null
+                        ? `+${ev.additions}/-${ev.deletions}`
+                        : ""}
                     </span>
                     <span className="time">
                       {new Date(ev.time).toLocaleString()}

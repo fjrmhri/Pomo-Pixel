@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { mapGitHubEvents } from "../../../lib/githubEvents";
 
 const TOKEN_COOKIE = "gh_access_token";
 
@@ -7,35 +8,6 @@ export const dynamic = "force-dynamic";
 const noStore = {
   "Cache-Control": "no-store",
 };
-
-const mapGitHubEvents = (events) =>
-  events
-    .filter((event) =>
-      ["PushEvent", "PullRequestEvent"].includes(String(event.type || "")),
-    )
-    .map((event) => {
-      if (event.type === "PullRequestEvent") {
-        const pullRequest = event.payload?.pull_request || {};
-        return {
-          id: event.id,
-          repo: event.repo?.name || "",
-          commit: pullRequest.head?.sha || event.payload?.head || "",
-          additions: Number(pullRequest.additions || 0),
-          deletions: Number(pullRequest.deletions || 0),
-          time: event.created_at,
-        };
-      }
-
-      const commit = event.payload?.commits?.[0];
-      return {
-        id: event.id,
-        repo: event.repo?.name || "",
-        commit: commit?.sha || event.payload?.head || "",
-        additions: 0,
-        deletions: 0,
-        time: event.created_at,
-      };
-    });
 
 const unauthorized = () =>
   NextResponse.json({ user: null, events: [] }, { status: 401, headers: noStore });
