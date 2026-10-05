@@ -204,8 +204,11 @@ function SettingsForm({
       <form className="Sf__inner" onSubmit={simpanPreferensi}>
         <div className="Sf__grid">
           <div className="Sf__group">
-            <label className="Sf__label">Focus (min)</label>
+            <label className="Sf__label" htmlFor="sf-fokus">
+              Focus (min)
+            </label>
             <input
+              id="sf-fokus"
               className="ui-input Sf__number"
               type="number"
               value={nilaiWork}
@@ -215,8 +218,11 @@ function SettingsForm({
             />
           </div>
           <div className="Sf__group">
-            <label className="Sf__label">Short break (min)</label>
+            <label className="Sf__label" htmlFor="sf-istirahat-singkat">
+              Short break (min)
+            </label>
             <input
+              id="sf-istirahat-singkat"
               className="ui-input Sf__number"
               type="number"
               value={nilaiShort}
@@ -226,8 +232,11 @@ function SettingsForm({
             />
           </div>
           <div className="Sf__group">
-            <label className="Sf__label">Long break (min)</label>
+            <label className="Sf__label" htmlFor="sf-istirahat-panjang">
+              Long break (min)
+            </label>
             <input
+              id="sf-istirahat-panjang"
               className="ui-input Sf__number"
               type="number"
               value={nilaiLong}
@@ -237,8 +246,11 @@ function SettingsForm({
             />
           </div>
           <div className="Sf__group">
-            <label className="Sf__label">Long break every (sessions)</label>
+            <label className="Sf__label" htmlFor="sf-interval">
+              Long break every (sessions)
+            </label>
             <input
+              id="sf-interval"
               className="ui-input Sf__number"
               type="number"
               value={nilaiIntervalLong}
@@ -248,8 +260,11 @@ function SettingsForm({
             />
           </div>
           <div className="Sf__group">
-            <label className="Sf__label">Alarm volume</label>
+            <label className="Sf__label" htmlFor="sf-volume">
+              Alarm volume
+            </label>
             <input
+              id="sf-volume"
               className="ui-slider Sf__range"
               style={{ "--isi": `${nilaiVolume}%` }}
               type="range"
@@ -260,8 +275,11 @@ function SettingsForm({
             />
           </div>
           <div className="Sf__group">
-            <label className="Sf__label">Top bar widget</label>
+            <label className="Sf__label" htmlFor="sf-widget">
+              Top bar widget
+            </label>
             <select
+              id="sf-widget"
               className="ui-input Sf__select"
               value={nilaiLocMode}
               onChange={(e) => setNilaiLocMode(e.target.value)}
@@ -271,8 +289,11 @@ function SettingsForm({
             </select>
           </div>
           <div className="Sf__group">
-            <label className="Sf__label">Display name from</label>
+            <label className="Sf__label" htmlFor="sf-nama">
+              Display name from
+            </label>
             <select
+              id="sf-nama"
               className="ui-input Sf__select"
               value={nilaiDisplayNameSource}
               onChange={(e) => setNilaiDisplayNameSource(e.target.value)}

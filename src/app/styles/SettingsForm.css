@@ -38,12 +38,6 @@
   font-family: var(--font-pixel);
 }
 
-.Sf__number:focus,
-.Sf__range:focus,
-.Sf__select:focus {
-  outline: none;
-}
-
 .Sf__actions {
   position: sticky;
   bottom: calc(-1 * var(--jarak-3));

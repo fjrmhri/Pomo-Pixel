@@ -323,6 +323,9 @@ select.ui-input {
   background-position: right 8px center;
   background-size: 8px 5px;
 }
+.ui-input:focus-visible {
+  border-color: var(--warna-utama);
+}
 .ui-input option {
   color: var(--warna-teks);
   background: var(--warna-permukaan-solid);
@@ -691,6 +694,22 @@ p {
   100% {
     transform: scale(1);
     filter: brightness(1);
+  }
+}
+
+/* Hormati preferensi gerak minimal. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .ui-tombol:hover,
+  .ui-tombol:active {
+    transform: none;
   }
 }
 
