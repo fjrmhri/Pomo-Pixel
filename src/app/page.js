@@ -15,7 +15,6 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { User } from "lucide-react";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, increment, setDoc } from "firebase/firestore";
 import Dashboard from "./components/Timer/Dashboard";
@@ -27,6 +26,7 @@ import LocationWidget from "./components/Timer/LocationWidget";
 import Footer from "./components/Timer/Footer";
 import Wallpaper from "./components/Music/Wallpaper";
 import { useToast } from "./components/ui/useToast";
+import IkonPixel from "./components/ui/IkonPixel";
 import {
   clearLegacyGitHubToken,
   completeGitHubLogin,
@@ -673,11 +673,11 @@ export default function Page() {
       </section>
 
       {/* Wallpaper */}
-      <Wallpaper src={wallpaperSrc} alt="latar pixel" />
+      <Wallpaper src={wallpaperSrc} alt="Pixel art wallpaper" />
 
       {entryHydrated && showEntryScreen ? (
-        <section className="entry-screen" aria-label="Mulai fokus" id="hero">
-          <div className="entry-screen__panel">
+        <section className="entry-screen" aria-label="Start focusing" id="hero">
+          <div className="ui-panel entry-screen__panel">
             <p className="entry-screen__eyebrow">Pomo Pixel</p>
             <h2 className="entry-screen__title">
               Focus more comfortably with pomodoro, lofi music, and a vibe you
@@ -689,7 +689,7 @@ export default function Page() {
             <div className="entry-screen__actions">
               <button
                 type="button"
-                className="pixel-btn entry-screen__cta"
+                className="pixel-btn ui-tombol ui-tombol--utama entry-screen__cta"
                 onClick={handleStartFocus}
               >
                 Start Focus Now
@@ -717,13 +717,14 @@ export default function Page() {
         {/* githubstats */}
         {githubUser ? (
           <button
-            className="Db__ikonbtn"
+            className="ui-tombol ui-tombol--ikon Db__ikonbtn"
             onClick={() => setBukaGithubStats((prev) => !prev)}
-            aria-label="github stats"
+            aria-label="GitHub stats"
+            title="GitHub stats"
           >
             <Image
               src="/images/github.png"
-              alt="ikon github"
+              alt=""
               width={24}
               height={24}
               className="Db__ikonimg Db__ikonimg--github"
@@ -734,13 +735,14 @@ export default function Page() {
 
         {/* statistik */}
         <button
-          className="Db__ikonbtn"
+          className="ui-tombol ui-tombol--ikon Db__ikonbtn"
           onClick={() => setBukaStatistik((prev) => !prev)}
-          aria-label="statistik"
+          aria-label="Statistics"
+          title="Statistics"
         >
           <Image
             src="/images/stats.png"
-            alt="ikon statistik"
+            alt=""
             width={24}
             height={24}
             className="Db__ikonimg"
@@ -749,13 +751,14 @@ export default function Page() {
         </button>
         {/* pengaturan */}
         <button
-          className="Db__ikonbtn"
+          className="ui-tombol ui-tombol--ikon Db__ikonbtn"
           onClick={() => setBukaPengaturan(true)}
-          aria-label="pengaturan"
+          aria-label="Settings"
+          title="Settings"
         >
           <Image
             src="/images/settings.png"
-            alt="ikon pengaturan"
+            alt=""
             width={24}
             height={24}
             className="Db__ikonimg"
@@ -765,22 +768,23 @@ export default function Page() {
         {/* akun */}
         {!(googleUser && githubUser) && (
           <button
-            className="account-button"
+            className="ui-tombol ui-tombol--ikon account-button"
             onClick={() => setLoginOpen(true)}
-            aria-label="login"
+            aria-label="Log in"
+            title="Log in"
           >
-            <User size={20} color="#ffffff" strokeWidth={2.25} />
+            <IkonPixel nama="pengguna" ukuran={18} />
           </button>
         )}
-        <div className="Db__status">
+        <div className="ui-panel Db__status">
           <span
-            className={`Db__dot ${
-              googleUser || githubUser ? "is-on" : "is-off"
+            className={`ui-titik ${
+              googleUser || githubUser ? "ui-titik--jalan" : ""
             }`}
-            aria-label={googleUser || githubUser ? "login" : "offline"}
+            aria-hidden
           />
           <span className="Db__status-teks">
-            {displayName ? `halo, ${displayName}` : "offline"}
+            {displayName ? `hi, ${displayName}` : "guest"}
           </span>
         </div>
       </div>
@@ -805,6 +809,7 @@ export default function Page() {
         buka={bukaStatistik}
         tutup={() => setBukaStatistik(false)}
         lebar="lg"
+        judul="Statistics"
       >
         {bukaStatistik ? (
           <UserStatistics
@@ -831,6 +836,7 @@ export default function Page() {
         buka={bukaPengaturan}
         tutup={() => setBukaPengaturan(false)}
         lebar="lg"
+        judul="Settings"
       >
         <SettingsForm
           workLen={pengaturanTimer.workLen}
@@ -874,7 +880,12 @@ export default function Page() {
       </Modal>
 
       {/* Modal login/register */}
-      <Modal buka={loginOpen} tutup={() => setLoginOpen(false)} lebar="lg">
+      <Modal
+        buka={loginOpen}
+        tutup={() => setLoginOpen(false)}
+        lebar="lg"
+        judul="Log in"
+      >
         <LoginRegisterForm
           googleUser={googleUser}
           githubUser={githubUser}
@@ -887,6 +898,7 @@ export default function Page() {
         buka={bukaGithubStats}
         tutup={() => setBukaGithubStats(false)}
         lebar="lg"
+        judul="GitHub Stats"
       >
         {bukaGithubStats && githubUser ? (
           <GithubStats

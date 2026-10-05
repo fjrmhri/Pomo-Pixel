@@ -18,7 +18,7 @@ export default function Toast({ id, title, description, variant, onDismiss }) {
       <button
         type="button"
         className="toast-item__close"
-        aria-label="Tutup toast"
+        aria-label="Dismiss notification"
         onClick={() => onDismiss(id)}
       >
         ×

@@ -6,6 +6,9 @@ import { auth, db, googleProvider } from "../../firebase";
 import { redirectToGitHub, getRedirectUriInfo } from "../../github";
 import { useToast } from "../ui/useToast";
 
+// Peringatan konfigurasi OAuth hanya ditampilkan saat development.
+const MODE_DEV = process.env.NODE_ENV !== "production";
+
 function Login({ googleUser, githubUser }) {
   const [sedangMemuat, setSedangMemuat] = useState(false);
   const { toast } = useToast();
@@ -31,8 +34,8 @@ function Login({ googleUser, githubUser }) {
     } catch (error) {
       console.error("Login: gagal login pengguna:", error);
       toast({
-        title: "Login Google gagal",
-        description: error?.message || "Coba lagi beberapa saat.",
+        title: "Google login failed",
+        description: error?.message || "Please try again in a moment.",
         variant: "error",
       });
     } finally {
@@ -48,8 +51,8 @@ function Login({ googleUser, githubUser }) {
           "[Login] NEXT_PUBLIC_GITHUB_CLIENT_ID tidak ditemukan saat login GitHub dipicu",
         );
         toast({
-          title: "GitHub OAuth belum aktif",
-          description: "NEXT_PUBLIC_GITHUB_CLIENT_ID belum disetel.",
+          title: "GitHub login is not available",
+          description: "GitHub sign-in has not been configured yet.",
           variant: "error",
         });
         return;
@@ -57,16 +60,16 @@ function Login({ googleUser, githubUser }) {
       const started = redirectToGitHub();
       if (!started) {
         toast({
-          title: "Login GitHub gagal",
-          description: "Otentikasi GitHub tidak dapat dimulai.",
+          title: "GitHub login failed",
+          description: "GitHub authentication could not start.",
           variant: "error",
         });
       }
     } catch (e) {
       console.error(e);
       toast({
-        title: "Login GitHub gagal",
-        description: "Terjadi masalah saat memulai login GitHub.",
+        title: "GitHub login failed",
+        description: "Something went wrong while starting GitHub login.",
         variant: "error",
       });
     }
@@ -83,8 +86,7 @@ function Login({ googleUser, githubUser }) {
   }
 
   return (
-    <div className="pixel-card pixel-card--borderless w-full h-full overflow-y-auto max-w-md mx-auto p-6">
-      <div className="Sf__section-title">Login</div>
+    <div className="w-full h-full overflow-y-auto max-w-md mx-auto px-2 pb-2">
       <div className="flex flex-col gap-4">
         <div
           className="text-sm text-center"
@@ -98,7 +100,7 @@ function Login({ googleUser, githubUser }) {
           <button
             type="button"
             onClick={handleLoginGoogle}
-            className="Sf__btn Sf__btn--primary w-full mt-2"
+            className="ui-tombol ui-tombol--blok Sf__btn"
             disabled={sedangMemuat}
           >
             <span
@@ -110,12 +112,12 @@ function Login({ googleUser, githubUser }) {
             >
               <Image
                 src="/images/login.png"
-                alt="ikon login"
+                alt=""
                 width={18}
                 height={18}
                 priority
               />
-              {sedangMemuat ? "Loading..." : "Login with Google"}
+              {sedangMemuat ? "Loading..." : "Log in with Google"}
             </span>
           </button>
         )}
@@ -129,7 +131,7 @@ function Login({ googleUser, githubUser }) {
                   <button
                     type="button"
                     onClick={handleLoginGitHub}
-                    className="Sf__btn Sf__btn--secondary w-full mt-2"
+                    className="ui-tombol ui-tombol--blok Sf__btn"
                   >
                     <span
                       style={{
@@ -140,24 +142,24 @@ function Login({ googleUser, githubUser }) {
                     >
                       <Image
                         src="/images/github.png"
-                        alt="ikon github"
+                        alt=""
                         width={18}
                         height={18}
                         priority
                       />
-                      Login with GitHub
+                      Log in with GitHub
                     </span>
                   </button>
-                  {!info.clientIdProvided && (
-                    <div className="text-xs text-center text-yellow-400 mt-2">
-                      NEXT_PUBLIC_GITHUB_CLIENT_ID belum disetel; OAuth akan
-                      dinonaktifkan.
+                  {MODE_DEV && !info.clientIdProvided && (
+                    <div className="Sf__catatan-dev">
+                      [dev] NEXT_PUBLIC_GITHUB_CLIENT_ID is not set; GitHub
+                      OAuth is disabled.
                     </div>
                   )}
-                  {info.usingFallbackRedirect && (
-                    <div className="text-xs text-center text-yellow-400 mt-2">
-                      NEXT_PUBLIC_GITHUB_REDIRECT_URI belum disetel; memakai
-                      fallback redirect otomatis.
+                  {MODE_DEV && info.usingFallbackRedirect && (
+                    <div className="Sf__catatan-dev">
+                      [dev] NEXT_PUBLIC_GITHUB_REDIRECT_URI is not set; using
+                      the automatic fallback redirect.
                     </div>
                   )}
                 </>

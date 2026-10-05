@@ -11,7 +11,7 @@
  */
 
 import { useEffect, useMemo, useState } from "react";
-import "../../styles/UserStatistics.css";
+import "../../styles/Statistik.css";
 
 import { db, auth } from "../../firebase";
 import { doc, onSnapshot } from "firebase/firestore";
@@ -111,8 +111,8 @@ export default function UserStatistics({
   useEffect(() => {
     if (!cloudGagal) return;
     toast({
-      title: "Statistik akun gagal dimuat",
-      description: "Menampilkan statistik lokal perangkat ini.",
+      title: "Could not load account stats",
+      description: "Showing this device's local stats.",
       variant: "error",
     });
   }, [cloudGagal, toast]);
@@ -144,7 +144,7 @@ export default function UserStatistics({
         ? lokalHarian
         : lokalTotal;
     return {
-      judulKecil: harian ? `hari ini (${tanggal})` : "total",
+      judulKecil: harian ? `today (${tanggal})` : "all time",
       fokus: sumber.menitFokus,
       istirahat: sumber.menitIstirahat,
       total: sumber.totalMenit,
@@ -163,44 +163,39 @@ export default function UserStatistics({
   return (
     <>
       <section className={`Stat ${className || ""}`}>
-        <div className="flex items-center gap-2 mb-4">
-          <div className="Stat__section-title flex-1 text-center">
-            Statistik
-          </div>
-        </div>
-
         {/* Tabs */}
         <div className="Stat__tab">
           <button
-            className={`Stat__tabbtn ${
-              modeTampil === "total" ? "is-aktif" : ""
-            }`}
+            className="ui-tombol ui-tombol--kecil Stat__tabbtn"
+            aria-pressed={modeTampil === "total"}
             onClick={() => setModeTampil("total")}
             type="button"
           >
             total
           </button>
           <button
-            className={`Stat__tabbtn ${
-              modeTampil === "harian" ? "is-aktif" : ""
-            }`}
+            className="ui-tombol ui-tombol--kecil Stat__tabbtn"
+            aria-pressed={modeTampil === "harian"}
             onClick={() => setModeTampil("harian")}
             type="button"
-            title="Statistik untuk hari kalender ini"
+            title="Stats for today's calendar date"
           >
-            hari ini
+            today
           </button>
         </div>
 
         {/* Status */}
         <div className="Stat__status">
-          <span className={`Stat__dot ${pakaiCloud ? "on" : "off"}`} />
+          <span
+            className={`ui-titik ${pakaiCloud ? "ui-titik--jalan" : ""}`}
+            aria-hidden
+          />
           <span className="Stat__status-teks">
             {sedangMuat
-              ? "memuat…"
+              ? "loading…"
               : pakaiCloud
-                ? "data akun (cloud)"
-                : "mode lokal (perangkat ini)"}
+                ? "account data (cloud)"
+                : "local mode (this device)"}
             <span className="Stat__sub"> • {dataTampil.judulKecil}</span>
           </span>
         </div>
@@ -208,21 +203,24 @@ export default function UserStatistics({
         {/* Grid angka */}
         <div className="Stat__grid" role="list">
           <article className="Stat__kartu" role="listitem">
-            <h4 className="Stat__kartu-judul">fokus</h4>
+            <h4 className="Stat__kartu-judul">focus</h4>
             <p className="Stat__angka">{Number(dataTampil.fokus || 0)}</p>
-            <span className="Stat__unit">menit</span>
+            <span className="Stat__unit">min</span>
           </article>
 
-          <article className="Stat__kartu" role="listitem">
-            <h4 className="Stat__kartu-judul">istirahat</h4>
+          <article
+            className="Stat__kartu Stat__kartu--istirahat"
+            role="listitem"
+          >
+            <h4 className="Stat__kartu-judul">break</h4>
             <p className="Stat__angka">{Number(dataTampil.istirahat || 0)}</p>
-            <span className="Stat__unit">menit</span>
+            <span className="Stat__unit">min</span>
           </article>
 
           <article className="Stat__kartu Stat__kartu-total" role="listitem">
             <h4 className="Stat__kartu-judul">total</h4>
             <p className="Stat__angka">{Number(dataTampil.total || 0)}</p>
-            <span className="Stat__unit">menit</span>
+            <span className="Stat__unit">min</span>
           </article>
         </div>
       </section>

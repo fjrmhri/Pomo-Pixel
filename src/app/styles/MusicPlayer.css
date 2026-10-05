@@ -1,24 +1,14 @@
-/* Music Player - Tema Pixel + Modern + Compact + Responsif */
+/* Dock pemutar musik. Panel, tombol, slider, dan select memakai ui-*. */
 
+/* Posisi dock diatur oleh .area-music-bawah (globals.css). */
 .Mp__bungkus {
-  position: fixed;
-  left: 50%;
-  bottom: 10px;
-  transform: translateX(-50%);
-  z-index: 30;
-  width: min(90vw, 640px);
-  pointer-events: none;
+  width: 100%;
 }
 
 .Mp {
-  pointer-events: auto;
-  backdrop-filter: blur(var(--panel-blur));
-  -webkit-backdrop-filter: blur(var(--panel-blur));
-  background: var(--panel-background);
-  color: var(--overlay-foreground);
-  border: var(--panel-border);
-  border-radius: 0;
-  padding: 6px 10px;
+  display: grid;
+  gap: var(--jarak-2);
+  padding: var(--jarak-2) var(--jarak-3);
   font-family: "Monocraft", monospace;
   max-width: 100%;
   box-sizing: border-box;
@@ -28,13 +18,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
-  margin-bottom: 4px;
+  gap: var(--jarak-2);
 }
 
 .Mp__judul {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: var(--teks-md);
+  font-weight: 400;
+  color: var(--warna-teks);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -42,223 +32,94 @@
 }
 
 .Mp__genre {
-  opacity: 0.8;
-  font-size: 10px;
+  flex: none;
 }
 
 .Mp__progress {
   display: grid;
-  grid-template-columns: 36px 1fr 36px;
-  gap: 5px;
+  grid-template-columns: 40px 1fr 40px;
+  gap: var(--jarak-2);
   align-items: center;
-  margin-bottom: 6px;
-  border: 0;
 }
 
 .Mp__waktu {
-  font-size: 9px;
+  font-size: var(--teks-xs);
   text-align: center;
-  color: #cbd5e1;
-}
-
-.Mp__slider {
-  appearance: none;
-  width: 100%;
-  height: 5px;
-  background: #a78bfa;
-  border: 2px solid #fff;
-  box-shadow: inset 0 0 0 2px #000;
-  border-radius: 0;
-  cursor: pointer;
+  color: var(--warna-teks-redup);
+  font-variant-numeric: tabular-nums;
 }
 
 .Mp__slider--volume {
   flex: 1;
-}
-
-.Mp__slider::-webkit-slider-thumb {
-  appearance: none;
-  width: 10px;
-  height: 10px;
-  background: #a78bfa;
-  border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff;
-  margin-top: -4px;
-}
-
-.Mp__slider::-moz-range-thumb {
-  width: 10px;
-  height: 10px;
-  background: #a78bfa;
-  border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff;
-}
-
-.Mp__slider::-moz-range-track {
-  background: #a78bfa;
+  min-width: 80px;
 }
 
 .Mp__kontrol {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 6px;
+  gap: var(--jarak-2);
 }
 
 .Mp__tombol {
   font-family: "Monocraft", monospace;
-  font-size: 11px;
-  color: #111827;
-  background: #22d3ee;
-  border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff;
-  padding: 4px 6px;
-  border-radius: 0;
-  cursor: pointer;
-  transition: transform 80ms ease;
-}
-
-.Mp__tombol:hover {
-  transform: translateY(-1px);
-}
-
-.Mp__tombol--utama {
-  background: #34d399;
-}
-
-.Mp__tombol--utama.is-active {
-  background: #fbbf24;
+  min-width: var(--tinggi-kontrol);
+  padding: 0;
 }
 
 .Mp__opsi {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
-  margin-top: 2px;
+  gap: var(--jarak-3);
 }
 
 .Mp__opsi-bar {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 6px;
+  gap: var(--jarak-2);
 }
 
 .Mp__opsi-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--jarak-2);
   flex: 1;
 }
 
 .Mp__wallpaper-btn {
   font-family: "Monocraft", monospace;
-  font-size: 10px;
-  color: #111827;
-  background: #a78bfa;
-  border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff;
-  padding: 3px 5px;
-  cursor: pointer;
-  white-space: nowrap;
-  width: 12ch;
-  text-align: center;
+  min-width: 12ch;
 }
 
 .Mp__label {
-  font-size: 10px;
-  color: #cbd5e1;
+  flex: none;
 }
 
 .Mp__select {
   font-family: "Monocraft", monospace;
-  font-size: 10px;
-  background: #111827;
-  color: #e5e7eb;
-  border: 2px solid #fff;
-  box-shadow: inset 0 0 0 2px #000;
-  padding: 3px 5px;
+  width: auto;
 }
 
 .Mp__chip {
   font-family: "Monocraft", monospace;
-  font-size: 10px;
-  color: #111827;
-  background: #a78bfa;
-  border: 2px solid #000;
-  box-shadow: 0 0 0 2px #fff;
-  padding: 3px 5px;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.Mp__chip.is-on {
-  background: #fb7185;
 }
 
 @media (max-width: 768px) {
-  .Mp__bungkus {
-    width: min(94vw, 560px);
-    bottom: 8px;
-  }
-
-  .Mp {
-    padding: 5px 8px;
-  }
-
-  .Mp__judul {
-    font-size: 12px;
-  }
-
-  .Mp__tombol {
-    font-size: 10px;
-    padding: 4px 5px;
-  }
-
-  .Mp__progress {
-    grid-template-columns: 32px 1fr 32px;
-    gap: 4px;
-  }
-
   .Mp__opsi {
     flex-direction: column;
-    gap: 5px;
-    align-items: flex-start;
+    gap: var(--jarak-2);
+    align-items: stretch;
   }
 
   .Mp__opsi-bar {
-    justify-content: space-between;
-    width: 100%;
-  }
-
-  .Mp__opsi-left {
-    width: 100%;
+    justify-content: flex-start;
   }
 }
 
 @media (max-width: 480px) {
-  .Mp__bungkus {
-    bottom: 6px;
-    width: 92vw;
-  }
-
-  .Mp {
-    padding: 5px 6px;
-  }
-
-  .Mp__judul {
-    font-size: 11px;
-  }
-
-  .Mp__tombol {
-    font-size: 9px;
-    padding: 3px 4px;
-  }
-
   .Mp__progress {
-    grid-template-columns: 28px 1fr 28px;
-    gap: 3px;
+    grid-template-columns: 36px 1fr 36px;
   }
 }

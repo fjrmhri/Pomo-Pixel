@@ -122,7 +122,7 @@ export default function Timer({
     setDragOffset((current) => {
       const pernahDipindah = current.x !== 0 || current.y !== 0;
       if (pernahDipindah) {
-        toast({ title: "Posisi direset" });
+        toast({ title: "Position reset" });
         return { x: 0, y: 0 };
       }
       return current;
@@ -145,8 +145,8 @@ export default function Timer({
       setSisaDetik(getDurasiPeriodeDetik(currentPeriod));
     } else {
       toast({
-        title: "Periode diperbarui",
-        description: "Durasi sesi yang sedang berjalan tetap dipertahankan.",
+        title: "Session updated",
+        description: "The running session keeps its current duration.",
       });
     }
   }, [currentPeriod, getDurasiPeriodeDetik, toast]);
@@ -205,8 +205,8 @@ export default function Timer({
     const dur = getDurasiPeriodeDetik(periode);
     if (dur <= 0) {
       toast({
-        title: "Durasi tidak valid",
-        description: "Periksa pengaturan timer terlebih dahulu.",
+        title: "Invalid duration",
+        description: "Check your timer settings first.",
         variant: "error",
       });
       return;
@@ -230,7 +230,7 @@ export default function Timer({
     } catch (error) {
       console.error("Timer: callback onMulai gagal dijalankan:", error);
       toast({
-        title: "Timer gagal dimulai",
+        title: "Timer failed to start",
         variant: "error",
       });
     }
@@ -260,7 +260,7 @@ export default function Timer({
     } catch (error) {
       console.error("Timer: callback onJeda gagal dijalankan:", error);
       toast({
-        title: "Timer gagal dijeda",
+        title: "Timer failed to pause",
         variant: "error",
       });
     }
@@ -278,7 +278,7 @@ export default function Timer({
     } catch (error) {
       console.error("Timer: callback onReset gagal dijalankan:", error);
       toast({
-        title: "Reset gagal",
+        title: "Reset failed",
         variant: "error",
       });
     }
@@ -298,7 +298,7 @@ export default function Timer({
           error,
         );
         toast({
-          title: "Periode gagal diubah",
+          title: "Could not change session",
           variant: "error",
         });
       }
@@ -323,7 +323,7 @@ export default function Timer({
     } catch (e) {
       console.warn("Gagal memutar audio notifikasi:", e);
       toast({
-        title: "Audio notifikasi gagal",
+        title: "Notification sound failed",
         variant: "error",
       });
     }
@@ -351,7 +351,7 @@ export default function Timer({
     } catch (error) {
       console.error("Timer: callback onCatatMenit gagal dijalankan:", error);
       toast({
-        title: "Statistik gagal disimpan",
+        title: "Could not save stats",
         variant: "error",
       });
     }
@@ -405,13 +405,13 @@ export default function Timer({
         ev.preventDefault();
         if (berjalan) {
           jeda();
-          toast({ title: "Timer dijeda" });
+          toast({ title: "Timer paused" });
         } else {
           mulai();
         }
       } else if (ev.key?.toLowerCase() === "r") {
         reset();
-        toast({ title: "Timer direset" });
+        toast({ title: "Timer reset" });
       } else if (ev.key?.toLowerCase() === "x") {
         resetPosisi();
       }
@@ -492,7 +492,7 @@ export default function Timer({
       />
 
       <section
-        className={`Tm ${
+        className={`ui-panel Tm ${
           periode === "work"
             ? "is-work"
             : periode === "short"
@@ -502,26 +502,32 @@ export default function Timer({
       >
         <header
           className="Tm__header"
-          title="tarik untuk memindah"
+          title="drag to move"
           onPointerDown={handleDragStart}
           onPointerMove={handleDragMove}
           onPointerUp={handleDragEnd}
           onPointerCancel={handleDragCancel}
         >
-          <span className="Tm__badge">
+          <span className="ui-lencana Tm__badge">
             {periode === "work"
-              ? "fokus"
+              ? "focus"
               : periode === "short"
-                ? "istirahat"
-                : "istirahat panjang"}
+                ? "short break"
+                : "long break"}
           </span>
           <span className={`Tm__indikator ${berjalan ? "on" : "off"}`}>
-            {berjalan ? "berjalan" : "jeda"}
+            <span
+              className={`ui-titik ${
+                berjalan ? "ui-titik--jalan" : "ui-titik--jeda"
+              }`}
+              aria-hidden
+            />
+            {berjalan ? "running" : "paused"}
           </span>
         </header>
 
         <div className="Tm__isi">
-          <div className="Tm__progress" aria-label={`progres ${persentase}%`}>
+          <div className="Tm__progress" aria-label={`progress ${persentase}%`}>
             <div
               className="Tm__progress-bar"
               style={{ width: `${persentase}%` }}
@@ -537,22 +543,29 @@ export default function Timer({
           <div className="Tm__kontrol">
             {!berjalan ? (
               <button
-                className="Tm__btn utama"
+                type="button"
+                className="ui-tombol ui-tombol--utama Tm__btn"
                 onClick={mulai}
-                aria-label="mulai (Space)"
+                aria-label="start (Space)"
               >
-                mulai
+                start
               </button>
             ) : (
               <button
-                className="Tm__btn"
+                type="button"
+                className="ui-tombol Tm__btn"
                 onClick={jeda}
-                aria-label="jeda (Space)"
+                aria-label="pause (Space)"
               >
-                jeda
+                pause
               </button>
             )}
-            <button className="Tm__btn" onClick={reset} aria-label="reset (R)">
+            <button
+              type="button"
+              className="ui-tombol Tm__btn"
+              onClick={reset}
+              aria-label="reset (R)"
+            >
               reset
             </button>
           </div>
@@ -560,7 +573,7 @@ export default function Timer({
         </div>
 
         <footer className="Tm__footer">
-          <span>{'"Space: mulai/jeda • R: reset • X: reset posisi"'}</span>
+          <span>Space: start/pause • R: reset • X: reset position</span>
         </footer>
       </section>
     </div>
