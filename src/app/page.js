@@ -23,7 +23,6 @@ import Modal from "./components/Timer/Modal";
 import SettingsForm from "./components/Timer/SettingsForm";
 import LoginRegisterForm from "./components/Timer/LoginRegisterForm";
 import LocationWidget from "./components/Timer/LocationWidget";
-import Footer from "./components/Timer/Footer";
 import Wallpaper from "./components/Music/Wallpaper";
 import { useToast } from "./components/ui/useToast";
 import IkonPixel from "./components/ui/IkonPixel";
@@ -34,8 +33,6 @@ import {
 } from "./github";
 import { auth, db } from "./firebase";
 import { formatTanggal } from "./lib/statistik";
-
-const SITE_URL = "https://pomo-pixel.vercel.app";
 
 // ---------- kunci localStorage ----------
 const KEY_PENGATURAN = "lp_pengaturan_v1";
@@ -130,7 +127,6 @@ const GithubStats = dynamic(() => import("./components/Timer/GithubStats"), {
 export default function Page() {
   const { toast } = useToast();
   const hasShownFirstTimerToast = useRef(false);
-  const [sessionCount, setSessionCount] = useState(0);
   /* ===================================================================
    *  1) Status Login Firebase & GitHub
    * =================================================================== */
@@ -362,14 +358,6 @@ export default function Page() {
     });
   }, []);
 
-  useEffect(() => {
-    const stored = safeReadLocalStorage(
-      KEY_SESSION_COUNT,
-      "memuat jumlah sesi selesai",
-    );
-    setSessionCount(Number(stored || 0));
-  }, []);
-
   const catatMenitSesi = useCallback(
     async ({
       fokusMenit = 0,
@@ -396,7 +384,6 @@ export default function Page() {
             ) || 0,
           ) + 1;
 
-        setSessionCount(nextSessionCount);
         safeWriteLocalStorage(
           KEY_SESSION_COUNT,
           String(nextSessionCount),
@@ -593,51 +580,6 @@ export default function Page() {
     });
   }, [toast]);
 
-  const handleShare = useCallback(async () => {
-    let copied = false;
-
-    try {
-      if (
-        typeof navigator !== "undefined" &&
-        navigator.clipboard &&
-        typeof navigator.clipboard.writeText === "function"
-      ) {
-        await navigator.clipboard.writeText(SITE_URL);
-        copied = true;
-        toast({
-          title: "Link copied. Share your focus space.",
-          variant: "success",
-        });
-      }
-    } catch (error) {
-      logError("gagal menyalin tautan", error);
-    }
-
-    if (
-      typeof navigator !== "undefined" &&
-      typeof navigator.share === "function"
-    ) {
-      try {
-        await navigator.share({
-          title: "Pomo Pixel",
-          text: "Pomo Pixel",
-          url: SITE_URL,
-        });
-        return;
-      } catch (error) {
-        if (error?.name === "AbortError") return;
-      }
-    }
-
-    if (!copied) {
-      toast({
-        title: "Share failed",
-        description: "Could not copy the site link.",
-        variant: "error",
-      });
-    }
-  }, [toast]);
-
   /* ===================================================================
    *  5) Modal Pengaturan
    * =================================================================== */
@@ -828,8 +770,6 @@ export default function Page() {
           onGantiWallpaper={gantiWallpaper}
         />
       </div>
-
-      <Footer onShare={handleShare} sessionCount={sessionCount} />
 
       {/* Modal Pengaturan */}
       <Modal
