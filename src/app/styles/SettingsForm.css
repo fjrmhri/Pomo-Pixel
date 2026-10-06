@@ -47,7 +47,6 @@
   margin: var(--jarak-4) calc(-1 * var(--jarak-2)) 0;
   padding: var(--jarak-3) var(--jarak-2);
   background: var(--warna-permukaan-solid);
-  border-top: var(--tebal-garis) solid var(--warna-garis);
 }
 
 .Sf__btn {
